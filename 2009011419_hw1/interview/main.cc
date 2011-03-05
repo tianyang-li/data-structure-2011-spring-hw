@@ -1,8 +1,7 @@
 #include <iostream>
 
-#include "sllist.h"
+#include "line_list.h"
 
 int main(int argc, char **argv) {
-	SLList<int> test1;
 	return 0;
 }
