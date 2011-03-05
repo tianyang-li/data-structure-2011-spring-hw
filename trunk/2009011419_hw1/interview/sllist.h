@@ -11,53 +11,29 @@
 template <class T>
 class SLList {
 public:
+	class SLListNode {
+	public:
+		SLListNode();
+	protected:
+		SLListNode *next_;
+		T data_;
+	};
 	SLList();
 	~SLList();
 
-	bool Insert(T const &new_T);  // append to end
+	bool InsertAfter(SLListNode *cur_node);  // insert after cur_node
 
 	std::size_t Legnth() const;
 	bool Empty();  // true if empty
 
 protected:
-	class SLListNode {
-	public:
-		SLListNode();
-		SLListNode *next_;
-		T data_;
-	};
-
 	SLListNode *head_;
 	SLListNode *tail_;
 
 	void Init();
 };
 
-template <class T>
-bool SLList<T>::Insert(T const &new_T) {
-	if (tail_ == NULL) {
-		head_->next_ = new (std::nothrow) SLListNode;
 
-		if (head_->next_ == NULL) {
-			std::cerr << "head_->next_ = new (std::nothrow) SLListNode\nMemory allocation error\n";
-			return false;
-		}
-
-		tail_ = head_->next_;
-		tail_->data_ = new_T;
-		return true;
-	}
-	tail_->next_ = new (std::nothrow) SLListNode;
-
-	if (tail_->next_ == NULL) {
-		std::cerr << "tail_->next_ = new (std::nothrow) SLListNode\nMemory allocation error\n";
-		return false;
-	}
-
-	tail_ = tail_->next_;
-	tail_->data_ = new_T;
-	return true;
-}
 
 template <class T>
 bool SLList<T>::Empty() {
