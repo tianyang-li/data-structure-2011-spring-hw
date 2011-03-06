@@ -21,6 +21,8 @@ ListNode<T>::ListNode() : next_(NULL), prev_(NULL) {
 template <class T>
 class LineList {
 public:
+	typedef int Index;  // < 0 on error, >= 0 otherwise
+
 	LineList();
 	~LineList();
 
@@ -29,6 +31,9 @@ public:
 
 	// insert before cur_node, return a pointer to the new node
 	static ListNode<T> *InsertBefore(ListNode<T> *cur_node, T const &new_T);
+
+	// add data to tail, return a pointer to the new node
+	ListNode<T> *Append(T const &new_T);
 
 	// delete a node from its list, return a pointer to the deleted node
 	static ListNode<T> *Delete(ListNode<T> *to_del);
@@ -39,6 +44,12 @@ public:
 		// return true if empty
 		return (head_ == tail_);
 	}
+
+	// return NULL if position doesn't exist
+	ListNode<T> *GetNode(Index cur_ind) const;
+
+	// return
+	Index GetIndex(ListNode<T> *cur_node) const;
 
 protected:
 	ListNode<T> *head_, *tail_;
@@ -94,18 +105,76 @@ LineList<T>::~LineList() {
 template <class T>
 static ListNode<T> *LineList<T>::InsertAfter(ListNode<T> *cur_node, T const &new_T) {
 	ListNode<T> *new_node = new (std::nothrow) ListNode<T>;
+
+	if (new_node == NULL) {
+		std::cerr << "ListNode<T> *new_node = new (std::nothrow) ListNode<T>" << std::endl;
+		std::cerr << "memory allocation error" << std::endl;
+		return NULL;
+	}
+
+	new_node->data_ = new_T;
+	ListNode<T> *old_next = cur_node->next_;
+	cur_node->next_ = new_node;
+	new_node->prev_ = cur_node;
+	new_node->next_ = old_next;
+
+	if (old_next != NULL) {
+		old_next->prev_ = new_node;
+	}
+
 	return new_node;
 }
 
 template <class T>
 static ListNode<T> *LineList<T>::InsertBefore(ListNode<T> *cur_node, T const &new_T) {
 	ListNode<T> *new_node = new (std::nothrow) ListNode<T>;
+
+	if (new_node == NULL) {
+		std::cerr << "ListNode<T> *new_node = new (std::nothrow) ListNode<T>" << std::endl;
+		std::cerr << "memory allocation error" << std::endl;
+		return NULL;
+	}
+
 	return new_node;
 }
 
 template <class T>
 static ListNode<T> *LineList<T>::Delete(ListNode<T> *to_del) {
+	ListNode<T> *prev = to_del->prev_;
+	ListNode<T> *next = to_del->next_;
+
+	if (prev != NULL) {
+		prev->next_ = next;
+	}
+	if (next != NULL) {
+		next->prev_ = prev;
+	}
+
 	return to_del;
+}
+
+template <class T>
+ListNode<T> *LineList<T>::Append(T const &new_T) {
+	return LineList<T>::InsertAfter(tail_, new_T);
+}
+
+template <class T>
+LineList<T>::Index LineList<T>::GetIndex(ListNode<T> *cur_node) const {
+	LineList<T>::Index::Index ind = -1;
+
+	ListNode<T> *temp = head_->next_;
+
+	while (temp != NULL) {
+		++ind;
+
+		if (temp == cur_node) {
+			return ind;
+		}
+
+		temp = temp->next_;
+	}
+
+	return -1;
 }
 
 #endif  // LINE_LIST_H
