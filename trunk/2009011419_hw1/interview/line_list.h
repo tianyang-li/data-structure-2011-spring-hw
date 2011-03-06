@@ -35,6 +35,9 @@ public:
 	// add data to tail, return a pointer to the new node
 	ListNode<T> *Append(T const &new_T);
 
+	// pop n^th node, return a ptr to that ndoe
+	List<T> *Pop(LineList<T>::Index to_pop);
+
 	// delete a node from its list, return a pointer to the deleted node
 	static ListNode<T> *Delete(ListNode<T> *to_del);
 
@@ -48,7 +51,7 @@ public:
 	// return NULL if position doesn't exist
 	ListNode<T> *GetNode(Index cur_ind) const;
 
-	// return
+	// return error (Index < 0) when cur_node doesn't exist
 	Index GetIndex(ListNode<T> *cur_node) const;
 
 protected:
@@ -56,6 +59,11 @@ protected:
 
 	void Init();
 };
+
+template <class T>
+ListNode<T> *LineList<T>::Pop(LineList<T>::Index to_pop) {
+
+}
 
 template <class T>
 std::size_t LineList<T>::GetLen() const {
@@ -175,6 +183,14 @@ LineList<T>::Index LineList<T>::GetIndex(ListNode<T> *cur_node) const {
 	}
 
 	return -1;
+}
+
+template <class T>
+ListNode<T> *LineList<T>::GetNode(LineList<T>::Index cur_ind) {
+	ListNode<T> *temp = head_;
+	LineList<T>::Index count = -1;
+
+	return NULL;
 }
 
 #endif  // LINE_LIST_H
