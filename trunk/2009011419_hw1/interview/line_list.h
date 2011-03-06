@@ -45,7 +45,7 @@ public:
 
 	bool Empty() const {
 		// return true if empty
-		return (head_ == tail_);
+		return (this->head_ == this->tail_);
 	}
 
 	// return NULL if position doesn't exist
@@ -74,7 +74,7 @@ ListNode<T> *LineList<T>::Pop(LineList<T>::Index to_pop) {
 template <class T>
 std::size_t LineList<T>::GetLen() const {
 	size_t count = 0;
-	ListNode<T> *temp1 = head_->next_;
+	ListNode<T> *temp1 = this->head_->next_;
 
 	while (temp1 != NULL) {
 		++count;
@@ -91,21 +91,21 @@ LineList<T>::LineList() {
 
 template <class T>
 void LineList<T>::Init() {
-	head_ = new (std::nothrow) ListNode<T>;
+	this->head_ = new (std::nothrow) ListNode<T>;
 
-	if (head_ == NULL) {
+	if (this->head_ == NULL) {
 		std::cerr << "head_ = tail_ = new (std::nothrow) LineList<T>::LineListNode";
 		std::cerr << std::endl << "memory allocation error" << std::endl;
 	}
 
-	tail_ = head_;
+	this->tail_ = this->head_;
 }
 
 template <class T>
 LineList<T>::~LineList() {
 	ListNode<T> *temp1, *temp2;
-	temp1 = head_;
-	temp2 = head_->next_;
+	temp1 = this->head_;
+	temp2 = this->head_->next_;
 
 	while (temp1 != NULL) {
 		delete temp1;
@@ -169,14 +169,14 @@ static ListNode<T> *LineList<T>::Delete(ListNode<T> *to_del) {
 
 template <class T>
 ListNode<T> *LineList<T>::Append(T const &new_T) {
-	return LineList<T>::InsertAfter(tail_, new_T);
+	return LineList<T>::InsertAfter(this->tail_, new_T);
 }
 
 template <class T>
 LineList<T>::Index LineList<T>::GetIndex(ListNode<T> *cur_node) const {
 	LineList<T>::Index::Index ind = -1;
 
-	ListNode<T> *temp = head_->next_;
+	ListNode<T> *temp = this->head_->next_;
 
 	while (temp != NULL) {
 		++ind;
@@ -197,7 +197,7 @@ ListNode<T> *LineList<T>::GetNode(LineList<T>::Index cur_ind) {
 		return NULL;
 	}
 
-	ListNode<T> *temp = head_->next_;
+	ListNode<T> *temp = this->head_->next_;
 	LineList<T>::Index count = 0;
 
 	while (temp != NULL) {
