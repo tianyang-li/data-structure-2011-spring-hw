@@ -62,7 +62,13 @@ protected:
 
 template <class T>
 ListNode<T> *LineList<T>::Pop(LineList<T>::Index to_pop) {
+	ListNode<T> *cur_node = this->GetNode(to_pop);
 
+	if (cur_node != NULL) {
+		LineList<T>::Delete(to_pop);
+	}
+
+	return cur_node;
 }
 
 template <class T>
@@ -80,7 +86,7 @@ std::size_t LineList<T>::GetLen() const {
 
 template <class T>
 LineList<T>::LineList() {
-	Init();
+	this->Init();
 }
 
 template <class T>
@@ -187,8 +193,21 @@ LineList<T>::Index LineList<T>::GetIndex(ListNode<T> *cur_node) const {
 
 template <class T>
 ListNode<T> *LineList<T>::GetNode(LineList<T>::Index cur_ind) {
-	ListNode<T> *temp = head_;
-	LineList<T>::Index count = -1;
+	if (cur_ind < 0) {
+		return NULL;
+	}
+
+	ListNode<T> *temp = head_->next_;
+	LineList<T>::Index count = 0;
+
+	while (temp != NULL) {
+		if (count == cur_ind) {
+			return temp;
+		}
+
+		temp = temp->next_;
+		++count;
+	}
 
 	return NULL;
 }
