@@ -6,6 +6,7 @@
 #define CIRC_LIST_H
 
 #include <cstddef>
+#include <new>
 
 #include "list_node.h"
 
@@ -40,7 +41,7 @@ protected:
 
 template <class T>
 bool CircList<T>::Insert(T const &new_T, std::size_t pos) {
-
+	ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T);
 }
 
 template <class T>

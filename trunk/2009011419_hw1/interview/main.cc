@@ -1,12 +1,17 @@
 #include <iostream>
 
+#include "circ_list.h"
+
 class Interview {
 public:
-	typedef int ID;
+	typedef unsigned int ID;
 	Interview();
 	~Interview();
+
 private:
 	void Init();
+
+	CircList<Interview::ID> people_;
 };
 
 Interview::Interview() {
