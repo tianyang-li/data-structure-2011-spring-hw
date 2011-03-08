@@ -63,15 +63,32 @@ protected:
 	ListNode<T> *list_ptr_;  // point to the actual list storing data
 
 	std::size_t len_;  // list length
+
+	// create a node when the list is empty
+	ListNode<T> *InitListNode(T const &new_T);
 };
 
 template <class T>
-ListNode<T> *CircList<T>::InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
-	ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T);
+ListNode<T> *CircList<T>::InitListNode(T const &new_T) {
+	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
 
 	if (new_node == NULL) {
-		std::cerr << "ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T)";
-		std::cerr << std::endl << "memory allocation failed" << std::endl;
+		return NULL;
+	}
+
+	new_node->next_ = new_node;
+	new_node->prev_ = new_node;
+
+	this->list_ptr_ = new_node;
+
+	return new_node;
+}
+
+template <class T>
+ListNode<T> *CircList<T>::InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
+	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
+
+	if (new_node == NULL) {
 		return NULL;
 	}
 
@@ -88,11 +105,9 @@ ListNode<T> *CircList<T>::InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_no
 
 template <class T>
 ListNode<T> *CircList<T>::InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
-	ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T);
+	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
 
 	if (new_node == NULL) {
-		std::cerr << "ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T)";
-		std::cerr << std::endl << "memory allocation failed" << std::endl;
 		return NULL;
 	}
 
@@ -112,23 +127,47 @@ ListNode<T> *CircList<T>::InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_n
 }
 
 template <class T>
-ListNode<T> * CircList<T>::Insert(T const &new_T, std::size_t pos) {
-	ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T);
+ListNode<T> * CircList<T>::InsertAfter(T const &new_T, std::size_t pos) {
+	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
 
 	if (new_node == NULL) {
-		std::cerr << "ListNode<T> *new_node = new (std::nothrow) ListNode<T>(new_T)";
-		std::cerr << std::endl << "memory allocation failed" << std::endl;
 		return NULL;
 	}
+
+	ListNode<T> *cur_node = this->GetNode(pos);
+
+	CircList<T>::InsertAfter(*this, cur_node, new_T);
 
 	return new_node;
 }
 
 template <class T>
-T CircList<T>::Delete(std::size_t pos, T &del_data) {
+ListNode<T> *CircList<T>::InsertBefore(T const &new_T, std::size_t pos) {
+	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
+
+	if (new_node == NULL) {
+		return NULL;
+	}
+
+	ListNode<T> *cur_node = this->GetNode(pos);
+
+	CircList<T>::InsertBefore(*this, cur_node, new_T);
+
+	return new_node;
+}
+
+template <class T>
+bool CircList<T>::Delete(std::size_t pos, T &del_data) {
 	if (this->Empty()) {
 		return false;
 	}
+
+	ListNode<T> *to_del = this->GetNode(pos);
+
+	CircList<T>::Remove(*this, to_del);
+
+	del_data = to_del->data_;
+	delete to_del;
 
 	return true;
 }
@@ -156,8 +195,17 @@ CircList<T>::~CircList() {
 }
 
 template <class T>
-void CircList<T>::Remove(CircList<T> cur_list, ListNode<T> *to_rm) {
+void CircList<T>::Remove(CircList<T> &cur_list, ListNode<T> *to_rm) {
 	--cur_list.len_;
+	to_rm->prev_->next_ = to_rm->next_;  // TODO: bug here!?!
+	to_rm->next_->prev_ = to_rm->prev_;  // TODO: bug here!?!
+	to_rm->next_ = NULL;
+	to_rm->prev_ = NULL;
+
+	if (cur_list.len_ == 0) {
+		cur_list.list_ptr_ = NULL;
+		return;
+	}
 }
 
 template <class T>
@@ -166,12 +214,39 @@ ListNode<T> *CircList<T>::GetNode(std::size_t pos) {
 		return NULL;
 	}
 
-	std::size_t cur_pos = pos % (this->len_);
+	std::size_t to_pos = pos % (this->len_);
+	std::size_t cur_pos = 0;
+
+	ListNode<T> *temp = this->list_ptr_;
+
+	do {
+		if (cur_pos == to_pos) {
+			return temp;
+		}
+
+		++cur_pos;
+	} while (cur_pos != this->len_);
 }
 
 template <class T>
 bool CircList<T>::GetIndex(ListNode<T> *cur_node, std::size_t &index) {
-	return true;
+	if (this->Empty()) {
+		return false;
+	}
+
+	index = 0;
+	ListNode<T> *temp = this->list_ptr_;
+
+	do {
+		if (temp == cur_node) {
+			return true;
+		}
+
+		++index;
+		temp = temp->next_;
+	} while (temp != this->list_ptr_);
+
+	return false;
 }
 
 #endif  // CIRC_LIST_H
