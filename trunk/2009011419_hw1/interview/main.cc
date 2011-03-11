@@ -42,7 +42,7 @@ void Interview::Init() {
 	for (int i = 1; i != this->N_; ++i) {
 		std::cin >> temp_ID;
 		this->MoveByM();
-		CircList<int>::InsertAfter(*this, this->cur_node_, temp_ID);
+		CircList<int>::InsertAfter(this->people_, this->cur_node_, temp_ID);
 	}
 }
 
