@@ -13,41 +13,70 @@ public:
 	bool Win();
 
 private:
-	int n_;  // # of numbers
+	int n_;  // # of numbers_
+	int64_t *numbers_;
 
-	int64_t *numbers;
+	int sorted_size_;
+	int64_t *sorted_;  // contain no repeats
 
 	void Init();
+
+	void RemoveRepeat();  // remove repeats in input
 };
 
-Lottery::Lottery() {
+Lottery::Lottery() : sorted_size_(0) {
 	this->Init();
 }
 
 Lottery::~Lottery() {
+	delete [] this->numbers_;
+	delete [] this->sorted_;
 }
 
 void Lottery::Init() {
 	std::cin >> this->n_;
-	this->numbers = new (std::nothrow) int64_t[this->n_];
+	this->numbers_ = new (std::nothrow) int64_t[this->n_];
 
-	if (this->numbers == NULL) {
-		std::cerr << "this->numbers = new (std::nothrow) std::int64_t[this->n_]";
+	if (this->numbers_ == NULL) {
+		std::cerr << "this->numbers_ = new (std::nothrow) std::int64_t[this->n_]";
 		std::cerr << std::endl << "memory allocation error" << std::endl;
 		return;
 	}
 
 	for (int i = 0; i != this->n_; ++i) {
-		std::cin >> this->numbers[i];
+		std::cin >> this->numbers_[i];
 	}
 
-	QuickSort<int64_t>(this->numbers, 0, this->n_ - 1);
+	QuickSort<int64_t>(this->numbers_, 0, this->n_ - 1);
+
+	this->RemoveRepeat();
+}
+
+void Lottery::RemoveRepeat() {
+	this->sorted_ = new (std::nothrow) int64_t[this->n_];
+
+	if (this->sorted_ == NULL) {
+		std::cerr << "this->sorted_ = new (std::nothrow) int64_t[this->n_]";
+		std::cerr << std::endl << "memory allocation error" << std::endl;
+		return;
+	}
+
+	this->sorted_[0] = this->numbers_[0];
+
+	for (int i = 1; i != this->n_; ++i) {
+		if (this->numbers_[i] != this->sorted_[this->sorted_size_]) {
+			++this->sorted_size_;
+			this->sorted_[this->sorted_size_] = this->numbers_[i];
+		}
+	}
+	++this->sorted_size_;
 }
 
 bool Lottery::Win() {
+	int index;  // index of c such that there exists a, b such that a + b == c
 	for (int i = 0; i != this->n_; ++i) {
 		for (int j = 0; j != this->n_ - 1; ++j) {
-			if (BinSearch<int64_t>(0, this->n_ - 1, this->numbers, this->numbers[i] + this->numbers[j])) {
+			if (BinSearch<int64_t>(0, this->sorted_size_ - 1, this->numbers_, this->numbers_[i] + this->numbers_[j], index)) {
 				return true;
 			}
 		}
