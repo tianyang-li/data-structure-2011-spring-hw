@@ -28,9 +28,15 @@ int Partition(T *array, int low, int high) {
 	while (low <= high) {
 		while (array[low] < pivot_val) {
 			++low;
+			if (low > pivot) {
+				break;
+			}
 		}
 		while (array[high] >= pivot_val) {
 			--high;
+			if (high < 0) {
+				break;
+			}
 		}
 		if (low < high) {
 			Swap(array[low], array[high]);
