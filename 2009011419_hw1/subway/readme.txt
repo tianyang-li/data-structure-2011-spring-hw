@@ -39,6 +39,12 @@
  * 增加第一个车站前 source S
  * 以及最后一个车站后 terminal T
  * 则由 O(n) 的算法可得 S->T 的最短路径, 即题中所求
+ * 对于第 i 个车站的 U D C 三种模式
+ * min(i, D) = min{min(i-1, U) + D, min(i-1, C) + D}
+ * min(i, C) = min{min(i-1, U) + C, min(i-1, D) + C}
+ * min(i, U) = min{min(i-1, D) + U, min(i-1, C) + U}
+ * 取 min{min(n, U), min(n, D), min(n, C)} 即得所求最小费用
+ * 该图使用循环链表实现
  **********************************************************/
 
 
