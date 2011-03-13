@@ -8,7 +8,7 @@ lottery : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o lottery
 
 main.o : main.cc bin_search.h quick_sort.h
-	$(CC) $(CFLGAS) -c main.cc
+	$(CC) $(CFLAGS) -c main.cc
 	
 bin_search.o : bin_search.h bin_search.cc
 	$(CC) $(CFLAGS) -c bin_search.cc
