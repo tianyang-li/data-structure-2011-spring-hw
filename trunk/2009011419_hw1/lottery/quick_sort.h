@@ -20,8 +20,12 @@ int Partition(T *array, int low, int high) {
 	// [low, high] in array[]
 	// increasing order
 	// 1st partition < pivot_val, 2nd partition >= pivot_val
-	T pivot_val = array[low + int(float(high - low) * float(std::rand()) / float(RAND_MAX))];
-	while (low < high) {
+	int pivot = low + int(float(high - low) * float(std::rand()) / float(RAND_MAX));
+	T pivot_val = array[pivot];
+	Swap(array[pivot], array[high]);
+	pivot = high;
+	--high;
+	while (low <= high) {
 		while (array[low] < pivot_val) {
 			++low;
 		}
@@ -34,6 +38,7 @@ int Partition(T *array, int low, int high) {
 			--high;
 		}
 	}
+	Swap(array[pivot], array[low]);
 	return low;
 }
 
