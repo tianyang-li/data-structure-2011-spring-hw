@@ -24,19 +24,50 @@
 
 class Log {
 public:
-	Log();
+	void Proc();  // process log
+
 private:
-	void Init();
+	ListStack<int> store_;  // warehouse storage
+	ListStack<int> max_;  // max in warehouse
 };
 
-Log::Log() {
-	this->Init();
-}
+void Log::Proc() {
+	int n;  // # of lines in log
+	std::cin >> n;
 
-void Log::Init() {
+	int action;  // 0 - in, 1 - out, 2 - query
+	int mass;  // mass IO
+	for (int i = 0; i != n; ++i) {
+		std::cin >> action;
+		switch (action) {
+		case 0:
+			std::cin >> mass;
+			if (!this->max_.Empty()) {
+				if (mass >= this->max_.Top()) {
+					this->max_.Push(mass);
+				}
+			}
+			else {
+				this->max_.Push(mass);
+			}
+			this->store_.Push(mass);
+			break;
+		case 1:
+			mass = this->store_.Top();
+			this->store_.Pop();
+			if (mass == this->max_.Top()) {
+				this->max_.Pop();
+			}
+			break;
+		case 2:
+			std::cout << this->max_.Top() << std::endl;
+			break;
+		}
+	}
 }
 
 int main(int argc, char **argv) {
 	Log log;
+	log.Proc();
 	return 0;
 }

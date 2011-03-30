@@ -34,6 +34,7 @@ struct ListNode {
 	ListNode(T const &new_T);
 
 	static ListNode<T> *CreateNewNode(T const &new_T);
+	static ListNode<T> *CreateNewNode();
 
 	ListNode<T> *next_;
 	ListNode<T> *prev_;
@@ -44,7 +45,7 @@ struct ListNode {
 template <class T>
 ListNode<T> *ListNode<T>::CreateNewNode(T const &new_T) {
 	ListNode<T> *new_node;
-	new_node = new (std::nothrow) ListNode<T>;
+	new_node = new (std::nothrow) ListNode<T>(new_T);
 
 	if (new_node == NULL) {
 		std::cerr << "new_node = new (std::nothrow) ListNode<T>";
@@ -52,7 +53,19 @@ ListNode<T> *ListNode<T>::CreateNewNode(T const &new_T) {
 		return NULL;
 	}
 
-	new_node->data_ = new_T;
+	return new_node;
+}
+
+template <class T>
+ListNode<T> *ListNode<T>::CreateNewNode() {
+	ListNode<T> *new_node;
+	new_node = new (std::nothrow) ListNode<T>();
+
+	if (new_node == NULL) {
+		std::cerr << "new_node = new (std::nothrow) ListNode<T>";
+		std::cerr << std::endl << "memory allocation error" << std::endl;
+		return NULL;
+	}
 
 	return new_node;
 }
