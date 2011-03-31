@@ -40,6 +40,7 @@ void Log::Proc() {
 	for (int i = 0; i != n; ++i) {
 		std::cin >> action;
 		switch (action) {
+		//XXX: no error checking here!
 		case 0:
 			std::cin >> mass;
 			if (!this->max_.Empty()) {
