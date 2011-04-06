@@ -3,6 +3,8 @@ CFLAGS = -Wall -ggdb
 OBJ = main.o
 
 all : hospital
+
+hospital : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o hospital
 
 main.o : main.cc
