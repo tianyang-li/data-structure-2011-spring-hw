@@ -18,6 +18,27 @@
  * E-Mail tmy1018 gmail com
  */
 
+#include <iostream>
+
+class Hospital {
+public:
+	Hospital();
+
+private:
+	int n_;  // # of cities
+
+	void Init();
+};
+
+Hospital::Hospital() {
+	this->Init();
+}
+
+void Hospital::Init() {
+	std::cin >> this->n_;
+}
+
 int main(int argc, char **argv) {
+	Hospital hospital;
 	return 0;
 }
