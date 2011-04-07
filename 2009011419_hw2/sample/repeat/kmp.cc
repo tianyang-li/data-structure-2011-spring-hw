@@ -30,5 +30,15 @@
 // int *pf - pointer to storage for prefix function
 void KMPPrefixFunction(char *pattern, int len, int *pf) {
 	pf[0] = 0;
+	int k = 0;
+	for (int q = 1; q != len; ++q) {
+		while ((k != 0) && (pattern[k + 1] != pattern[q])) {
+			k = pf[k];
+		}
+		if (pattern[k + 1] == pattern[q]) {
+			++k;
+		}
+		pf[q] = k;
+	}
 }
 
