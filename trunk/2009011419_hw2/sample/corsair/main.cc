@@ -18,6 +18,33 @@
  * E-Mail tmy1018 gmail com
  */
 
+#include <iostream>
+
+class Corsair {
+public:
+	Corsair();
+	void Init();
+
+private:
+	int n_;  // # of coins
+	int val_[60];  // value of coins
+	int owner_[60];  // owner_[i] is the owner of the i^th coin
+	int tot_;  // total val of coins
+};
+
+Corsair::Corsair() : tot_(0) {
+}
+
+void Corsair::Init() {
+	std::cin >> this->n_;
+	for (int i = 0; i != this->n; ++i) {
+		std::cin >> this->val_[i];
+		this->tot_ += this->val_[i];
+	}
+}
+
 int main(int argc, char **argv) {
+	Corsair corsair;
+	corsair.Init();
 	return 0;
 }
