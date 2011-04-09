@@ -52,6 +52,7 @@ public:
 	inline void AddVert(std::size_t new_vert);  // XXX: no bound checking!
 	inline void AddVert(std::size_t new_vert, T const &new_data);  // XXX: no bound checking!
 	inline bool MallocVert(std::size_t more_vert);  // alloc memory for more_vert new vertices
+	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // XXX: no checking, add new_nb to cur_v's neighbor
 
 protected:
 	static std::size_t const kInitTabSize = 32;
@@ -118,6 +119,11 @@ inline void AdjListGraph<T>::AddVert(std::size_t new_vert, T const &new_data) {
 		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex(new_data);";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 	}
+}
+
+template <class T>
+inline void AdjListGraph<T>::AddNeighbor(std::size_t cur_v, std::size_t new_nb) {
+	this->vertex_[cur_v]->adj_list.Append(this->vertex_[new_nb]);
 }
 
 #endif
