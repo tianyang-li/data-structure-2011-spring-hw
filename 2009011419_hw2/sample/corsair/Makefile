@@ -5,10 +5,10 @@ OBJ = main.o
 all : corsair
 
 corsair : $(OBJ)
-	$(CC) $(CFLAGS) -o corsair
+	$(CC) $(CFLAGS) $(OBJ) -o corsair
 
 main.o : main.cc
-	$(CC) $(CFLGAS) -c main.cc
+	$(CC) $(CFLAGS) -c main.cc
 
 .PHONY : clean
 clean :

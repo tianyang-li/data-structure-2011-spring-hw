@@ -30,16 +30,34 @@ private:
 	int val_[60];  // value of coins
 	int owner_[60];  // owner_[i] is the owner of the i^th coin
 	int tot_;  // total val of coins
+	int coins_[60][60];  // coins_[i][j] is the j^th coin owned by the i^th person
+	int num_[60];  // num_[i] is the # of coins owned by the i^th person
+
+	void SortCoin();
 };
 
 Corsair::Corsair() : tot_(0) {
 }
 
+void Corsair::SortCoin() {
+	int temp_swap;
+	for (int i = this->n_ - 1; i != -1; --i) {
+		for (int j = 0; j != i; ++i) {
+			if (this->val_[j] > this->val_[j + 1]) {
+				temp_swap = this->val_[j];
+				this->val_[j] = this->val_[j + 1];
+				this->val_[j + 1] = temp_swap;
+			}
+		}
+	}
+}
+
 void Corsair::Init() {
 	std::cin >> this->n_;
-	for (int i = 0; i != this->n; ++i) {
+	for (int i = 0; i != this->n_; ++i) {
 		std::cin >> this->val_[i];
 		this->tot_ += this->val_[i];
+		this->num_[i] = 0;
 	}
 }
 

@@ -20,25 +20,29 @@
 
 #include <iostream>
 
+#include "adj_list_graph.h"
+
 class Hospital {
 public:
 	Hospital();
 
+	void Init();
+
 private:
 	int n_;  // # of cities
-
-	void Init();
+	AdjListGraph<int> city_;
 };
 
 Hospital::Hospital() {
-	this->Init();
 }
 
 void Hospital::Init() {
 	std::cin >> this->n_;
+	city_.MallocVert(this->n_);
 }
 
 int main(int argc, char **argv) {
 	Hospital hospital;
+	hospital.Init();
 	return 0;
 }
