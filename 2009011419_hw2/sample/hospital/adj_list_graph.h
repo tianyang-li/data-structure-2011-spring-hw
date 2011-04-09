@@ -33,6 +33,10 @@ class AdjListGraph {
 public:
 	class Vertex {
 	public:
+		Vertex();
+		Vertex(T const &new_data) : data(new_data) {
+		}
+
 		CircList<AdjListGraph<T>::Vertex *> adj_list;  // adjacency list
 		T data;
 	};
@@ -45,6 +49,8 @@ public:
 		return this->V_;
 	}
 
+	inline void AddVert(std::size_t new_vert);  // XXX: no bound checking!
+	inline void AddVert(std::size_t new_vert, T const &new_data);  // XXX: no bound checking!
 	inline bool MallocVert(std::size_t more_vert);  // alloc memory for more_vert new vertices
 
 protected:
@@ -94,6 +100,24 @@ inline bool AdjListGraph<T>::MallocVert(std::size_t more_vert) {
 		this->vertex_ = new_vert;
 	}
 	return true;
+}
+
+template <class T>
+inline void AdjListGraph<T>::AddVert(std::size_t new_vert) {
+	this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex;
+	if (this->vertex_[new_vert] == NULL) {
+		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex;";
+		std::cerr << std::endl << "Memory allocation error!" << std::endl;
+	}
+}
+
+template <class T>
+inline void AdjListGraph<T>::AddVert(std::size_t new_vert, T const &new_data) {
+	this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex(new_data);
+	if (this->vertex_[new_vert] == NULL) {
+		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex(new_data);";
+		std::cerr << std::endl << "Memory allocation error!" << std::endl;
+	}
 }
 
 #endif
