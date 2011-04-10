@@ -48,10 +48,9 @@ public:
 	std::size_t GetSize() const {
 		return this->V_;
 	}
-
 	inline void AddVert(std::size_t new_vert);  // XXX: no bound checking!
 	inline void AddVert(std::size_t new_vert, T const &new_data);  // XXX: no bound checking!
-	inline bool MallocVert(std::size_t more_vert);  // alloc memory for more_vert new vertices
+	inline bool MallocVertPtr(std::size_t more_vert);  // alloc memory for more_vert new vertice ptrs
 	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // XXX: no checking, add new_nb to cur_v's neighbor
 
 protected:
@@ -76,7 +75,7 @@ AdjListGraph<T>::~AdjListGraph() {
 template <class T>
 void AdjListGraph<T>::Init() {
 	this->vertex_ = new (std::nothrow) AdjListGraph<T>::VertexPtr[this->kInitTabSize];
-	if (this->vertex_ == NULL) {
+	if (NULL == this->vertex_) {
 		std::cerr << "this->vertex_ = new (std::nothrow) AdjListGraph<T>::VertexPtr[this->kInitTabSize];";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 		return;
@@ -84,12 +83,15 @@ void AdjListGraph<T>::Init() {
 }
 
 template <class T>
-inline bool AdjListGraph<T>::MallocVert(std::size_t more_vert) {
-	if (this->V_ + more_vert == this->tab_size_) {  // dynamic table (CLRS)
+inline bool AdjListGraph<T>::MallocVertPtr(std::size_t more_vert) {
+	std::size_t size_need = this->V_ + more_vert;
+	if (size_need >= this->tab_size_) {  // dynamic table (CLRS)
 		AdjListGraph<T>::VertexPtr *new_vert;
-		this->tab_size_ <<= 1;
+		while (size_need >= this->tab_size_) {
+			this->tab_size_ <<= 1;
+		}
 		new_vert = new (std::nothrow) AdjListGraph<T>::VertexPtr[this->tab_size_];
-		if (new_vert == NULL) {
+		if (NULL == new_vert) {
 			std::cerr << "new_vert = new (std::nothrow) AdjListGraph<T>::VertexPtr[this->tab_size_];";
 			std::cerr << std::endl << "Memory allocation error" << std::endl;
 			return false;
@@ -106,7 +108,7 @@ inline bool AdjListGraph<T>::MallocVert(std::size_t more_vert) {
 template <class T>
 inline void AdjListGraph<T>::AddVert(std::size_t new_vert) {
 	this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex;
-	if (this->vertex_[new_vert] == NULL) {
+	if (NULL == this->vertex_[new_vert]) {
 		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex;";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 	}
@@ -115,7 +117,7 @@ inline void AdjListGraph<T>::AddVert(std::size_t new_vert) {
 template <class T>
 inline void AdjListGraph<T>::AddVert(std::size_t new_vert, T const &new_data) {
 	this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex(new_data);
-	if (this->vertex_[new_vert] == NULL) {
+	if (NULL == this->vertex_[new_vert]) {
 		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex(new_data);";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 	}
