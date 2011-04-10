@@ -42,7 +42,7 @@ Corsair::Corsair() : tot_(0) {
 void Corsair::SortCoin() {
 	int temp_swap;
 	for (int i = this->n_ - 1; i != -1; --i) {
-		for (int j = 0; j != i; ++i) {
+		for (int j = 0; j != i; ++j) {
 			if (this->val_[j] > this->val_[j + 1]) {
 				temp_swap = this->val_[j];
 				this->val_[j] = this->val_[j + 1];
@@ -59,6 +59,7 @@ void Corsair::Init() {
 		this->tot_ += this->val_[i];
 		this->num_[i] = 0;
 	}
+	this->SortCoin();
 }
 
 int main(int argc, char **argv) {
