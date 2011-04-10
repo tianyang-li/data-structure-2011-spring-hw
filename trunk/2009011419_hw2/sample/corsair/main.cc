@@ -23,7 +23,8 @@
 class Corsair {
 public:
 	Corsair();
-	void Init();
+	inline void Init();
+	int Most();
 
 private:
 	int n_;  // # of coins
@@ -34,7 +35,22 @@ private:
 	int num_[60];  // num_[i] is the # of coins owned by the i^th person
 
 	void SortCoin();
+	bool DivPossible(int people);
 };
+
+bool Corsair::DivPossible(int people) {
+	return false;
+}
+
+int Corsair::Most() {
+	int people = this->n_;
+	while (people != 1) {
+		if (this->DivPossible(people)) {
+			return people;
+		}
+	}
+	return 1;
+}
 
 Corsair::Corsair() : tot_(0) {
 }
@@ -52,7 +68,7 @@ void Corsair::SortCoin() {
 	}
 }
 
-void Corsair::Init() {
+inline void Corsair::Init() {
 	std::cin >> this->n_;
 	for (int i = 0; i != this->n_; ++i) {
 		std::cin >> this->val_[i];
@@ -65,5 +81,6 @@ void Corsair::Init() {
 int main(int argc, char **argv) {
 	Corsair corsair;
 	corsair.Init();
+	std::cout << corsair.Most() << std::endl;
 	return 0;
 }
