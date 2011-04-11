@@ -39,7 +39,7 @@ private:
 };
 
 bool Corsair::DivPossible(int people) {
-	if ((people * this->val_[this->n_ - 1]) > this->tot_) {
+	if (((people * this->val_[this->n_ - 1]) > this->tot_) || ((this->tot_ % people) != 0)) {
 		return false;
 	}
 	return false;
