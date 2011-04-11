@@ -35,10 +35,10 @@ private:
 	int num_[60];  // num_[i] is the # of coins owned by the i^th person
 
 	inline void SortCoin();
-	bool DivPossible(int people);
+	inline bool DivPossible(int people);
 };
 
-bool Corsair::DivPossible(int people) {
+inline bool Corsair::DivPossible(int people) {
 	if (((people * this->val_[this->n_ - 1]) > this->tot_) || ((this->tot_ % people) != 0)) {
 		return false;
 	}
