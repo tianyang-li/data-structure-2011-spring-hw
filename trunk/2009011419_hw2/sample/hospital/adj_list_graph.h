@@ -42,16 +42,28 @@ public:
 	};
 	typedef Vertex *VertexPtr;
 
+	class ProcVert {  // process vertex
+	public:
+		virtual void Proc(VertexPtr cur_vert) = 0;
+		// args should have been set in each vertex
+		// XXX: modify this approach?
+	};
+
 	AdjListGraph(std::size_t init_size = 0);
 	~AdjListGraph();
 
-	std::size_t GetSize() const {
+	inline std::size_t GetSize() const {
 		return this->V_;
+	}
+	inline VertexPtr GetVertexPtr(std::size_t get_vert) const {
+		return this->vertex_[get_vert];
 	}
 	inline void AddVert(std::size_t new_vert);  // XXX: no bound checking!
 	inline void AddVert(std::size_t new_vert, T const &new_data);  // XXX: no bound checking!
 	inline bool MallocVertPtr(std::size_t more_vert);  // alloc memory for more_vert new vertice ptrs
 	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // XXX: no checking, add new_nb to cur_v's neighbor
+	inline void DFS(VertexPtr start, ProcVert &proc);  // depth first search
+	inline void BFS(VertexPtr start, ProcVert &proc);  // breadth first search
 
 protected:
 	static std::size_t const kInitTabSize = 32;
@@ -126,6 +138,16 @@ inline void AdjListGraph<T>::AddVert(std::size_t new_vert, T const &new_data) {
 template <class T>
 inline void AdjListGraph<T>::AddNeighbor(std::size_t cur_v, std::size_t new_nb) {
 	this->vertex_[cur_v]->adj_list.Append(this->vertex_[new_nb]);
+}
+
+template <class T>
+inline void AdjListGraph<T>::DFS(AdjListGraph<T>::VertexPtr start, AdjListGraph<T>::ProcVert &proc) {
+	proc.Proc(start);
+}
+
+template <class T>
+inline void AdjListGraph<T>::BFS(AdjListGraph<T>::VertexPtr start, AdjListGraph<T>::ProcVert &proc) {
+
 }
 
 #endif
