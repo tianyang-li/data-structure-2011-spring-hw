@@ -24,7 +24,7 @@ class Corsair {
 public:
 	Corsair();
 	inline void Init();
-	int Most();
+	inline int Most();
 
 private:
 	int n_;  // # of coins
@@ -34,20 +34,24 @@ private:
 	int coins_[60][60];  // coins_[i][j] is the j^th coin owned by the i^th person
 	int num_[60];  // num_[i] is the # of coins owned by the i^th person
 
-	void SortCoin();
+	inline void SortCoin();
 	bool DivPossible(int people);
 };
 
 bool Corsair::DivPossible(int people) {
+	if ((people * this->val_[this->n_ - 1]) > this->tot_) {
+		return false;
+	}
 	return false;
 }
 
-int Corsair::Most() {
+inline int Corsair::Most() {
 	int people = this->n_;
 	while (people != 1) {
 		if (this->DivPossible(people)) {
 			return people;
 		}
+		--people;
 	}
 	return 1;
 }
@@ -55,7 +59,7 @@ int Corsair::Most() {
 Corsair::Corsair() : tot_(0) {
 }
 
-void Corsair::SortCoin() {
+inline void Corsair::SortCoin() {  // bubble sort
 	int temp_swap;
 	for (int i = this->n_ - 1; i != -1; --i) {
 		for (int j = 0; j != i; ++j) {

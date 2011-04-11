@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <new>
+#include <cstdlib>
 
 #include "adj_list_graph.h"
 #include "circ_list.h"
@@ -36,6 +37,12 @@ public:
 	};
 	typedef City *CityPtr;
 
+	class ProcCity : public AdjListGraph<CityPtr>::ProcVert {
+	public:
+		void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert) {
+		}
+	};
+
 	Hospital();
 
 	bool Init();
@@ -44,6 +51,7 @@ private:
 	int n_;  // # of cities
 	AdjListGraph<Hospital::CityPtr> city_graph_;
 	Hospital::CityPtr *city_ptr_;  // point to city data
+	ProcCity proc_sity_;  // function obj
 };
 
 Hospital::Hospital() {
@@ -71,6 +79,8 @@ bool Hospital::Init() {
 		}
 		this->city_graph_.AddVert(i, this->city_ptr_[i]);
 	}
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_sity_);
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_sity_);
 	return true;
 }
 
