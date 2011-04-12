@@ -20,19 +20,35 @@
 
 #include <iostream>
 
+#include "list_stack.h"
+
 class Corsair {
+private:
+	static int const kMaxCoin = 60;
 public:
+	class State {  // search state
+	public:
+		State() {
+		}
+		~State() {
+		}
+
+		bool state[Corsair::kMaxCoin];  // state[i] == true if i is added in a round
+	};
+
 	Corsair();
+
 	inline void Init();
 	inline int Most();
 
 private:
 	int n_;  // # of coins
-	int val_[60];  // value of coins
-	int owner_[60];  // owner_[i] is the owner of the i^th coin
+	int val_[Corsair::kMaxCoin];  // value of coins
+	int owner_[Corsair::kMaxCoin];  // owner_[i] is the owner of the i^th coin
 	int tot_;  // total val of coins
-	int coins_[60][60];  // coins_[i][j] is the j^th coin owned by the i^th person
-	int num_[60];  // num_[i] is the # of coins owned by the i^th person
+	int coins_[Corsair::kMaxCoin][Corsair::kMaxCoin];  // coins_[i][j] is the j^th coin owned by the i^th person
+	int num_[Corsair::kMaxCoin];  // num_[i] is the # of coins owned by the i^th person
+	ListStack<State> state_;
 
 	inline void SortCoin();
 	inline bool DivPossible(int people);
