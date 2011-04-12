@@ -118,6 +118,17 @@ ListStack<T>::~ListStack() {
 template <class T>
 inline void ListStack<T>::Clear() {
 	ListNode<T> *temp1 = this->top_->next_;
+	if (temp1 != NULL) {
+		ListNode<T> *temp2 = temp1->next_;
+		while (NULL != temp1) {
+			delete temp1;
+			temp1 = temp2;
+			if (temp2 != NULL) {
+				temp2 = temp2->next_;
+			}
+		}
+		this->top_->next_ = NULL;
+	}
 }
 
 #endif  // LIST_STACK_H
