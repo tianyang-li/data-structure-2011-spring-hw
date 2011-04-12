@@ -25,15 +25,32 @@
 class Corsair {
 private:
 	static int const kMaxCoin = 60;
+
 public:
 	class State {  // search state
 	public:
 		State() {
 		}
+
+		State(State const &cur_state) {
+			for (int i = 0; i != Corsair::kMaxCoin; ++i) {
+				this->state[i] = cur_state.state[i];
+			}
+		}
+
 		~State() {
 		}
 
 		bool state[Corsair::kMaxCoin];  // state[i] == true if i is added in a round
+
+		State &operator=(State const &cur_state) {
+			if (this != &cur_state) {
+				for (int i = 0; i != Corsair::kMaxCoin; ++i) {
+					this->state[i] = cur_state.state[i];
+				}
+			}
+			return *this;
+		}
 	};
 
 	Corsair();
@@ -48,7 +65,7 @@ private:
 	int tot_;  // total val of coins
 	int coins_[Corsair::kMaxCoin][Corsair::kMaxCoin];  // coins_[i][j] is the j^th coin owned by the i^th person
 	int num_[Corsair::kMaxCoin];  // num_[i] is the # of coins owned by the i^th person
-	ListStack<State> state_;
+	static int const kNoOwner = -1;
 
 	inline void SortCoin();
 	inline bool DivPossible(int people);
@@ -79,7 +96,7 @@ inline void Corsair::SortCoin() {  // bubble sort
 	int temp_swap;
 	for (int i = this->n_ - 1; i != -1; --i) {
 		for (int j = 0; j != i; ++j) {
-			if (this->val_[j] > this->val_[j + 1]) {
+			if (this->val_[j] < this->val_[j + 1]) {
 				temp_swap = this->val_[j];
 				this->val_[j] = this->val_[j + 1];
 				this->val_[j + 1] = temp_swap;
