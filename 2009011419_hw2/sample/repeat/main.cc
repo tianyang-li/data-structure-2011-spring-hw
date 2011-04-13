@@ -50,10 +50,20 @@ inline int Repeat::RepFac() {
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 		return -1;
 	}
+	int final_seg;
 	this->rep_fac_[0] = 1;
 	for (int i = 1; i != this->n_; ++i) {
-		if (this->pf_[i] != -1) {
-			if
+		if (-1 == this->pf_[i]) {
+			this->rep_fac_[i] = i + 1;
+		}
+		else {
+			final_seg = i - this->pf_[i];
+			if (this->rep_fac_[this->pf_[i]] == final_seg) {
+				this->rep_fac_[i] = final_seg;
+			}
+			else {
+				this->rep_fac_[i] = i + 1;
+			}
 		}
 	}
 	return (this->n_ / this->rep_fac_[this->n_ - 1]);
