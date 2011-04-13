@@ -69,7 +69,7 @@ inline bool Corsair::DivPossible(int people) {
 	this->cur_max_owner_ = 0;
 	this->cur_coin_ = 1;
 	this->min_coin_[0] = 0;
-	while (/*this->NotReached(subset, people) && (this->cur_coin_ != this->n_)*/true) {
+	while (true) {
 		return true;
 	}
 	return false;
