@@ -20,39 +20,11 @@
 
 #include <iostream>
 
-#include "list_stack.h"
-
 class Corsair {
 private:
 	static int const kMaxCoin = 60;
 
 public:
-	class State {  // search state
-	public:
-		State() {
-		}
-
-		State(State const &cur_state) {
-			for (int i = 0; i != Corsair::kMaxCoin; ++i) {
-				this->state[i] = cur_state.state[i];
-			}
-		}
-
-		~State() {
-		}
-
-		bool state[Corsair::kMaxCoin];  // state[i] == true if i is added in a round
-
-		State &operator=(State const &cur_state) {
-			if (this != &cur_state) {
-				for (int i = 0; i != Corsair::kMaxCoin; ++i) {
-					this->state[i] = cur_state.state[i];
-				}
-			}
-			return *this;
-		}
-	};
-
 	Corsair();
 
 	inline void Init();
@@ -63,11 +35,8 @@ private:
 	int val_[Corsair::kMaxCoin];  // value of coins
 	int owner_[Corsair::kMaxCoin];  // owner_[i] is the owner of the i^th coin
 	int tot_;  // total val of coins
-	static int const kNoOwner = -1;  // a coin doesn't have a owner
-	int min_coin_[Corsair::kMaxCoin];
-	static int const kNoCoin = -1;  // a owner doesn't have a coin, for this->min_coin_
-	ListStack<State> state_;  // used in search
-	int asset_[Corsair::kMaxCoin];  // the amount each person currently has
+	int asset_[Corsair::kMaxCoin];
+	static int const kNoOwner = -1;
 
 	inline void SortCoin();
 	inline bool DivPossible(int people);
@@ -87,20 +56,17 @@ inline bool Corsair::DivPossible(int people) {
 	if (((people * this->val_[this->n_ - 1]) > this->tot_) || ((this->tot_ % people) != 0)) {
 		return false;
 	}
-	this->state_.Clear();
 	int subset = this->tot_ / people;  // what each person should get
 	this->owner_[0] = 0;  // 0^th person has the 0^th coin
 	for (int i = 1; i != this->n_; ++i) {
 		this->owner_[i] = Corsair::kNoOwner;
 	}
-	this->min_coin_[0] = 0;  // 0^th person has the 0^th coin
 	this->asset_[0] = this->val_[0];
 	for (int i = 1; i != people; ++i) {
-		this->min_coin_[i] = Corsair::kNoCoin;
 		this->asset_[i] = 0;
 	}
 	while (this->NotReached(subset, people)) {
-		return false;
+		return false; //TODO
 	}
 	return true;
 }
