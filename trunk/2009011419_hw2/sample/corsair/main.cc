@@ -36,7 +36,8 @@ private:
 	int owner_[Corsair::kMaxCoin];  // owner_[i] is the owner of the i^th coin
 	int tot_;  // total val of coins
 	int asset_[Corsair::kMaxCoin];
-	static int const kNoOwner = -1;
+//	static int const kNoOwner = -1;
+	int cur_max_owner_;  // because owners are searched from 0 up, this says
 
 	inline void SortCoin();
 	inline bool DivPossible(int people);
@@ -53,18 +54,19 @@ inline bool Corsair::NotReached(int subset, int people) {
 }
 
 inline bool Corsair::DivPossible(int people) {
-	if (((people * this->val_[this->n_ - 1]) > this->tot_) || ((this->tot_ % people) != 0)) {
+	if (((people * this->val_[0]) > this->tot_) || ((this->tot_ % people) != 0)) {
 		return false;
 	}
 	int subset = this->tot_ / people;  // what each person should get
 	this->owner_[0] = 0;  // 0^th person has the 0^th coin
-	for (int i = 1; i != this->n_; ++i) {
+/*	for (int i = 1; i != this->n_; ++i) {
 		this->owner_[i] = Corsair::kNoOwner;
-	}
+	}*/
 	this->asset_[0] = this->val_[0];
 	for (int i = 1; i != people; ++i) {
 		this->asset_[i] = 0;
 	}
+	this->cur_max_owner_ = 0;
 	while (this->NotReached(subset, people)) {
 		return false; //TODO
 	}
