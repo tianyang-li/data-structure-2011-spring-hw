@@ -198,8 +198,8 @@ CircList<T>::~CircList() {
 template <class T>
 void CircList<T>::Remove(CircList<T> &cur_list, ListNode<T> *to_rm) {
 	--cur_list.len_;
-	to_rm->prev_->next_ = to_rm->next_;  // TODO: bug here!?!
-	to_rm->next_->prev_ = to_rm->prev_;  // TODO: bug here!?!
+	to_rm->prev_->next_ = to_rm->next_;
+	to_rm->next_->prev_ = to_rm->prev_;
 	to_rm->next_ = NULL;
 	to_rm->prev_ = NULL;
 

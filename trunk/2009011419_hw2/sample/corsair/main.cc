@@ -40,7 +40,8 @@ private:
 	int cur_max_owner_;  // because owners are searched from 0 up, this says
 	int cur_coin_;  // current coin searching for owner, sort of like a stack ptr
 	int min_coin_[Corsair::kMaxCoin];  // min_coin_[i] is lowest index in the indices of coins owned by the i^th person
-	int i[Corsair::kMaxCoin];  // indices used in search
+	//int i[Corsair::kMaxCoin];  // indices used in search
+	bool inc_max_owner_[Corsair::kMaxCoin];  // for each coin
 
 	inline void SortCoin();
 	inline bool DivPossible(int people);
@@ -66,11 +67,55 @@ inline bool Corsair::DivPossible(int people) {
 	for (int i = 1; i != people; ++i) {
 		this->asset_[i] = 0;
 	}
+	for (int i = 0; i != this->n_; ++i) {
+		this->inc_max_owner_[i] = false;
+	}
 	this->cur_max_owner_ = 0;
 	this->cur_coin_ = 1;
 	this->min_coin_[0] = 0;
 	while (true) {
-		return true;
+		if (this->cur_coin_ == this->n_ind_) {
+			for (int j = 0; j != people; ++j) {
+				this->asset_[j] += this->val_[this->cur_coin_];
+				if (this->asset_[j] > subset) {  // TODO: compare performance of this IF
+					this->asset_[j] -= this->val_[this->cur_coin_];
+					continue;
+				}
+				if (!this->NotReached(subset, people)) {
+					return true;
+				}
+				this->asset_[j] -= this->val_[this->cur_coin_];
+			}
+			--this->cur_coin_;
+		}
+		else {
+			if (this->owner_[this->cur_coin_] == this->cur_max_owner_){
+				if (!this->inc_max_owner_[this->cur_coin_]) {
+					this->asset_[this->cur_max_owner_] += this->val_[this->cur_coin_];
+					if (this->asset_[this->cur_max_owner_] > subset) {
+						this->asset_[this->cur_max_owner_] -= this->val_[this->cur_coin_];
+						this->owner_[this->cur_coin_] = -1; // TODO: goto cur_max_owner_ (DOWN THERE)
+						--this->cur_coin_;
+					}
+					else {
+						this->inc_max_owner_[this->cur_coin_] = true;
+						++this->cur_max_owner_;
+						++this->owner_[this->cur_coin_];
+						++this->cur_coin_;
+					}
+				}
+				else {
+					this->inc_max_owner_[this->cur_coin_] = false;
+					--this->cur_max_owner_;
+					this->owner_[this->cur_coin_] = -1;
+					--this->cur_coin_;
+				}
+			}
+			else {
+				++this->owner_[this->cur_coin_];
+				++this->cur_coin_;
+			}
+		}
 	}
 	return false;
 }
