@@ -56,7 +56,7 @@ inline int Repeat::RepFac() {
 			if
 		}
 	}
-	return this->rep_fac_[this->n_ - 1];
+	return (this->n_ / this->rep_fac_[this->n_ - 1]);
 }
 
 Repeat::Repeat() : n_(0), str_(NULL), tab_len_(0), pf_(NULL) {
