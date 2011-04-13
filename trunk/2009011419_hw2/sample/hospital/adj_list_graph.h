@@ -142,12 +142,11 @@ inline void AdjListGraph<T>::AddNeighbor(std::size_t cur_v, std::size_t new_nb) 
 
 template <class T>
 inline void AdjListGraph<T>::DFS(AdjListGraph<T>::VertexPtr start, AdjListGraph<T>::ProcVert &proc) {
-	proc.Proc(start);
 }
 
 template <class T>
 inline void AdjListGraph<T>::BFS(AdjListGraph<T>::VertexPtr start, AdjListGraph<T>::ProcVert &proc) {
-
+	// TODO: write code here!
 }
 
 #endif

@@ -29,7 +29,8 @@ public:
 	Repeat();
 	~Repeat();
 
-	bool Init();
+	inline bool Init();
+	int RepFac();  // repetition factor
 
 private:
 	static int const kInitTabSize = 32;
@@ -37,15 +38,34 @@ private:
 	char *str_;  // ptr to str, similar to a dynamic table (Section 17.4, CLRS)
 	int tab_len_;  // size of memory allocated allocated by tab_len
 	int *pf_;  // KMP prefix function for this->str_
+	int *rep_fac_;
 
 	bool InputStr();
 };
+
+inline int Repeat::RepFac() {
+	this->rep_fac_ = new (std::nothrow) int[this->n_];
+	if (NULL == this->rep_fac_) {
+		std::cerr << "this->rep_fac_ = new (std::nothrow) int[this->n_];";
+		std::cerr << std::endl << "Memory allocation error!" << std::endl;
+		return -1;
+	}
+	this->rep_fac_[0] = 1;
+	for (int i = 1; i != this->n_; ++i) {
+		if (this->pf_[i] != -1) {
+			if
+		}
+	}
+	return this->rep_fac_[this->n_ - 1];
+}
 
 Repeat::Repeat() : n_(0), str_(NULL), tab_len_(0), pf_(NULL) {
 }
 
 Repeat::~Repeat() {
-	delete [] str_;
+	delete [] this->str_;
+	delete [] this->pf_;
+	delete [] this->rep_fac_;
 }
 
 bool Repeat::InputStr() {
@@ -79,7 +99,7 @@ bool Repeat::InputStr() {
 	return true;
 }
 
-bool Repeat::Init() {
+inline bool Repeat::Init() {
 	if (!this->InputStr()) {
 		return false;
 	}
@@ -98,5 +118,6 @@ int main(int argc, char **argv) {
 	if (!repeat.Init()) {
 		return 0;
 	}
+	std::cout << repeat.RepFac() << std::endl;
 	return 0;
 }

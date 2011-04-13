@@ -63,19 +63,46 @@ private:
 	int val_[Corsair::kMaxCoin];  // value of coins
 	int owner_[Corsair::kMaxCoin];  // owner_[i] is the owner of the i^th coin
 	int tot_;  // total val of coins
-	int coins_[Corsair::kMaxCoin][Corsair::kMaxCoin];  // coins_[i][j] is the j^th coin owned by the i^th person
-	int num_[Corsair::kMaxCoin];  // num_[i] is the # of coins owned by the i^th person
-	static int const kNoOwner = -1;
+	static int const kNoOwner = -1;  // a coin doesn't have a owner
+	int min_coin_[Corsair::kMaxCoin];
+	static int const kNoCoin = -1;  // a owner doesn't have a coin, for this->min_coin_
+	ListStack<State> state_;  // used in search
+	int asset_[Corsair::kMaxCoin];  // the amount each person currently has
 
 	inline void SortCoin();
 	inline bool DivPossible(int people);
+	inline bool NotReached(int subset, int people);  // Subset sum subset not reached
 };
+
+inline bool Corsair::NotReached(int subset, int people) {
+	for (int i = 1; i != people; ++i) {
+		if (this->asset_[i] != subset) {
+			return true;
+		}
+	}
+	return true;
+}
 
 inline bool Corsair::DivPossible(int people) {
 	if (((people * this->val_[this->n_ - 1]) > this->tot_) || ((this->tot_ % people) != 0)) {
 		return false;
 	}
-	return false;
+	this->state_.Clear();
+	int subset = this->tot_ / people;  // what each person should get
+	this->owner_[0] = 0;  // 0^th person has the 0^th coin
+	for (int i = 1; i != this->n_; ++i) {
+		this->owner_[i] = Corsair::kNoOwner;
+	}
+	this->min_coin_[0] = 0;  // 0^th person has the 0^th coin
+	this->asset_[0] = this->val_[0];
+	for (int i = 1; i != people; ++i) {
+		this->min_coin_[i] = Corsair::kNoCoin;
+		this->asset_[i] = 0;
+	}
+	while (this->NotReached(subset, people)) {
+		return false;
+	}
+	return true;
 }
 
 inline int Corsair::Most() {
@@ -110,7 +137,6 @@ inline void Corsair::Init() {
 	for (int i = 0; i != this->n_; ++i) {
 		std::cin >> this->val_[i];
 		this->tot_ += this->val_[i];
-		this->num_[i] = 0;
 	}
 	this->SortCoin();
 }
