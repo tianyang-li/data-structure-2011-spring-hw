@@ -40,7 +40,7 @@ private:
 	int val_[Corsair::kMaxCoin];  // value of coins
 	int owner_[Corsair::kMaxCoin];  // owner_[i] is the owner of the i^th coin
 	int tot_;  // total val of coins
-	int asset_[Corsair::kMaxCoin];
+	int asset_[Corsair::kMaxCoin][Corsair::kMaxCoin];  // ex: asset_[this->cur_coin_][i]
 	int cur_max_owner_;  // because owners are searched from 0 up, this says
 	int cur_coin_;  // current coin searching for owner, sort of like a stack ptr
 	int min_coin_[Corsair::kMaxCoin];  // min_coin_[i] is lowest index in the indices of coins owned by the i^th person
@@ -53,7 +53,7 @@ private:
 
 inline bool Corsair::NotReached(int subset, int people) {
 	for (int i = 0; i != people; ++i) {
-		if (this->asset_[i] != subset) {
+		if (this->asset_[this->cur_coin_][i] != subset) {
 			return true;
 		}
 	}
@@ -66,9 +66,6 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 	}
 	int subset = this->tot_ / people;  // what each person should get
 	this->asset_[0] = this->val_[0];
-	for (int i = 1; i != people; ++i) {
-		this->asset_[i] = 0;
-	}
 	for (int i = 0; i != this->n_; ++i) {
 		this->inc_max_owner_[i] = false;
 		this->owner_[i] = -1;
