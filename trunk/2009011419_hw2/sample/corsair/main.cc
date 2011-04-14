@@ -35,7 +35,7 @@ private:
 	int n_ind_;  // this->n_ -1
 	int val_[Corsair::kMaxCoin];  // value of coins
 	int tot_;  // total val of coins
-	int asset_[Corsair::kMaxCoin];  // ex: asset_[this->cur_coin_][i]
+	int asset_[Corsair::kMaxCoin];
 	int people_;
 	int subset_;
 	int max_person_;
