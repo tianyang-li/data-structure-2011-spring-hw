@@ -76,15 +76,15 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 	this->cur_max_owner_ = 0;  // can be equal to this in search
 	this->cur_coin_ = 1;
 	this->owner_[0] = 0;  // 0^th person has the 0^th coin
-	int cur_owner;
+	int cur_asset;
 	while (0 == this->owner_[0]) {
 		if (this->cur_coin_ == this->n_ind_) {
 			for (int j = 0; j != people; ++j) {
-				this->asset_[j] += this->val_[this->cur_coin_];
-				if (this->asset_[j] > subset) {  // TODO: compare performance of this IF
-					this->asset_[j] -= this->val_[this->cur_coin_];
+				cur_asset = this->asset_[j] + this->val_[this->cur_coin_];
+				if (cur_asset > subset) {
 					continue;
 				}
+				this->asset_[j] = cur_asset;
 				if (!this->NotReached(subset, people - 1)) {
 					return true;
 				}
@@ -93,7 +93,9 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 			--this->cur_coin_;  // backtracking
 		}
 		else {
-			cur_owner = this->owner_[this->cur_coin_];
+			if (-1 != this->owner_[this->cur_coin_]) {
+				this->asset_[this->owner_[this->cur_coin_]] -= this->val_[this->cur_coin_];
+			}
 			++this->owner_[this->cur_coin_];
 			while ((this->inc_max_owner_[this->cur_coin_] ? (this->owner_[this->cur_coin_] <= this->cur_max_owner_) : (this->owner_[this->cur_coin_] <= this->cur_max_owner_ + 1))
 					&& (this->asset_[this->owner_[this->cur_coin_]] + this->val_[this->cur_coin_] > subset)) {  // order of &&
@@ -105,16 +107,10 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 					this->inc_max_owner_[this->cur_coin_] = false;
 					--this->cur_max_owner_;
 				}
-				if (-1 != cur_owner) {
-					this->asset_[cur_owner] -= this->val_[this->cur_coin_];
-				}
 				this->owner_[this->cur_coin_] = -1;
 				--this->cur_coin_;
 			}
 			else {
-				if (-1 != cur_owner) {
-					this->asset_[cur_owner] -= this->val_[this->cur_coin_];
-				}
 				this->asset_[this->owner_[this->cur_coin_]] += this->val_[this->cur_coin_];
 				if (!this->inc_max_owner_[this->cur_coin_] && (this->cur_max_owner_ < people)
 						&& (this->cur_max_owner_ + 1 == this->owner_[this->cur_coin_])) {
