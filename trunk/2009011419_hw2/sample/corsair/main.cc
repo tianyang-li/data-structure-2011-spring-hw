@@ -49,7 +49,14 @@ private:
 	inline void SortCoin();
 	inline bool DivPossible(int people);
 	inline bool NotReached(int subset, int people);  // Subset sum subset not reached
+	inline void CopyAsset(int cur_coin_minus_1, int people);
 };
+
+inline void Corsair::CopyAsset(int cur_coin_minus_1, int people) {
+	for (int i = 0; i != people; ++i) {
+		this->asset_[this->cur_coin_][i] = this->asset_[cur_coin_minus_1][i];
+	}
+}
 
 inline bool Corsair::NotReached(int subset, int people) {
 	for (int i = 0; i != people; ++i) {
@@ -65,7 +72,7 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 		return false;
 	}
 	int subset = this->tot_ / people;  // what each person should get
-	this->asset_[0] = this->val_[0];
+	this->asset_[0][0] = this->val_[0];
 	for (int i = 0; i != this->n_; ++i) {
 		this->inc_max_owner_[i] = false;
 		this->owner_[i] = -1;
@@ -75,32 +82,30 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 	this->owner_[0] = 0;  // 0^th person has the 0^th coin
 	int cur_asset;
 	int cur_max_owner_plus_1;
+	int cur_coin_minus_1;
 	while (0 == this->owner_[0]) {
+		cur_coin_minus_1 = this->cur_coin_ - 1;
 		if (this->cur_coin_ == this->n_ind_) {
 			for (int j = 0; j != people; ++j) {
-				cur_asset = this->asset_[j] + this->val_[this->cur_coin_];
+				cur_asset = this->asset_[cur_coin_minus_1][j] + this->val_[this->cur_coin_];
 				if (cur_asset > subset) {
 					continue;
 				}
-				this->asset_[j] = cur_asset;
+				this->asset_[this->cur_coin_][j] = cur_asset;
 				if (!this->NotReached(subset, people - 1)) {
 					return true;
 				}
-				this->asset_[j] -= this->val_[this->cur_coin_];
 			}
 			--this->cur_coin_;  // backtracking
 		}
 		else {
-			if (-1 != this->owner_[this->cur_coin_]) {
-				this->asset_[this->owner_[this->cur_coin_]] -= this->val_[this->cur_coin_];
-			}
 			++this->owner_[this->cur_coin_];
 			cur_max_owner_plus_1 = this->cur_max_owner_ + 1;
-			cur_asset = this->asset_[this->owner_[this->cur_coin_]] + this->val_[this->cur_coin_];
+			cur_asset = this->asset_[cur_coin_minus_1][this->owner_[this->cur_coin_]] + this->val_[this->cur_coin_];
 			while ((this->inc_max_owner_[this->cur_coin_] ? (this->owner_[this->cur_coin_] <= this->cur_max_owner_) : (this->owner_[this->cur_coin_] <= cur_max_owner_plus_1))
 					&& (cur_asset > subset)) {  // order of &&
 						++this->owner_[this->cur_coin_];
-						cur_asset = this->asset_[this->owner_[this->cur_coin_]] + this->val_[this->cur_coin_];
+						cur_asset = this->asset_[cur_coin_minus_1][this->owner_[this->cur_coin_]] + this->val_[this->cur_coin_];
 					}
 			if (this->inc_max_owner_[this->cur_coin_] ? (this->owner_[this->cur_coin_] > this->cur_max_owner_) : (this->owner_[this->cur_coin_] > cur_max_owner_plus_1)) {
 				// backtracking
@@ -112,7 +117,8 @@ inline bool Corsair::DivPossible(int people) {  // people != 1, see Corsair::Mos
 				--this->cur_coin_;
 			}
 			else {
-				this->asset_[this->owner_[this->cur_coin_]] = cur_asset;
+				this->CopyAsset(cur_coin_minus_1, people);
+				this->asset_[this->cur_coin_][this->owner_[this->cur_coin_]] = cur_asset;
 				if (!this->inc_max_owner_[this->cur_coin_] && (this->cur_max_owner_ < people)
 						&& (cur_max_owner_plus_1 == this->owner_[this->cur_coin_])) {
 					this->inc_max_owner_[this->cur_coin_] = true;
