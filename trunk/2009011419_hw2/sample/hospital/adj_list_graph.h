@@ -55,9 +55,10 @@ public:
 		Edge(U const &new_data) : data(new_data) {
 		}
 
-		VertexPtr v1, v2;  // connects v1 v2 (v1->v2 in directed graph)
+		VertexPtr v[2];  // connects v1 v2 (v1->v2 in directed graph)
 		U data;
 	};
+	typedef Edge *EdgePtr;
 
 	AdjListGraph(std::size_t init_size = 0);
 	~AdjListGraph();
@@ -74,6 +75,7 @@ public:
 	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // XXX: no checking, add new_nb to cur_v's neighbor
 	inline void DFS(VertexPtr start, ProcVert &proc);  // depth first search
 	inline void BFS(VertexPtr start, ProcVert &proc);  // breadth first search
+	inline bool MallocEdgePtr(std::size_t more_edge);
 
 protected:
 	static std::size_t const kInitTabSize = 32;

@@ -37,9 +37,20 @@ public:
 	};
 	typedef City *CityPtr;
 
-	class ProcCity : public AdjListGraph<CityPtr>::ProcVert {
+	class Br {
 	public:
-		void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert);
+		int w[2];  // weighted distance of two subtrees created by removing this bridge
+	};
+	typedef Br *BrPtr;
+
+	class ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
+	public:
+		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert);
+	};
+
+	class ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
+	public:
+		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert);
 	};
 
 	Hospital();
@@ -49,9 +60,10 @@ public:
 
 private:
 	int n_;  // # of cities
-	AdjListGraph<Hospital::CityPtr> city_graph_;
+	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;
 	Hospital::CityPtr *city_ptr_;  // point to city data
-	ProcCity proc_city_;  // function obj
+	ProcCity1 proc_city_1_;
+	ProcCity2 proc_city_2_;
 };
 
 Hospital::Hospital() {
@@ -79,12 +91,16 @@ bool Hospital::Init() {
 		}
 		this->city_graph_.AddVert(i, this->city_ptr_[i]);
 	}
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_);
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_);
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_);
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_2_);
 	return true;
 }
 
-void Hospital::ProcCity::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert) {
+void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert) {
+
+}
+
+void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert) {
 
 }
 
