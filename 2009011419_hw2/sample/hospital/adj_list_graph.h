@@ -238,8 +238,9 @@ template <class T, class U>
 inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
 		, VertexPtr from_vert, EdgePtr from_edge) {
 	proc1.Proc(start, from_vert, from_edge);
-	ListNode<Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
+	ListNode<typename Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
 	while (NULL != cur_nb) {
+		// TODO
 		proc2.Proc(start, from_vert, from_edge);
 		cur_nb = start->adj_list.IterateNext(cur_nb);
 	}
