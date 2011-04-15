@@ -46,12 +46,16 @@ public:
 
 	class ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
 	public:
-		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert);
+		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
 
 	class ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
 	public:
-		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert);
+		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
 
 	Hospital();
@@ -92,16 +96,27 @@ bool Hospital::Init() {
 		}
 		this->city_graph_.AddVert(i, this->city_ptr_[i]);
 	}
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_);
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_2_);
+	int n_minus_1 = this->n_ - 1;
+	int tmp_city1, tmp_city2;
+	for (int i = 0 ; i != n_minus_1; ++i) {
+		std::cin >> tmp_city1 >> tmp_city2;
+		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
+		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
+	}
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
 	return true;
 }
 
-void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert) {
+void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
 }
 
-void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert) {
+void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
 }
 

@@ -21,7 +21,7 @@
 #ifndef ADJ_LIST_GRAPH_H_
 #define ADJ_LIST_GRAPH_H_
 
-// graph implemented using adjacency list
+// graph implemented using adjacency list (directed graph)
 
 #include <cstddef>
 #include <new>
@@ -71,13 +71,6 @@ public:
 	};
 	typedef Vertex *VertexPtr;
 
-	class ProcVert {  // process vertex
-	public:
-		virtual void Proc(VertexPtr cur_vert) = 0;
-		// args should have been set in each vertex
-		// XXX: modify this approach?
-	};
-
 	class Edge {
 	public:
 		Edge();
@@ -88,6 +81,15 @@ public:
 		U data;
 	};
 	typedef Edge *EdgePtr;
+
+	class ProcVert {  // process vertex
+	public:
+		virtual void Proc(VertexPtr cur_vert
+				, VertexPtr from_vert /* entered cur_vert from from_vert */
+				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
+		// args should have been set in each vertex
+		// XXX: modify this approach?
+	};
 
 	AdjListGraph();  // alloc memory for ptr
 	~AdjListGraph();
@@ -103,9 +105,11 @@ public:
 
 	inline bool MallocVertPtr(std::size_t more_vert);  // alloc memory for more_vert new vertice ptrs
 
-	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // no checking, add new_nb to cur_v's neighbor (= add edge)
-	inline void DFS(VertexPtr start, ProcVert &proc);  // depth first search
-	inline void BFS(VertexPtr start, ProcVert &proc);  // breadth first search
+	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
+	inline void DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // depth first search
+	inline void BFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // breadth first search
 	inline bool MallocEdgePtr(std::size_t more_edge);
 
 protected:
@@ -116,7 +120,6 @@ protected:
 	std::size_t E_;  // # of edges
 	std::size_t edge_tab_size_;
 	AdjListGraph<T, U>::EdgePtr *edge_;
-	bool use_edge_;  // true if edge class used
 
 	inline void Init();
 	inline void InitEdge();
@@ -232,11 +235,19 @@ inline void AdjListGraph<T, U>::AddNeighbor(std::size_t cur_v, std::size_t new_n
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::DFS(AdjListGraph<T, U>::VertexPtr start, AdjListGraph<T, U>::ProcVert &proc) {
+inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+		, VertexPtr from_vert, EdgePtr from_edge) {
+	proc1.Proc(start, from_vert, from_edge);
+	ListNode<Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
+	while (NULL != cur_nb) {
+		proc2.Proc(start, from_vert, from_edge);
+		cur_nb = start->adj_list.IterateNext(cur_nb);
+	}
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::BFS(AdjListGraph<T, U>::VertexPtr start, AdjListGraph<T, U>::ProcVert &proc) {
+inline void AdjListGraph<T, U>::BFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+		, VertexPtr from_vert, EdgePtr from_edge) {
 	// TODO
 }
 
