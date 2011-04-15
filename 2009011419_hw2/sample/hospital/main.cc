@@ -21,6 +21,7 @@
 #include <iostream>
 #include <new>
 #include <cstdlib>
+#include <stdint.h>
 
 #include "adj_list_graph.h"
 #include "circ_list.h"
@@ -32,14 +33,14 @@ public:
 		City(int cur_pop) : pop(cur_pop) {
 		}
 
-		int pop;  // population
-		CircList<int> neigbor_cost;
+		int64_t pop;  // population
+		CircList<int64_t> neigbor_cost;
 	};
 	typedef City *CityPtr;
 
-	class Br {
+	class Br {  // bridge
 	public:
-		int w[2];  // weighted distance of two subtrees created by removing this bridge
+		int64_t w[2];  // weighted distance of two subtrees created by removing this bridge
 	};
 	typedef Br *BrPtr;
 
@@ -71,7 +72,7 @@ Hospital::Hospital() {
 
 bool Hospital::Init() {
 	std::cin >> this->n_;
-	if (!this->city_graph_.MallocVertPtr(this->n_)) {
+	if (!this->city_graph_.MallocVertPtr(this->n_) || !this->city_graph_.MallocEdgePtr(this->n_ - 1)) {
 		return false;
 	}
 	this->city_ptr_ = new (std::nothrow) Hospital::CityPtr[this->n_];
