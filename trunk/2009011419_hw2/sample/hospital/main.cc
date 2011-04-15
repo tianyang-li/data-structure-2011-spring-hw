@@ -40,7 +40,7 @@ public:
 
 	class Br {  // bridge
 	public:
-		int64_t w[2];  // weighted distance of two subtrees created by removing this bridge
+		int64_t w;  // weighted distance of two subtrees created by removing this bridge
 	};
 	typedef Br *BrPtr;
 
@@ -61,7 +61,7 @@ public:
 
 private:
 	int n_;  // # of cities
-	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;
+	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
 	Hospital::CityPtr *city_ptr_;  // point to city data
 	ProcCity1 proc_city_1_;
 	ProcCity2 proc_city_2_;
@@ -72,7 +72,7 @@ Hospital::Hospital() {
 
 bool Hospital::Init() {
 	std::cin >> this->n_;
-	if (!this->city_graph_.MallocVertPtr(this->n_) || !this->city_graph_.MallocEdgePtr(this->n_ - 1)) {
+	if (!this->city_graph_.MallocVertPtr(this->n_) || !this->city_graph_.MallocEdgePtr((this->n_ - 1) << 1)) {  // 2 (n -1) directed edges
 		return false;
 	}
 	this->city_ptr_ = new (std::nothrow) Hospital::CityPtr[this->n_];

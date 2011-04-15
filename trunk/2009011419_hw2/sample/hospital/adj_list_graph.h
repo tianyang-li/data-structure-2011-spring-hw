@@ -39,6 +39,10 @@ public:
 		public:
 			AdjInfo() {
 			}
+
+			AdjInfo(Vertex *cur_vert, Edge *cur_edge) : vert(cur_vert), edge(cur_edge) {
+			}
+
 			~AdjInfo() {
 			}
 
@@ -159,7 +163,14 @@ AdjListGraph<T, U>::AdjListGraph()
 
 template <class T, class U>
 AdjListGraph<T, U>::~AdjListGraph() {
+	for (std::size_t i = 0; i != this->V_; ++i) {
+		delete this->vertex_[i];
+	}
 	delete [] this->vertex_;
+	for (std::size_t i = 0; i != this->E_; ++i) {
+		delete this->edge_[i];
+	}
+	delete [] this->edge_;
 }
 
 template <class T, class U>
@@ -215,7 +226,9 @@ inline void AdjListGraph<T, U>::AddVert(std::size_t new_vert, T const &new_data)
 
 template <class T, class U>
 inline void AdjListGraph<T, U>::AddNeighbor(std::size_t cur_v, std::size_t new_nb) {
-	this->vertex_[cur_v]->adj_list.Append(this->vertex_[new_nb]);
+	typename Vertex::AdjInfo temp_adj(this->vertex_[new_nb], this->edge_[this->E_]);
+	++this->E_;
+	this->vertex_[cur_v]->adj_list.Append(temp_adj);
 }
 
 template <class T, class U>
