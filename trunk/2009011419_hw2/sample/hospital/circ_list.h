@@ -17,54 +17,61 @@ public:
 	CircList();
 	~CircList();
 
-	std::size_t GetLen() const {
+	inline ListNode<T> *GetHead() const {
+		return (NULL == this->list_ptr_) ? NULL : this->list_ptr_;
+	}
+
+	inline std::size_t GetLen() const {
 		return this->len_;
 	}
 
 	// insert new_T after position pos in the list
 	// return a pointer to the new node
 	// this->list_ptr_ NOT modified
-	ListNode<T> *InsertAfter(T const &new_T, std::size_t pos);
+	inline ListNode<T> *InsertAfter(T const &new_T, std::size_t pos);
 
 	// insert new_T before position pos in the list
 	// return a pointer to the new node
 	// this->list_ptr_ MAY BE modified
-	ListNode<T> *InsertBefore(T const &new_T, std::size_t pos);
+	inline ListNode<T> *InsertBefore(T const &new_T, std::size_t pos);
 
 	// delete data at position pos in the list
 	// stpre value of data stored at (pos % this->len_) before deletion
 	// return false when list is empty
-	bool Delete(std::size_t pos, T &del_data);
+	inline bool Delete(std::size_t pos, T &del_data);
 
 	// remove to_rm from cur_list
-	static void Remove(CircList<T> &cur_list, ListNode<T> *to_rm);
+	inline static void Remove(CircList<T> &cur_list, ListNode<T> *to_rm);
 
 	// true if list is empty
-	bool Empty() const {
+	inline bool Empty() const {
 		return (this->list_ptr_ == NULL);
 	}
 
 	// return a ptr to the new node
 	// cur_list.list_ptr_ NOT modified
-	static ListNode<T> *InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T);
+	inline static ListNode<T> *InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T);
 
 	// return a ptr to the new node
 	// cur_list.list_ptr_ MAY BE modified
-	static ListNode<T> *InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T);
+	inline static ListNode<T> *InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T);
 
 	// NULl returned on error
-	ListNode<T> *GetNode(std::size_t pos);
+	inline ListNode<T> *GetNode(std::size_t pos) const;
 
 	// get index of cur_node in this
 	// false returned on error
-	bool GetIndex(ListNode<T> *cur_node, std::size_t &index);
+	inline bool GetIndex(ListNode<T> *cur_node, std::size_t &index) const;
 
-	ListNode<T> *Append(T const &new_T) {
+	inline ListNode<T> *Append(T const &new_T) {
 		if (this->list_ptr_ == NULL) {
 			return this->InitListNode(new_T);
 		}
 		return CircList<T>::InsertAfter(*this, this->list_ptr_->prev_, new_T);
 	}
+
+	inline ListNode<T> *IteratePrev(ListNode<T> *cur_node) const;
+	inline ListNode<T> *IterateNext(ListNode<T> *cur_node) const;
 
 protected:
 	ListNode<T> *list_ptr_;  // point to the actual list storing data
@@ -72,11 +79,11 @@ protected:
 	std::size_t len_;  // list length
 
 	// create a node when the list is empty
-	ListNode<T> *InitListNode(T const &new_T);
+	inline ListNode<T> *InitListNode(T const &new_T);
 };
 
 template <class T>
-ListNode<T> *CircList<T>::InitListNode(T const &new_T) {
+inline ListNode<T> *CircList<T>::InitListNode(T const &new_T) {
 	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
 
 	if (new_node == NULL) {
@@ -92,7 +99,7 @@ ListNode<T> *CircList<T>::InitListNode(T const &new_T) {
 }
 
 template <class T>
-ListNode<T> *CircList<T>::InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
+inline ListNode<T> *CircList<T>::InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
 	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
 
 	if (new_node == NULL) {
@@ -111,7 +118,7 @@ ListNode<T> *CircList<T>::InsertAfter(CircList<T> &cur_list, ListNode<T> *cur_no
 }  // TODO: testing needed for this function
 
 template <class T>
-ListNode<T> *CircList<T>::InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
+inline ListNode<T> *CircList<T>::InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_node, T const &new_T) {
 	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
 
 	if (new_node == NULL) {
@@ -134,7 +141,7 @@ ListNode<T> *CircList<T>::InsertBefore(CircList<T> &cur_list, ListNode<T> *cur_n
 }  // TODO: testing needed for this function
 
 template <class T>
-ListNode<T> * CircList<T>::InsertAfter(T const &new_T, std::size_t pos) {
+inline ListNode<T> * CircList<T>::InsertAfter(T const &new_T, std::size_t pos) {
 	ListNode<T> *cur_node = this->GetNode(pos);
 	if (cur_node == NULL) {
 		++this->len_;
@@ -146,7 +153,7 @@ ListNode<T> * CircList<T>::InsertAfter(T const &new_T, std::size_t pos) {
 }
 
 template <class T>
-ListNode<T> *CircList<T>::InsertBefore(T const &new_T, std::size_t pos) {
+inline ListNode<T> *CircList<T>::InsertBefore(T const &new_T, std::size_t pos) {
 	ListNode<T> *cur_node = this->GetNode(pos);
 	if (cur_node == NULL) {
 		++this->len_;
@@ -158,7 +165,7 @@ ListNode<T> *CircList<T>::InsertBefore(T const &new_T, std::size_t pos) {
 }
 
 template <class T>
-bool CircList<T>::Delete(std::size_t pos, T &del_data) {
+inline bool CircList<T>::Delete(std::size_t pos, T &del_data) {
 	if (this->Empty()) {
 		return false;
 	}
@@ -196,7 +203,7 @@ CircList<T>::~CircList() {
 }  // TODO: testing needed for this function
 
 template <class T>
-void CircList<T>::Remove(CircList<T> &cur_list, ListNode<T> *to_rm) {
+inline void CircList<T>::Remove(CircList<T> &cur_list, ListNode<T> *to_rm) {
 	--cur_list.len_;
 	to_rm->prev_->next_ = to_rm->next_;
 	to_rm->next_->prev_ = to_rm->prev_;
@@ -210,7 +217,7 @@ void CircList<T>::Remove(CircList<T> &cur_list, ListNode<T> *to_rm) {
 }  // TODO: testing needed for this function
 
 template <class T>
-ListNode<T> *CircList<T>::GetNode(std::size_t pos) {
+inline ListNode<T> *CircList<T>::GetNode(std::size_t pos) const {
 	if (this->Empty()) {
 		return NULL;
 	}
@@ -230,7 +237,7 @@ ListNode<T> *CircList<T>::GetNode(std::size_t pos) {
 }
 
 template <class T>
-bool CircList<T>::GetIndex(ListNode<T> *cur_node, std::size_t &index) {
+inline bool CircList<T>::GetIndex(ListNode<T> *cur_node, std::size_t &index) const {
 	if (this->Empty()) {
 		return false;
 	}
@@ -249,6 +256,22 @@ bool CircList<T>::GetIndex(ListNode<T> *cur_node, std::size_t &index) {
 
 	return false;
 }  // TODO: testing needed for this function
+
+template <class T>
+inline ListNode<T> *CircList<T>::IterateNext(ListNode<T> *cur_node) const {
+	if ((NULL == this->list_ptr_) || (cur_node->next_ == this->list_ptr_)) {
+		return NULL;
+	}
+	return cur_node->next_;
+}
+
+template <class T>
+inline ListNode<T> *CircList<T>::IteratePrev(ListNode<T> *cur_node) const {
+	if ((NULL == this->list_ptr_) || (cur_node->prev_ == this->list_ptr_)) {
+		return NULL;
+	}
+	return cur_node->prev_;
+}
 
 #endif  // CIRC_LIST_H
 
