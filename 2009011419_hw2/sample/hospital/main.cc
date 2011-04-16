@@ -50,14 +50,14 @@ public:
 	};
 	typedef Br *BrPtr;
 
-	class ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert1 {
+	class DFS1ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert1 {
 	public:
 		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
 
-	class ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert2 {
+	class DFS1ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert2 {
 	public:
 		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
@@ -65,7 +65,45 @@ public:
 				, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge);
 	};
 
-	class ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert3 {
+	class DFS1ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert3 {
+	public:
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge);
+	};
+
+	class DFS1ProcCity4 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert4 {
+	public:
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
+	};
+
+	class DFS2ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert1 {
+	public:
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
+	};
+
+	class DFS2ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert2 {
+	public:
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge);
+	};
+
+	class DFS2ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert3 {
+	public:
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge);
+	};
+
+	class DFS2ProcCity4 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert4 {
 	public:
 		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
@@ -86,9 +124,16 @@ private:
 	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
 	Hospital::City *city_;  // point to city data
 	Hospital::Br *br_;
-	ProcCity1 proc_city1_;
-	ProcCity2 proc_city2_;
-	ProcCity3 proc_city3_;
+
+	DFS1ProcCity1 dfs1_proc_city1_;
+	DFS1ProcCity2 dfs1_proc_city2_;
+	DFS1ProcCity3 dfs1_proc_city3_;
+	DFS1ProcCity4 dfs1_proc_city4_;
+
+	DFS2ProcCity1 dfs2_proc_city1_;
+	DFS2ProcCity2 dfs2_proc_city2_;
+	DFS2ProcCity3 dfs2_proc_city3_;
+	DFS2ProcCity4 dfs2_proc_city4_;
 };
 
 Hospital::Hospital() {
@@ -127,27 +172,62 @@ bool Hospital::Init() {
 		cur_br1->data->rev = cur_br2;
 		cur_br2->data->rev = cur_br1;
 	}
-	this->city_graph_.InitFlag();
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city1_, this->proc_city2_, this->proc_city3_);
-	this->city_graph_.InitFlag();
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city1_, this->proc_city2_, this->proc_city3_);
+	this->city_graph_.InitVertFlag();
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->dfs1_proc_city1_
+			, this->dfs1_proc_city2_, this->dfs1_proc_city3_, this->dfs1_proc_city4_);
+	this->city_graph_.InitVertFlag();
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->dfs2_proc_city1_
+			, this->dfs2_proc_city2_, this->dfs2_proc_city3_, this->dfs2_proc_city4_);
 	return true;
 }
 
-inline void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+inline void Hospital::DFS1ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
 }
 
-inline void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+inline void Hospital::DFS1ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
 
 }
 
-inline void Hospital::ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
+
+}
+
+inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
+
+}
+
+inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
+
+}
+
+inline void Hospital::DFS2ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
+
+}
+
+inline void Hospital::DFS2ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
+
+}
+
+inline void Hospital::DFS2ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
