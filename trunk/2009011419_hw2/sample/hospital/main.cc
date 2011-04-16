@@ -204,9 +204,8 @@ inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
 	if (NULL != from_edge) {
 		from_edge->data->rev->data->w += leave_edge->data->rev->data->w;  // weight of subtree
-		cur_vert->data->cost += (to_vert->data->cost + leave_edge->data->rev->data->w);  // cost of current vertex
 	}
-
+	cur_vert->data->cost += (to_vert->data->cost + leave_edge->data->rev->data->w);  // cost of current vertex
 }
 
 inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
