@@ -109,10 +109,11 @@ public:
 
 	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
 
-	inline void DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+	inline void DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2, ProcVert &proc3
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // depth first search
 
-	inline void BFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+	// TODO
+	inline void BFS(VertexPtr start, ProcVert &proc
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // breadth first search
 
 	inline void InitFlag() {  // set all flags in Vertex to false
@@ -122,6 +123,14 @@ public:
 	}
 
 	inline bool MallocEdgePtr(std::size_t more_edge);
+
+	// enough ptrs?
+	inline bool NeedVertPtr(std::size_t more_vert = 1) {
+		return (this->vert_tab_size_ <= (this->V_ + more_vert));
+	}
+	inline bool NeedEdgePtr(std::size_t more_edge = 1) {
+		return (this->edge_tab_size_ <= (this->E_ + more_edge));
+	}
 
 protected:
 	static std::size_t const kInitTabSize = 32;
@@ -246,7 +255,7 @@ inline void AdjListGraph<T, U>::AddNeighbor(std::size_t cur_v, std::size_t new_n
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2, ProcVert &proc3
 		, VertexPtr from_vert, EdgePtr from_edge) {
 	if (true == start->flag) {
 		return;
@@ -255,15 +264,16 @@ inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &
 	proc1.Proc(start, from_vert, from_edge);
 	ListNode<typename Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
 	while (NULL != cur_nb) {
-		this->DFS(cur_nb->data_.vert, proc1, proc2, start, cur_nb->data_.edge);
-		// TODO
-		proc2.Proc(start, from_vert, from_edge);
-		cur_nb = start->adj_list.IterateNext(cur_nb);
+		if (false == cur_nb->data_.vert->flag) {
+			this->DFS(cur_nb->data_.vert, proc1, proc2, proc3, start, cur_nb->data_.edge);
+			proc2.Proc(start, from_vert, from_edge);
+			cur_nb = start->adj_list.IterateNext(cur_nb);
+		}
 	}
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::BFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
+inline void AdjListGraph<T, U>::BFS(VertexPtr start, ProcVert &proc
 		, VertexPtr from_vert, EdgePtr from_edge) {
 	// TODO
 }
