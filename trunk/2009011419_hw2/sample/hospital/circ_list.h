@@ -65,6 +65,7 @@ public:
 
 	inline ListNode<T> *Append(T const &new_T) {
 		if (this->list_ptr_ == NULL) {
+			this->len_ = 1;
 			return this->InitListNode(new_T);
 		}
 		return CircList<T>::InsertAfter(*this, this->list_ptr_->prev_, new_T);
