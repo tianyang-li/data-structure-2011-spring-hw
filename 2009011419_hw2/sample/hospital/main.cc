@@ -103,15 +103,10 @@ bool Hospital::Init() {
 		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
 		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
 	}
-	bool *visited = this->city_graph_.MallocDFS();
-	if (NULL == visited) {
-		return false;
-	}
-	this->city_graph_.InitDFS(visited);
-	this->city_graph_.DFS(visited, this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
-	this->city_graph_.InitDFS(visited);
-	this->city_graph_.DFS(visited, this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
-	this->city_graph_.FreeDFS(visited);
+	this->city_graph_.InitFlag();
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	this->city_graph_.InitFlag();
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
 	return true;
 }
 

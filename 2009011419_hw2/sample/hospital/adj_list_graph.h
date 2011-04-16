@@ -68,6 +68,7 @@ public:
 
 		CircList<AdjListGraph<T, U>::Vertex::AdjInfo> adj_list;  // adjacency list
 		T data;
+		bool flag;  // used in DFS, BFS, etc.
 	};
 	typedef Vertex *VertexPtr;
 
@@ -79,6 +80,7 @@ public:
 
 		VertexPtr v[2];  // connects v1 v2 (v1->v2 in directed graph)
 		U data;
+		bool flag;  // used in some edge related algorithms
 	};
 	typedef Edge *EdgePtr;
 
@@ -107,29 +109,18 @@ public:
 
 	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
 
-	inline void DFS(bool *visited, VertexPtr start, ProcVert &proc1, ProcVert &proc2
+	inline void DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // depth first search
-	inline bool *MallocDFS() { // alloc memory for DFS visited
-		bool *visited = new (std::nothrow) bool[this->V_];
-		if (NULL == visited) {
-			std::cerr << "bool *visited = new (std::nothrow) bool[this->V_];";
-			std::cerr << std::endl << "Memory allocation error!" << std::endl;
-			return NULL;
-		}
-		return visited;
-	}
-	inline void InitDFS(bool *visited) {
-		for (std::size_t i = 0; i != this->V_; ++i) {
-			visited[i] = false;
-		}
-	}
-	inline void FreeDFS(bool *visited) {  // free mem used in DFS
-		delete [] visited;
-		visited = NULL;
-	}
 
 	inline void BFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // breadth first search
+
+	inline void InitFlag() {  // set all flags in Vertex to false
+		for (std::size_t i = 0; i != this->V_; ++i) {
+			this->vertex_[i]->flag = false;
+		}
+	}
+
 	inline bool MallocEdgePtr(std::size_t more_edge);
 
 protected:
@@ -255,12 +246,16 @@ inline void AdjListGraph<T, U>::AddNeighbor(std::size_t cur_v, std::size_t new_n
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::DFS(bool *visited, VertexPtr start, ProcVert &proc1, ProcVert &proc2
+inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2
 		, VertexPtr from_vert, EdgePtr from_edge) {
+	if (true == start->flag) {
+		return;
+	}
+	start->flag = true;
 	proc1.Proc(start, from_vert, from_edge);
 	ListNode<typename Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
 	while (NULL != cur_nb) {
-		this->DFS(visited, cur_nb->data_.vert, proc1, proc2, start, cur_nb->data_.edge);
+		this->DFS(cur_nb->data_.vert, proc1, proc2, start, cur_nb->data_.edge);
 		// TODO
 		proc2.Proc(start, from_vert, from_edge);
 		cur_nb = start->adj_list.IterateNext(cur_nb);
