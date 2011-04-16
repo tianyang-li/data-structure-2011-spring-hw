@@ -18,7 +18,7 @@ public:
 	~CircList();
 
 	inline ListNode<T> *GetHead() const {
-		return (NULL == this->list_ptr_) ? NULL : this->list_ptr_;
+		return this->list_ptr_;
 	}
 
 	inline std::size_t GetLen() const {

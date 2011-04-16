@@ -312,22 +312,18 @@ template <class T, class U>
 inline void AdjListGraph<T, U>::DFS(VertexPtr start, DFSProcVert1 &proc1, DFSProcVert2 &proc2
 		, DFSProcVert3 &proc3, DFSProcVert4 &proc4
 		, VertexPtr from_vert, EdgePtr from_edge) {
-	if (true == start->flag) {
-		return;
-	}
 	start->flag = true;
 	proc1.Proc(start, from_vert, from_edge);
 	ListNode<typename Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
 	while (NULL != cur_nb) {
 		if (false == cur_nb->data_.vert->flag) {
-			cur_nb->data_.vert->flag = true;
 			proc2.Proc(start, from_vert, cur_nb->data_.vert, from_edge, cur_nb->data_.edge);
 			this->DFS(cur_nb->data_.vert, proc1, proc2, proc3, proc4, start, cur_nb->data_.edge);
 			proc3.Proc(start, from_vert, cur_nb->data_.vert, from_edge, cur_nb->data_.edge);
-			cur_nb = start->adj_list.IterateNext(cur_nb);
 		}
-		proc4.Proc(start, from_vert, from_edge);
+		cur_nb = start->adj_list.IterateNext(cur_nb);
 	}
+	proc4.Proc(start, from_vert, from_edge);
 }
 
 /*
