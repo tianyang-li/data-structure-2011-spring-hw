@@ -34,7 +34,7 @@ public:
 		}
 
 		int64_t pop;  // population
-		CircList<int64_t> neigbor_cost;
+		//CircList<int64_t> neigbor_cost;
 	};
 	typedef City *CityPtr;
 
@@ -58,6 +58,13 @@ public:
 				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
 
+	class ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
+	public:
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
+	};
+
 	Hospital();
 
 	bool Init();
@@ -67,8 +74,9 @@ private:
 	int n_;  // # of cities
 	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
 	Hospital::CityPtr *city_ptr_;  // point to city data
-	ProcCity1 proc_city_1_;
-	ProcCity2 proc_city_2_;
+	ProcCity1 proc_city1_;
+	ProcCity2 proc_city2_;
+	ProcCity3 proc_city3_;
 };
 
 Hospital::Hospital() {
@@ -100,13 +108,15 @@ bool Hospital::Init() {
 	int tmp_city1, tmp_city2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
 		std::cin >> tmp_city1 >> tmp_city2;
+		--tmp_city1;
+		--tmp_city2;
 		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
-		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
+		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1);
 	}
 	this->city_graph_.InitFlag();
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city1_, this->proc_city2_, this->proc_city3_);
 	this->city_graph_.InitFlag();
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city1_, this->proc_city2_, this->proc_city3_);
 	return true;
 }
 
@@ -117,6 +127,12 @@ void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 }
 
 void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
+
+}
+
+void Hospital::ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
