@@ -32,6 +32,8 @@ public:
 	public:
 		City(int cur_pop) : pop(cur_pop) {
 		}
+		City() {
+		}
 
 		int64_t pop;  // population
 		//CircList<int64_t> neigbor_cost;
@@ -40,7 +42,11 @@ public:
 
 	class Br {  // bridge
 	public:
+		Br() : w(0) {
+		}
+
 		int64_t w;  // weighted distance of two subtrees created by removing this bridge
+		AdjListGraph<CityPtr, Br *>::EdgePtr rev;  // ptr to reverse edge
 	};
 	typedef Br *BrPtr;
 
@@ -66,6 +72,10 @@ public:
 	};
 
 	Hospital();
+	~Hospital() {
+		delete [] this->city_;
+		delete [] this->br_;
+	}
 
 	bool Init();
 	int MinCity();
@@ -73,7 +83,8 @@ public:
 private:
 	int n_;  // # of cities
 	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
-	Hospital::CityPtr *city_ptr_;  // point to city data
+	Hospital::City *city_;  // point to city data
+	Hospital::Br *br_;
 	ProcCity1 proc_city1_;
 	ProcCity2 proc_city2_;
 	ProcCity3 proc_city3_;
@@ -84,34 +95,36 @@ Hospital::Hospital() {
 
 bool Hospital::Init() {
 	std::cin >> this->n_;
-	if (!this->city_graph_.MallocVertPtr(this->n_) || !this->city_graph_.MallocEdgePtr((this->n_ - 1) << 1)) {  // 2 (n -1) directed edges
+	if (!this->city_graph_.MallocVertPtr(this->n_)) {
 		return false;
 	}
-	this->city_ptr_ = new (std::nothrow) Hospital::CityPtr[this->n_];
-	if (NULL == this->city_ptr_) {
-		std::cerr << "this->city_ptr_ = new (std::nothrow) Hospital::CityPtr[this->n_];";
+	this->city_ = new (std::nothrow) Hospital::City[this->n_];
+	if (NULL == this->city_) {
+		std::cerr << "this->city_ = new (std::nothrow) Hospital::CityPtr[this->n_];";
 		std::cerr << std::endl << "Memory allocation problem!" << std::endl;
 		return false;
 	}
-	int temp_pop;
+	int64_t temp_pop;
 	for (int i = 0; i != this->n_; ++i) {
 		std::cin >> temp_pop;
-		this->city_ptr_[i] = new (std::nothrow) Hospital::City(temp_pop);
-		if (NULL == this->city_ptr_[i]) {
-			std::cerr << "this->city_ptr_[i] = new (std::nothrow) Hospital::City(temp_pop);";
-			std::cerr << std::endl << "Memory allocation error!" << std::endl;
-			return false;
-		}
-		this->city_graph_.AddVert(i, this->city_ptr_[i]);
+		this->city_[i].pop = temp_pop;
+		this->city_graph_.AddVert(i, &this->city_[i]);
 	}
 	int n_minus_1 = this->n_ - 1;
+	if (!this->city_graph_.MallocEdgePtr(n_minus_1 << 1)) {
+		return false;
+	}
+	this->br_ = new (std::nothrow) Br[this->n_];
 	int tmp_city1, tmp_city2;
+	AdjListGraph<CityPtr, BrPtr>::EdgePtr cur_br1, cur_br2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
 		std::cin >> tmp_city1 >> tmp_city2;
 		--tmp_city1;
 		--tmp_city2;
-		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
-		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1);
+		cur_br1 = this->city_graph_.AddNeighbor(tmp_city1, tmp_city2, &this->br_[i << 1]);
+		cur_br2 = this->city_graph_.AddNeighbor(tmp_city2, tmp_city1, &this->br_[(i << 1) + 1]);
+		cur_br1->data->rev = cur_br2;
+		cur_br2->data->rev = cur_br1;
 	}
 	this->city_graph_.InitFlag();
 	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city1_, this->proc_city2_, this->proc_city3_);
