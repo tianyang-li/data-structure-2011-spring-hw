@@ -176,11 +176,12 @@ bool Hospital::Init() {
 		cur_br1->data->rev = cur_br2;
 		cur_br2->data->rev = cur_br1;
 	}
+	int root = std::rand() % this->city_graph_.GetSize();
 	this->city_graph_.InitVertFlag();
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->dfs1_proc_city1_
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(root), this->dfs1_proc_city1_
 			, this->dfs1_proc_city2_, this->dfs1_proc_city3_, this->dfs1_proc_city4_);
 	this->city_graph_.InitVertFlag();
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->dfs2_proc_city1_
+	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(root), this->dfs2_proc_city1_
 			, this->dfs2_proc_city2_, this->dfs2_proc_city3_, this->dfs2_proc_city4_);
 	return true;
 }
@@ -244,7 +245,13 @@ inline void Hospital::DFS2ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 }
 
 int Hospital::MinCity() {
-	return 0;
+	int min = 0;
+	for (int i = 1; i != this->n_; ++i) {
+		if (this->city_[i].cost < this->city_[min].cost) {
+			min = i;
+		}
+	}
+	return min;
 }
 
 int main(int argc, char **argv) {
