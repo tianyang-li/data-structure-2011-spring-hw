@@ -46,14 +46,14 @@ public:
 
 	class ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
 	public:
-		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
 
 	class ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
 	public:
-		void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
@@ -103,8 +103,15 @@ bool Hospital::Init() {
 		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
 		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
 	}
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
-	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	bool *visited = this->city_graph_.MallocDFS();
+	if (NULL == visited) {
+		return false;
+	}
+	this->city_graph_.InitDFS(visited);
+	this->city_graph_.DFS(visited, this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	this->city_graph_.InitDFS(visited);
+	this->city_graph_.DFS(visited, this->city_graph_.GetVertexPtr(std::rand() % this->city_graph_.GetSize()), this->proc_city_1_, this->proc_city_2_);
+	this->city_graph_.FreeDFS(visited);
 	return true;
 }
 
