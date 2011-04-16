@@ -50,21 +50,22 @@ public:
 	};
 	typedef Br *BrPtr;
 
-	class ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
+	class ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert1 {
 	public:
 		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
 	};
 
-	class ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
+	class ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert2 {
 	public:
 		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge);
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+				, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge);
 	};
 
-	class ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::ProcVert {
+	class ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::DFSProcVert3 {
 	public:
 		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
@@ -141,7 +142,8 @@ void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 
 void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
+		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
 
 }
 

@@ -89,12 +89,31 @@ public:
 	};
 	typedef Edge *EdgePtr;
 
-	class ProcVert {  // process vertex
+	class DFSProcVert1 {  // process vertex
 	public:
 		inline virtual void Proc(VertexPtr cur_vert
 				, VertexPtr from_vert /* entered cur_vert from from_vert */
 				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
-		// args should have been set in each vertex
+		// args should have been set in each vertex, edge
+		// XXX: modify this approach?
+	};
+
+	class DFSProcVert2 {  // process vertex
+	public:
+		inline virtual void Proc(VertexPtr cur_vert
+				, VertexPtr from_vert /* entered cur_vert from from_vert */
+				, EdgePtr from_edge /* entered cur_vert from from_vert using from_edge */
+				, EdgePtr leave_edge /* leave cur_vert through leave_edge */) = 0;
+		// args should have been set in each vertex, edge
+		// XXX: modify this approach?
+	};
+
+	class DFSProcVert3 {  // process vertex
+	public:
+		inline virtual void Proc(VertexPtr cur_vert
+				, VertexPtr from_vert /* entered cur_vert from from_vert */
+				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
+		// args should have been set in each vertex, edge
 		// XXX: modify this approach?
 	};
 
@@ -114,12 +133,14 @@ public:
 
 	inline EdgePtr AddNeighbor(std::size_t cur_v, std::size_t new_nb, U const &edge_data);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
 
-	inline void DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2, ProcVert &proc3
+	inline void DFS(VertexPtr start, DFSProcVert1 &proc1, DFSProcVert2 &proc2, DFSProcVert3 &proc3
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // depth first search
 
 	// TODO
+	/*
 	inline void BFS(VertexPtr start, ProcVert &proc
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // breadth first search
+	*/
 
 	inline void InitFlag() {  // set all flags in Vertex to false
 		for (std::size_t i = 0; i != this->V_; ++i) {
@@ -272,7 +293,7 @@ inline typename AdjListGraph<T, U>::EdgePtr AdjListGraph<T, U>::AddNeighbor(std:
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &proc2, ProcVert &proc3
+inline void AdjListGraph<T, U>::DFS(VertexPtr start, DFSProcVert1 &proc1, DFSProcVert2 &proc2, DFSProcVert3 &proc3
 		, VertexPtr from_vert, EdgePtr from_edge) {
 	if (true == start->flag) {
 		return;
@@ -284,17 +305,20 @@ inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &
 		if (false == cur_nb->data_.vert->flag) {
 			cur_nb->data_.vert->flag = true;
 			this->DFS(cur_nb->data_.vert, proc1, proc2, proc3, start, cur_nb->data_.edge);
-			proc2.Proc(start, from_vert, from_edge);
+			proc2.Proc(start, from_vert, from_edge, cur_nb->data_.edge);
 			cur_nb = start->adj_list.IterateNext(cur_nb);
 		}
+		proc3.Proc(start, from_vert, from_edge);
 	}
 }
 
+/*
 template <class T, class U>
 inline void AdjListGraph<T, U>::BFS(VertexPtr start, ProcVert &proc
 		, VertexPtr from_vert, EdgePtr from_edge) {
 	// TODO
 }
+*/
 
 #endif
 
