@@ -114,7 +114,7 @@ bool Hospital::Init() {
 	if (!this->city_graph_.MallocEdgePtr(n_minus_1 << 1)) {
 		return false;
 	}
-	this->br_ = new (std::nothrow) Br[this->n_];
+	this->br_ = new (std::nothrow) Br[n_minus_1 << 1];
 	int tmp_city1, tmp_city2;
 	AdjListGraph<CityPtr, BrPtr>::EdgePtr cur_br1, cur_br2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
@@ -160,6 +160,6 @@ int main(int argc, char **argv) {
 	if (!hospital.Init()) {
 		return 0;
 	}
-	std::cout << hospital.MinCity() << std::endl;
+	std::cout << (hospital.MinCity() + 1) << std::endl;
 	return 0;
 }

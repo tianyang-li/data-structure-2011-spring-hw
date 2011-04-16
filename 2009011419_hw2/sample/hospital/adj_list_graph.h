@@ -282,6 +282,7 @@ inline void AdjListGraph<T, U>::DFS(VertexPtr start, ProcVert &proc1, ProcVert &
 	ListNode<typename Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
 	while (NULL != cur_nb) {
 		if (false == cur_nb->data_.vert->flag) {
+			cur_nb->data_.vert->flag = true;
 			this->DFS(cur_nb->data_.vert, proc1, proc2, proc3, start, cur_nb->data_.edge);
 			proc2.Proc(start, from_vert, from_edge);
 			cur_nb = start->adj_list.IterateNext(cur_nb);
