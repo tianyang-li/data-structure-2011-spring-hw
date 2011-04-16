@@ -89,13 +89,13 @@ public:
 	};
 	typedef Edge *EdgePtr;
 
+	// XXX: modify this approach?
 	class DFSProcVert1 {  // process vertex
 	public:
 		inline virtual void Proc(VertexPtr cur_vert
 				, VertexPtr from_vert /* entered cur_vert from from_vert */
 				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
 		// args should have been set in each vertex, edge
-		// XXX: modify this approach?
 	};
 
 	class DFSProcVert2 {  // process vertex
@@ -105,7 +105,6 @@ public:
 				, EdgePtr from_edge /* entered cur_vert from from_vert using from_edge */
 				, EdgePtr leave_edge /* leave cur_vert through leave_edge */) = 0;
 		// args should have been set in each vertex, edge
-		// XXX: modify this approach?
 	};
 
 	class DFSProcVert3 {  // process vertex
@@ -114,7 +113,6 @@ public:
 				, VertexPtr from_vert /* entered cur_vert from from_vert */
 				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
 		// args should have been set in each vertex, edge
-		// XXX: modify this approach?
 	};
 
 	AdjListGraph();  // alloc memory for ptr
@@ -136,7 +134,7 @@ public:
 	inline void DFS(VertexPtr start, DFSProcVert1 &proc1, DFSProcVert2 &proc2, DFSProcVert3 &proc3
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // depth first search
 
-	// TODO
+	// TODO BFS(), BFSProc classes
 	/*
 	inline void BFS(VertexPtr start, ProcVert &proc
 			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // breadth first search
