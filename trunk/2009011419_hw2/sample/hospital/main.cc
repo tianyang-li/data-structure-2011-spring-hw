@@ -134,20 +134,20 @@ bool Hospital::Init() {
 	return true;
 }
 
-void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+inline void Hospital::ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
 }
 
-void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+inline void Hospital::ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
 
 }
 
-void Hospital::ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
+inline void Hospital::ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 
