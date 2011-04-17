@@ -29,10 +29,9 @@
 #include "circ_list.h"
 #include "list_queue.h"
 
-template <class T, class U>  // T - vertex, U - edge
+template <class T>  // T - vertex, U - edge
 class AdjListGraph {
 public:
-	class Edge;
 	class Vertex {
 	public:
 		class AdjInfo {
@@ -40,54 +39,35 @@ public:
 			AdjInfo() {
 			}
 
-			AdjInfo(Vertex *cur_vert, Edge *cur_edge) : vert(cur_vert), edge(cur_edge) {
+			AdjInfo(Vertex *cur_vert) : vert(cur_vert) {
 			}
 
 			~AdjInfo() {
 			}
 
 			AdjInfo(AdjInfo const &cur_adj_info)
-			: vert(cur_adj_info.vert), edge(cur_adj_info.edge) {
+			: vert(cur_adj_info.vert) {
 			}
 
 			AdjInfo &operator=(AdjInfo const &cur_adj_info) {
 				if (this != &cur_adj_info) {
 					this->vert = cur_adj_info.vert;
-					this->edge = cur_adj_info.edge;
 				}
 				return *this;
 			}
 
 			Vertex *vert;
-			Edge *edge;
 		};
 
 		Vertex();
 		Vertex(T const &new_data) : data(new_data) {
 		}
 
-		CircList<typename AdjListGraph<T, U>::Vertex::AdjInfo> adj_list;  // adjacency list
+		CircList<typename AdjListGraph<T>::Vertex::AdjInfo> adj_list;  // adjacency list
 		T data;
 		bool flag;  // used in DFS, BFS, etc.
 	};
 	typedef Vertex *VertexPtr;
-
-	class Edge {  // sort of like a payload on the edge
-	public:
-		Edge() {
-		}
-
-		Edge(U const &new_data) : data(new_data) {
-		}
-
-		~Edge() {
-		}
-
-		//VertexPtr v[2];  // connects v1 v2 (v1->v2 in directed graph)
-		U data;
-		bool flag;  // used in some edge related algorithms
-	};
-	typedef Edge *EdgePtr;
 
 	// XXX: modify this approach?
 	class NoEdgeDFSProcVert1 {  // process vertex
@@ -120,7 +100,7 @@ public:
 		// args should have been set in each vertex, edge
 	};
 
-	AdjListGraph(bool use_edge = false);  // alloc memory for ptr
+	AdjListGraph();  // alloc memory for ptr
 	~AdjListGraph();
 
 	inline std::size_t GetSize() const {
@@ -134,8 +114,7 @@ public:
 
 	inline bool MallocVertPtr(std::size_t more_vert);  // alloc memory for more_vert new vertice ptrs
 
-	inline EdgePtr AddNeighbor(std::size_t cur_v, std::size_t new_nb, U const &edge_data);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
-	inline EdgePtr AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
+	inline void AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
 
 	inline void NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
 			, NoEdgeDFSProcVert3 &proc3, NoEdgeDFSProcVert4 &proc4
@@ -153,112 +132,56 @@ public:
 		}
 	}
 
-	inline void InitEdgeFlag() {
-		for (std::size_t i = 0; i != this->E_; ++i) {
-			this->edge_[i]->flag = false;
-		}
-	}
-
-	inline bool MallocEdgePtr(std::size_t more_edge);
-
 	// enough ptrs?
 	inline bool NeedVertPtr(std::size_t more_vert = 1) {
 		return (this->vert_tab_size_ <= (this->V_ + more_vert));
-	}
-	inline bool NeedEdgePtr(std::size_t more_edge = 1) {
-		return (this->edge_tab_size_ <= (this->E_ + more_edge));
 	}
 
 protected:
 	static std::size_t const kInitTabSize = 32;
 	std::size_t vert_tab_size_;
 	std::size_t V_;  // # of vertices
-	typename AdjListGraph<T, U>::VertexPtr *vertex_;
+	typename AdjListGraph<T>::VertexPtr *vertex_;
 	std::size_t E_;  // # of edges
-	std::size_t edge_tab_size_;
-	typename AdjListGraph<T, U>::EdgePtr *edge_;
-	bool use_edge_;
 
 	inline void Init();
-	inline void InitEdge();
 };
 
-template <class T, class U>
-inline bool AdjListGraph<T, U>::MallocEdgePtr(size_t more_edge) {
-	std::size_t size_need = more_edge + this->E_;
-	if (size_need >= this->edge_tab_size_) {
-		while (size_need >= this->edge_tab_size_) {
-			this->edge_tab_size_ <<= 1;
-		}
-		typename AdjListGraph<T, U>::EdgePtr *new_edge = new (std::nothrow) typename AdjListGraph<T, U>::EdgePtr[this->edge_tab_size_];
-		if (NULL == new_edge) {
-			std::cerr << "AdjListGraph<T, U>::EdgePtr *new_edge = new (std::nothrow) AdjListGraph<T, U>::EdgePtr[this->edge_tab_size_];";
-			std::cerr << std::endl << "Memory allocation error" << std::endl;
-			return false;
-		}
-		for (std::size_t i = 0; i != this->E_; ++i) {
-			new_edge[i] = this->edge_[i];
-		}
-		delete [] this->edge_;
-		this->edge_ = new_edge;
-	}
-	return true;
-}
-
-template <class T, class U>
-inline void AdjListGraph<T, U>::InitEdge() {
-	this->edge_ = new (std::nothrow) EdgePtr[this->kInitTabSize];
-	if (NULL == this->edge_) {
-		std::cerr << "this->edge_ = new (std::nothrow) AdjListGraph<T, U>::VertexPtr[this->kInitTabSize];";
-		std::cerr << std::endl << "Memory allocation error!" << std::endl;
-		return;
-	}
-}
-
-template <class T, class U>
-AdjListGraph<T, U>::AdjListGraph(bool use_edge)
-: vert_tab_size_(AdjListGraph<T, U>::kInitTabSize), V_(0), vertex_(NULL)
-  , E_(0), edge_tab_size_(AdjListGraph<T, U>::kInitTabSize), edge_(NULL), use_edge_(use_edge)  {
+template <class T>
+AdjListGraph<T>::AdjListGraph()
+: vert_tab_size_(AdjListGraph<T>::kInitTabSize), V_(0), vertex_(NULL)
+  , E_(0) {
 	this->Init();
 }
 
-template <class T, class U>
-AdjListGraph<T, U>::~AdjListGraph() {
+template <class T>
+AdjListGraph<T>::~AdjListGraph() {
 	for (std::size_t i = 0; i != this->V_; ++i) {
 		delete this->vertex_[i];
 	}
 	delete [] this->vertex_;
-	if (this->use_edge_) {
-		for (std::size_t i = 0; i != this->E_; ++i) {
-			delete this->edge_[i];
-		}
-		delete [] this->edge_;
-	}
 }
 
-template <class T, class U>
-inline void AdjListGraph<T, U>::Init() {
+template <class T>
+inline void AdjListGraph<T>::Init() {
 	this->vertex_ = new (std::nothrow) VertexPtr[this->kInitTabSize];
 	if (NULL == this->vertex_) {
-		std::cerr << "this->vertex_ = new (std::nothrow) AdjListGraph<T, U>::VertexPtr[this->kInitTabSize];";
+		std::cerr << "this->vertex_ = new (std::nothrow) AdjListGraph<T>::VertexPtr[this->kInitTabSize];";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 		return;
 	}
-	if (this->use_edge_) {
-		this->InitEdge();
-	}
 }
 
-template <class T, class U>
-inline bool AdjListGraph<T, U>::MallocVertPtr(std::size_t more_vert) {
+template <class T>
+inline bool AdjListGraph<T>::MallocVertPtr(std::size_t more_vert) {
 	std::size_t size_need = this->V_ + more_vert;
 	if (size_need >= this->vert_tab_size_) {  // dynamic table (CLRS)
 		while (size_need >= this->vert_tab_size_) {
 			this->vert_tab_size_ <<= 1;
 		}
-		typename AdjListGraph<T, U>::VertexPtr *new_vert = new (std::nothrow) typename AdjListGraph<T, U>::VertexPtr[this->vert_tab_size_];
+		typename AdjListGraph<T>::VertexPtr *new_vert = new (std::nothrow) typename AdjListGraph<T>::VertexPtr[this->vert_tab_size_];
 		if (NULL == new_vert) {
-			std::cerr << "new_vert = new (std::nothrow) AdjListGraph<T, U>::VertexPtr[this->vert_tab_size_];";
+			std::cerr << "new_vert = new (std::nothrow) AdjListGraph<T>::VertexPtr[this->vert_tab_size_];";
 			std::cerr << std::endl << "Memory allocation error" << std::endl;
 			return false;
 		}
@@ -271,22 +194,22 @@ inline bool AdjListGraph<T, U>::MallocVertPtr(std::size_t more_vert) {
 	return true;
 }
 
-template <class T, class U>
-inline typename AdjListGraph<T, U>::VertexPtr AdjListGraph<T, U>::AddVert(std::size_t new_vert) {
-	this->vertex_[new_vert] = new (std::nothrow) typename AdjListGraph<T, U>::Vertex;
+template <class T>
+inline typename AdjListGraph<T>::VertexPtr AdjListGraph<T>::AddVert(std::size_t new_vert) {
+	this->vertex_[new_vert] = new (std::nothrow) typename AdjListGraph<T>::Vertex;
 	if (NULL == this->vertex_[new_vert]) {
-		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T, U>::Vertex;";
+		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex;";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 	}
 	++this->V_;
 	return this->vertex_[new_vert];
 }
 
-template <class T, class U>
-inline typename AdjListGraph<T, U>::VertexPtr AdjListGraph<T, U>::AddVert(std::size_t new_vert, T const &new_data) {
-	this->vertex_[new_vert] = new (std::nothrow) typename AdjListGraph<T, U>::Vertex(new_data);
+template <class T>
+inline typename AdjListGraph<T>::VertexPtr AdjListGraph<T>::AddVert(std::size_t new_vert, T const &new_data) {
+	this->vertex_[new_vert] = new (std::nothrow) typename AdjListGraph<T>::Vertex(new_data);
 	if (NULL == this->vertex_[new_vert]) {
-		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T, U>::Vertex(new_data);";
+		std::cerr << "this->vertex_[new_vert] = new (std::nothrow) AdjListGraph<T>::Vertex(new_data);";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
 		return NULL;
 	}
@@ -294,39 +217,15 @@ inline typename AdjListGraph<T, U>::VertexPtr AdjListGraph<T, U>::AddVert(std::s
 	return this->vertex_[new_vert];
 }
 
-template <class T, class U>
-inline typename AdjListGraph<T, U>::EdgePtr AdjListGraph<T, U>::AddNeighbor(std::size_t cur_v, std::size_t new_nb, U const &edge_data) {
-	this->edge_[this->E_] = new (std::nothrow) Edge(edge_data);
-	if (NULL == this->edge_[this->E_]) {
-		std::cerr << "this->edge_[this->E_] = new (std::nothrow) Edge;";
-		std::cerr << std::endl << "Memory allocation error!" << std::endl;
-		return NULL;
-	}
-	typename Vertex::AdjInfo temp_adj(this->vertex_[new_nb], this->edge_[this->E_]);
+template <class T>
+inline void AdjListGraph<T>::AddNeighbor(std::size_t cur_v, std::size_t new_nb) {
+	typename Vertex::AdjInfo temp_adj(this->vertex_[new_nb]);
 	++this->E_;
 	this->vertex_[cur_v]->adj_list.Append(temp_adj);
-	return this->edge_[this->E_ - 1];
 }
 
-template <class T, class U>
-inline typename AdjListGraph<T, U>::EdgePtr AdjListGraph<T, U>::AddNeighbor(std::size_t cur_v, std::size_t new_nb) {
-	if (this->use_edge_) {
-		this->edge_[this->E_] = new (std::nothrow) Edge();
-		if (NULL == this->edge_[this->E_]) {
-			std::cerr << "this->edge_[this->E_] = new (std::nothrow) Edge;";
-			std::cerr << std::endl << "Memory allocation error!" << std::endl;
-			return NULL;
-		}
-	}
-	typename Vertex::AdjInfo temp_adj(this->vertex_[new_nb]
-	                                                , this->use_edge_ ? this->edge_[this->E_] : NULL);
-	++this->E_;
-	this->vertex_[cur_v]->adj_list.Append(temp_adj);
-	return (this->use_edge_ ? this->edge_[this->E_ - 1] : NULL);
-}
-
-template <class T, class U>
-inline void AdjListGraph<T, U>::NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
+template <class T>
+inline void AdjListGraph<T>::NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
 		, NoEdgeDFSProcVert3 &proc3, NoEdgeDFSProcVert4 &proc4, VertexPtr from_vert) {
 	start->flag = true;
 	proc1.Proc(start, from_vert);
@@ -343,8 +242,8 @@ inline void AdjListGraph<T, U>::NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &p
 }
 
 /*
-template <class T, class U>
-inline void AdjListGraph<T, U>::BFS(VertexPtr start, ProcVert &proc
+template <class T>
+inline void AdjListGraph<T>::BFS(VertexPtr start, ProcVert &proc
 		, VertexPtr from_vert, EdgePtr from_edge) {
 	// TODO
 }
