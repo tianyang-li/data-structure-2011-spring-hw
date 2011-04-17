@@ -29,7 +29,7 @@ typedef struct City City;
 
 City city[MAX_CITY];
 
-void InitDFS() {
+void Init() {
 	int i;
 	for (i = 0; i != n; i++) {
 		city[i].visited = NO_VIS;
@@ -57,10 +57,6 @@ int Min() {
 		++i;
 	}
 	return min;
-}
-
-void BFS1(int cur_city) {
-
 }
 
 void DFS1(int cur_city) {
@@ -114,9 +110,9 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	int root = rand() % n;
-	InitDFS();
+	Init();
 	DFS1(root);
-	InitDFS();
+	Init();
 	DFS2(root, -1);
 	printf("%d\n", Min() + 1);
 	return 0;
