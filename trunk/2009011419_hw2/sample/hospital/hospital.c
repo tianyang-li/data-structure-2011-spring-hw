@@ -54,8 +54,13 @@ int Min() {
 		if (city[i].cost < city[min].cost) {
 			min = i;
 		}
+		++i;
 	}
 	return min;
+}
+
+void BFS1(int cur_city) {
+
 }
 
 void DFS1(int cur_city) {
@@ -73,13 +78,19 @@ void DFS1(int cur_city) {
 	} while (nb != city[cur_city].end->next);
 }
 
-void DFS2(int cur_city) {
+void DFS2(int cur_city, int from_city) {
 	static int64_t tmp2;
 	city[cur_city].visited = VIS;
 	Adj *nb = city[cur_city].adj.next;
+	if (-1 != from_city) {
+		tmp2 = city[from_city].subtree - city[cur_city].pop + city[from_city].pop;
+		city[cur_city].cost = city[from_city].cost - (city[cur_city].subtree << 1)+ tmp2
+				- city[cur_city].pop;
+		city[cur_city].subtree = tmp2;
+	}
 	do {
 		if (city[nb->vert].visited == NO_VIS) {
-			DFS2(nb->vert);
+			DFS2(nb->vert, cur_city);
 		}
 		nb = nb->next;
 	} while (nb != city[cur_city].end->next);
@@ -106,7 +117,7 @@ int main(int argc, char **argv) {
 	InitDFS();
 	DFS1(root);
 	InitDFS();
-	DFS2(root);
+	DFS2(root, -1);
 	printf("%d\n", Min() + 1);
 	return 0;
 }
