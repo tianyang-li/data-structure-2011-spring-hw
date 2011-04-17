@@ -148,6 +148,7 @@ bool Hospital::Init() {
 	}
 	std::srand(std::time(NULL));
 	int root = std::rand() % this->city_graph_.GetSize();
+	// TODO: use NoRecNoEdgeDFS() instead
 	this->city_graph_.InitVertFlag();
 	this->city_graph_.NoEdgeDFS(this->city_graph_.GetVertexPtr(root), this->dfs1_proc_city1_
 			, this->dfs1_proc_city2_, this->dfs1_proc_city3_, this->dfs1_proc_city4_);
