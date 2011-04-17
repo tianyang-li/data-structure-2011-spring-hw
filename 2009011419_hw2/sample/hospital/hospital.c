@@ -11,7 +11,6 @@ struct Adj {
 	int vert;
 	struct Adj *next;
 };
-
 typedef struct Adj Adj;
 
 #define VIS 1  /* city visited */
@@ -24,7 +23,6 @@ struct City {
 	int visited;
 	Adj adj, *end;
 };
-
 typedef struct City City;
 
 City city[MAX_CITY];
@@ -74,6 +72,45 @@ void DFS1(int cur_city) {
 	} while (nb != city[cur_city].end->next);
 }
 
+struct SearchStack1 {
+	int cur;
+	Adj *adj;
+};
+typedef struct SearchStack1 SearchStack1;
+
+void Search1(int cur_city) {
+	int64_t tmp;
+	SearchStack1 stack[MAX_CITY];
+	int top = 0;
+	stack[0].cur = cur_city;
+	stack[0].adj = city[cur_city].adj.next;
+	city[cur_city].visited = VIS;
+	while (1) {
+		if (stack[top].adj == city[stack[top].cur].end->next) {
+			--top;
+			if (top != -1) {
+				tmp = city[stack[top].adj->vert].subtree + city[stack[top].adj->vert].pop;
+				city[stack[top].cur].subtree += tmp;
+				city[stack[top].cur].cost += (tmp + city[stack[top].adj->vert].cost);
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			if (city[stack[top].adj->vert].visited == NO_VIS) {  // push
+				city[stack[top].adj->vert].visited = VIS;
+				stack[top + 1].cur = stack[top].adj->vert;
+				++top;
+				stack[top].adj = city[stack[top].cur].adj.next;
+			}
+			else {
+				stack[top].adj = stack[top].adj->next;
+			}
+		}
+	}
+}
+
 void DFS2(int cur_city, int from_city) {
 	static int64_t tmp2;
 	city[cur_city].visited = VIS;
@@ -90,6 +127,10 @@ void DFS2(int cur_city, int from_city) {
 		}
 		nb = nb->next;
 	} while (nb != city[cur_city].end->next);
+}
+
+void Search2(int cur_city) {
+
 }
 
 int main(int argc, char **argv) {
@@ -111,7 +152,7 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 	int root = rand() % n;
 	Init();
-	DFS1(root);
+	Search1(root);
 	Init();
 	DFS2(root, -1);
 	printf("%d\n", Min() + 1);
