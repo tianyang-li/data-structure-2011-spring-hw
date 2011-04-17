@@ -2,10 +2,13 @@ CC = g++
 CFLAGS = -Wall -ggdb
 OBJ = main.o
 
-all : hospital hospital-pg
+all : hospital hospital-pg c-hospital
 
 hospital : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o hospital
+	
+c-hospital : hospital.c
+	gcc -Wall -ggdb hospital.c -o c-hospital
 	
 hospital-pg : $(OBJ)
 	$(CC) $(CFLAGS) -pg $(OBJ) -o hospital-pg
