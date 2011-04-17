@@ -90,39 +90,33 @@ public:
 	typedef Edge *EdgePtr;
 
 	// XXX: modify this approach?
-	class DFSProcVert1 {  // process vertex
+	class NoEdgeDFSProcVert1 {  // process vertex
 	public:
 		inline virtual void Proc(VertexPtr cur_vert
-				, VertexPtr from_vert /* entered cur_vert from from_vert */
-				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
+				, VertexPtr from_vert /* entered cur_vert from from_vert */) = 0;
 		// args should have been set in each vertex, edge
 	};
 
-	class DFSProcVert2 {  // process vertex
+	class NoEdgeDFSProcVert2 {  // process vertex
 	public:
 		inline virtual void Proc(VertexPtr cur_vert
 				, VertexPtr from_vert /* entered cur_vert from from_vert */
-				, VertexPtr to_vert /* entered cur_vert from from_vert */
-				, EdgePtr from_edge /* entered cur_vert from from_vert using from_edge */
-				, EdgePtr leave_edge /* leave cur_vert through leave_edge */) = 0;
+				, VertexPtr to_vert /* entered cur_vert from from_vert */) = 0;
 		// args should have been set in each vertex, edge
 	};
 
-	class DFSProcVert3 {  // process vertex
+	class NoEdgeDFSProcVert3 {  // process vertex
 	public:
 		inline virtual void Proc(VertexPtr cur_vert
 				, VertexPtr from_vert /* entered cur_vert from from_vert */
-				, VertexPtr to_vert /* entered cur_vert from from_vert */
-				, EdgePtr from_edge /* entered cur_vert from from_vert using from_edge */
-				, EdgePtr leave_edge /* leave cur_vert through leave_edge */) = 0;
+				, VertexPtr to_vert /* entered cur_vert from from_vert */) = 0;
 		// args should have been set in each vertex, edge
 	};
 
-	class DFSProcVert4 {  // process vertex
+	class NoEdgeDFSProcVert4 {  // process vertex
 	public:
 		inline virtual void Proc(VertexPtr cur_vert
-				, VertexPtr from_vert /* entered cur_vert from from_vert */
-				, EdgePtr from_edge /*entered cur_vert from from_vert using from_edge*/) = 0;
+				, VertexPtr from_vert /* entered cur_vert from from_vert */) = 0;
 		// args should have been set in each vertex, edge
 	};
 
@@ -143,9 +137,9 @@ public:
 	inline EdgePtr AddNeighbor(std::size_t cur_v, std::size_t new_nb, U const &edge_data);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
 	inline EdgePtr AddNeighbor(std::size_t cur_v, std::size_t new_nb);  // directed, no checking, add new_nb to cur_v's neighbor (= add edge), cur_v -> new_nb
 
-	inline void DFS(VertexPtr start, DFSProcVert1 &proc1, DFSProcVert2 &proc2
-			, DFSProcVert3 &proc3, DFSProcVert4 &proc4
-			, VertexPtr from_vert = NULL, EdgePtr from_edge = NULL);  // depth first search
+	inline void NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
+			, NoEdgeDFSProcVert3 &proc3, NoEdgeDFSProcVert4 &proc4
+			, VertexPtr from_vert = NULL /* entered start from from_vert */);  // depth first search
 
 	// TODO BFS(), BFSProc classes
 	/*
@@ -332,21 +326,20 @@ inline typename AdjListGraph<T, U>::EdgePtr AdjListGraph<T, U>::AddNeighbor(std:
 }
 
 template <class T, class U>
-inline void AdjListGraph<T, U>::DFS(VertexPtr start, DFSProcVert1 &proc1, DFSProcVert2 &proc2
-		, DFSProcVert3 &proc3, DFSProcVert4 &proc4
-		, VertexPtr from_vert, EdgePtr from_edge) {
+inline void AdjListGraph<T, U>::NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
+		, NoEdgeDFSProcVert3 &proc3, NoEdgeDFSProcVert4 &proc4, VertexPtr from_vert) {
 	start->flag = true;
-	proc1.Proc(start, from_vert, from_edge);
+	proc1.Proc(start, from_vert);
 	ListNode<typename Vertex::AdjInfo> *cur_nb = start->adj_list.GetHead();
 	while (NULL != cur_nb) {
 		if (false == cur_nb->data_.vert->flag) {
-			proc2.Proc(start, from_vert, cur_nb->data_.vert, from_edge, cur_nb->data_.edge);
-			this->DFS(cur_nb->data_.vert, proc1, proc2, proc3, proc4, start, cur_nb->data_.edge);
-			proc3.Proc(start, from_vert, cur_nb->data_.vert, from_edge, cur_nb->data_.edge);
+			proc2.Proc(start, from_vert, cur_nb->data_.vert);
+			this->NoEdgeDFS(cur_nb->data_.vert, proc1, proc2, proc3, proc4, start);
+			proc3.Proc(start, from_vert, cur_nb->data_.vert);
 		}
 		cur_nb = start->adj_list.IterateNext(cur_nb);
 	}
-	proc4.Proc(start, from_vert, from_edge);
+	proc4.Proc(start, from_vert);
 }
 
 /*
