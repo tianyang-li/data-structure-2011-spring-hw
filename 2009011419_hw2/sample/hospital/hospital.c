@@ -72,21 +72,21 @@ void DFS1(int cur_city) {
 	} while (nb != city[cur_city].end->next);
 }
 
-struct SearchStack1 {
+struct SearchStack {
 	int cur;
 	Adj *adj;
 };
-typedef struct SearchStack1 SearchStack1;
+typedef struct SearchStack SearchStack;
 
 void Search1(int cur_city) {
 	int64_t tmp;
-	SearchStack1 stack[MAX_CITY];
+	SearchStack stack[MAX_CITY];
 	int top = 0;
 	stack[0].cur = cur_city;
 	stack[0].adj = city[cur_city].adj.next;
 	city[cur_city].visited = VIS;
 	while (1) {
-		if (stack[top].adj == city[stack[top].cur].end->next) {
+		if (stack[top].adj == city[stack[top].cur].end->next) {  // pop
 			--top;
 			if (top != -1) {
 				tmp = city[stack[top].adj->vert].subtree + city[stack[top].adj->vert].pop;
@@ -130,7 +130,38 @@ void DFS2(int cur_city, int from_city) {
 }
 
 void Search2(int cur_city) {
-
+	int64_t tmp;
+	SearchStack stack[MAX_CITY];
+	int top = 0;
+	stack[0].cur = cur_city;
+	stack[0].adj = city[cur_city].adj.next;
+	while (1) {
+		if (stack[top].adj == city[stack[top].cur].end->next) {  // pop
+			--top;
+			if (top == -1) {
+				break;
+			}
+		}
+		else {  // push
+			if (top > 0) {
+				tmp = city[stack[top - 1].cur].subtree - city[stack[top].cur].pop
+						+ city[stack[top - 1].cur].pop;
+				city[stack[top].cur].cost = city[stack[top - 1].cur].cost
+						- (city[stack[top].cur].subtree << 1) + tmp
+						- city[stack[top].cur].pop;
+				city[stack[top].cur].subtree = tmp;
+			}
+			if (city[stack[top].adj->vert].visited == NO_VIS) {  // push
+				city[stack[top].adj->vert].visited = VIS;
+				stack[top + 1].cur = stack[top].adj->vert;
+				++top;
+				stack[top].adj = city[stack[top].cur].adj.next;
+			}
+			else {
+				stack[top].adj = stack[top].adj->next;
+			}
+		}
+	}
 }
 
 int main(int argc, char **argv) {
