@@ -38,11 +38,10 @@ public:
 
 	inline bool Empty() const;
 	inline std::size_t Size() const;
-	inline T Top() const;  // get top of stack, undefined when this->top_ == this->sentry_
+	inline T &Top() const;  // get top of stack, undefined when this->top_ == this->sentry_
 
 	inline void Pop();
 	inline void Push(T const &new_T);
-	inline void Clear();  // clear out stack contents
 protected:
 	ListNode<T> *top_;  // top of stack
 	ListNode<T> *sentry_;
@@ -51,11 +50,6 @@ protected:
 
 	inline void Init();
 };
-
-/*
- * 			stack bottom					stack top
- * sentry_	-> next_		-> next_		-> next_
- */
 
 template <class T>
 void ListStack<T>::Init() {
@@ -84,7 +78,7 @@ void ListStack<T>::Pop() {
 }
 
 template <class T>
-T ListStack<T>::Top() const {
+T &ListStack<T>::Top() const {
 	return this->top_->data_;
 }
 
@@ -112,22 +106,6 @@ ListStack<T>::~ListStack() {
 		if (temp1 != NULL) {
 			temp2 = temp1->prev_;
 		}
-	}
-}
-
-template <class T>
-inline void ListStack<T>::Clear() {
-	ListNode<T> *temp1 = this->top_->next_;
-	if (temp1 != NULL) {
-		ListNode<T> *temp2 = temp1->next_;
-		while (NULL != temp1) {
-			delete temp1;
-			temp1 = temp2;
-			if (temp2 != NULL) {
-				temp2 = temp2->next_;
-			}
-		}
-		this->top_->next_ = NULL;
 	}
 }
 
