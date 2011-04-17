@@ -30,13 +30,14 @@ class Hospital {
 public:
 	class City {
 	public:
-		City(int cur_pop) : pop(cur_pop), cost(0) {
+		City(int cur_pop) : pop(cur_pop), cost(0), subtree_weight(0) {
 		}
-		City() : cost(0) {
+		City() : cost(0), subtree_weight(0) {
 		}
 
 		int64_t pop;  // population
 		int64_t cost;  // cost of building at this city
+		int64_t subtree_weight;  //
 	};
 	typedef City *CityPtr;
 
@@ -207,6 +208,7 @@ inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 		from_edge->data->rev->data->w += leave_edge->data->rev->data->w;  // weight of subtree
 	}
 	cur_vert->data->cost += (to_vert->data->cost + leave_edge->data->rev->data->w);  // cost of current vertex
+	cur_vert->data->subtree_weight += (to_vert->data->subtree_weight + to_vert->data->pop);
 }
 
 inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
