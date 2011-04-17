@@ -22,6 +22,7 @@
 #include <new>
 #include <cstdlib>
 #include <stdint.h>
+#include <ctime>
 
 #include "adj_list_graph.h"
 #include "circ_list.h"
@@ -37,7 +38,7 @@ public:
 
 		int64_t pop;  // population
 		int64_t cost;  // cost of building at this city
-		int64_t subtree_weight;  //
+		int64_t subtree_weight;  //  weight of all subtrees by removing this city
 	};
 	typedef City *CityPtr;
 
@@ -177,6 +178,7 @@ bool Hospital::Init() {
 		cur_br1->data->rev = cur_br2;
 		cur_br2->data->rev = cur_br1;
 	}
+	std::srand(std::time(NULL));
 	int root = std::rand() % this->city_graph_.GetSize();
 	this->city_graph_.InitVertFlag();
 	this->city_graph_.DFS(this->city_graph_.GetVertexPtr(root), this->dfs1_proc_city1_
@@ -222,6 +224,13 @@ inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
+	if (NULL != from_vert) {
+		int64_t temp_weight = from_vert->data->subtree_weight
+				- cur_vert->data->pop + from_vert->data->pop;
+		from_edge->data->w = temp_weight - cur_vert->data->subtree_weight;
+		cur_vert->data->cost = (from_vert->data->cost - (cur_vert->data->subtree_weight + cur_vert->data->pop) + from_edge->data->w);
+		cur_vert->data->subtree_weight = temp_weight;
+	}
 }
 
 inline void Hospital::DFS2ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
