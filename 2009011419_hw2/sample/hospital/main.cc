@@ -18,6 +18,8 @@
  * E-Mail tmy1018 gmail com
  */
 
+#ifdef HOSPITAL_CC
+
 #include <iostream>
 #include <new>
 #include <cstdlib>
@@ -222,3 +224,5 @@ int main(int argc, char **argv) {
 	std::cout << (hospital.MinCity() + 1) << std::endl;
 	return 0;
 }
+
+#endif
