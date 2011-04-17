@@ -211,7 +211,7 @@ inline bool AdjListGraph<T, U>::MallocEdgePtr(size_t more_edge) {
 
 template <class T, class U>
 inline void AdjListGraph<T, U>::InitEdge() {
-	this->edge_ = new (std::nothrow) typename AdjListGraph<T, U>::EdgePtr[this->kInitTabSize];
+	this->edge_ = new (std::nothrow) EdgePtr[this->kInitTabSize];
 	if (NULL == this->edge_) {
 		std::cerr << "this->edge_ = new (std::nothrow) AdjListGraph<T, U>::VertexPtr[this->kInitTabSize];";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
@@ -240,7 +240,7 @@ AdjListGraph<T, U>::~AdjListGraph() {
 
 template <class T, class U>
 inline void AdjListGraph<T, U>::Init() {
-	this->vertex_ = new (std::nothrow) typename AdjListGraph<T, U>::VertexPtr[this->kInitTabSize];
+	this->vertex_ = new (std::nothrow) VertexPtr[this->kInitTabSize];
 	if (NULL == this->vertex_) {
 		std::cerr << "this->vertex_ = new (std::nothrow) AdjListGraph<T, U>::VertexPtr[this->kInitTabSize];";
 		std::cerr << std::endl << "Memory allocation error!" << std::endl;
