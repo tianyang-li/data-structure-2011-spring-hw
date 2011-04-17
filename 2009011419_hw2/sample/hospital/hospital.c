@@ -25,7 +25,7 @@ struct City {
 };
 typedef struct City City;
 
-City city[MAX_CITY];
+City *city;
 
 void Init() {
 	int i;
@@ -78,6 +78,8 @@ struct SearchStack {
 };
 typedef struct SearchStack SearchStack;
 
+SearchStack *stack;
+
 void Search1(int cur_city) {
 	int64_t tmp;
 	SearchStack stack[MAX_CITY];
@@ -88,14 +90,13 @@ void Search1(int cur_city) {
 	while (1) {
 		if (stack[top].adj == city[stack[top].cur].end->next) {  // pop
 			--top;
-			if (top != -1) {
-				tmp = city[stack[top].adj->vert].subtree + city[stack[top].adj->vert].pop;
-				city[stack[top].cur].subtree += tmp;
-				city[stack[top].cur].cost += (tmp + city[stack[top].adj->vert].cost);
-			}
-			else {
+			if (top == -1) {
 				break;
 			}
+			tmp = city[stack[top].adj->vert].subtree + city[stack[top].adj->vert].pop;
+			city[stack[top].cur].subtree += tmp;
+			city[stack[top].cur].cost += (tmp + city[stack[top].adj->vert].cost);
+			stack[top].adj = stack[top].adj->next;
 		}
 		else {
 			if (city[stack[top].adj->vert].visited == NO_VIS) {  // push
@@ -129,33 +130,38 @@ void DFS2(int cur_city, int from_city) {
 	} while (nb != city[cur_city].end->next);
 }
 
+int *flag;
+
 void Search2(int cur_city) {
 	int64_t tmp;
-	SearchStack stack[MAX_CITY];
 	int top = 0;
 	stack[0].cur = cur_city;
 	stack[0].adj = city[cur_city].adj.next;
+	city[cur_city].visited = VIS;
 	while (1) {
 		if (stack[top].adj == city[stack[top].cur].end->next) {  // pop
 			--top;
 			if (top == -1) {
 				break;
 			}
+			stack[top].adj = stack[top].adj->next;
 		}
 		else {  // push
-			if (top > 0) {
+			if ((!flag[top]) && (top > 0)) {
 				tmp = city[stack[top - 1].cur].subtree - city[stack[top].cur].pop
 						+ city[stack[top - 1].cur].pop;
 				city[stack[top].cur].cost = city[stack[top - 1].cur].cost
 						- (city[stack[top].cur].subtree << 1) + tmp
 						- city[stack[top].cur].pop;
 				city[stack[top].cur].subtree = tmp;
+				flag[top] = 1;
 			}
 			if (city[stack[top].adj->vert].visited == NO_VIS) {  // push
 				city[stack[top].adj->vert].visited = VIS;
 				stack[top + 1].cur = stack[top].adj->vert;
 				++top;
 				stack[top].adj = city[stack[top].cur].adj.next;
+				flag[top] = 0;
 			}
 			else {
 				stack[top].adj = stack[top].adj->next;
@@ -166,6 +172,9 @@ void Search2(int cur_city) {
 
 int main(int argc, char **argv) {
 	scanf("%d", &n);
+	flag = (int *) malloc(n * sizeof(int));
+	stack = (SearchStack *) malloc(n * sizeof(SearchStack));
+	city = (City *) malloc(n * sizeof(City));
 	int i;
 	for (i = 0; i != n; ++i) {
 		scanf("%lld", &city[i].pop);
@@ -185,7 +194,7 @@ int main(int argc, char **argv) {
 	Init();
 	Search1(root);
 	Init();
-	DFS2(root, -1);
+	Search2(root);
 	printf("%d\n", Min() + 1);
 	return 0;
 }
