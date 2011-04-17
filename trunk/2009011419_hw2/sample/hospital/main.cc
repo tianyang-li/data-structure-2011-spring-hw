@@ -173,7 +173,7 @@ inline void Hospital::DFS1ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert) {
-	static int64_t tmp2 = to_vert->data->subtree_weight + to_vert->data->pop;
+	int64_t tmp2 = to_vert->data->subtree_weight + to_vert->data->pop;
 	cur_vert->data->subtree_weight += tmp2;
 	cur_vert->data->cost += (to_vert->data->cost + tmp2);  // cost of current vertex
 }
@@ -185,7 +185,7 @@ inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert) {
 	if (NULL != from_vert) {
-		static int64_t tmp1 = from_vert->data->subtree_weight - cur_vert->data->pop + from_vert->data->pop;
+		int64_t tmp1 = from_vert->data->subtree_weight - cur_vert->data->pop + from_vert->data->pop;
 		cur_vert->data->cost = from_vert->data->cost - cur_vert->data->subtree_weight + tmp1
 				- cur_vert->data->pop - cur_vert->data->subtree_weight;
 		cur_vert->data->subtree_weight = tmp1;
