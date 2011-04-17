@@ -6,6 +6,9 @@ all : hospital
 
 hospital : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o hospital
+	
+hospital-pg : $(OBJ)
+	$(CC) $(CFLAGS) -pg $(OBJ) -o hospital
 
 main.o : main.cc adj_list_graph.h
 	$(CC) $(CFLAGS) -c main.cc
