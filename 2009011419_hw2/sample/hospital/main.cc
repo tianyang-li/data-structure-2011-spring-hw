@@ -44,11 +44,6 @@ public:
 
 	class Br {  // bridge
 	public:
-		Br() : w(0) {
-		}
-
-		int64_t w;  // tot weight of subtree pointed by bridge, (subtree1)<==(bridge)==(subtree2), weight of subtree2
-		AdjListGraph<CityPtr, Br *>::EdgePtr rev;  // ptr to reverse edge
 	};
 	typedef Br *BrPtr;
 
@@ -168,15 +163,12 @@ bool Hospital::Init() {
 	}
 	this->br_ = new (std::nothrow) Br[n_minus_1 << 1];
 	int tmp_city1, tmp_city2;
-	AdjListGraph<CityPtr, BrPtr>::EdgePtr cur_br1, cur_br2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
 		std::cin >> tmp_city1 >> tmp_city2;
 		--tmp_city1;
 		--tmp_city2;
-		cur_br1 = this->city_graph_.AddNeighbor(tmp_city1, tmp_city2, &this->br_[i << 1]);
-		cur_br2 = this->city_graph_.AddNeighbor(tmp_city2, tmp_city1, &this->br_[(i << 1) + 1]);
-		cur_br1->data->rev = cur_br2;
-		cur_br2->data->rev = cur_br1;
+		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2, &this->br_[i << 1]);
+		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1, &this->br_[(i << 1) + 1]);
 	}
 	std::srand(std::time(NULL));
 	int root = std::rand() % this->city_graph_.GetSize();
@@ -206,30 +198,24 @@ inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
-	if (NULL != from_edge) {
-		from_edge->data->rev->data->w += leave_edge->data->rev->data->w;  // weight of subtree
-	}
-	cur_vert->data->cost += (to_vert->data->cost + leave_edge->data->rev->data->w);  // cost of current vertex
-	cur_vert->data->subtree_weight += (to_vert->data->subtree_weight + to_vert->data->pop);
+	int64_t tmp2 = to_vert->data->subtree_weight + to_vert->data->pop;
+	cur_vert->data->subtree_weight += tmp2;
+	cur_vert->data->cost += (to_vert->data->cost + tmp2);  // cost of current vertex
 }
 
 inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
-	if (NULL != from_edge) {
-		from_edge->data->rev->data->w += cur_vert->data->pop;  // weight of subtree
-	}
 }
 
 inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
 	if (NULL != from_vert) {
-		int64_t temp_weight = from_vert->data->subtree_weight
-				- cur_vert->data->pop + from_vert->data->pop;
-		from_edge->data->w = temp_weight - cur_vert->data->subtree_weight;
-		cur_vert->data->cost = (from_vert->data->cost - (cur_vert->data->subtree_weight + cur_vert->data->pop) + from_edge->data->w);
-		cur_vert->data->subtree_weight = temp_weight;
+		int64_t tmp1 = from_vert->data->subtree_weight - cur_vert->data->pop + from_vert->data->pop;
+		cur_vert->data->cost = from_vert->data->cost - cur_vert->data->subtree_weight + tmp1
+				- cur_vert->data->pop - cur_vert->data->subtree_weight;
+		cur_vert->data->subtree_weight = tmp1;
 	}
 }
 
@@ -238,7 +224,6 @@ inline void Hospital::DFS2ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
-
 }
 
 inline void Hospital::DFS2ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
@@ -246,13 +231,11 @@ inline void Hospital::DFS2ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPt
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr leave_edge) {
-
 }
 
 inline void Hospital::DFS2ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
 		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
 		, AdjListGraph<CityPtr, BrPtr>::EdgePtr from_edge) {
-
 }
 
 int Hospital::MinCity() {
