@@ -31,8 +31,6 @@ class Hospital {
 public:
 	class City {
 	public:
-		City(int cur_pop) : pop(cur_pop), cost(0), subtree_weight(0) {
-		}
 		City() : cost(0), subtree_weight(0) {
 		}
 
@@ -114,7 +112,6 @@ public:
 	Hospital();
 	~Hospital() {
 		delete [] this->city_;
-		delete [] this->br_;
 	}
 
 	bool Init();
@@ -124,7 +121,6 @@ private:
 	int n_;  // # of cities
 	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
 	Hospital::City *city_;  // point to city data
-	Hospital::Br *br_;
 
 	DFS1ProcCity1 dfs1_proc_city1_;
 	DFS1ProcCity2 dfs1_proc_city2_;
@@ -142,13 +138,13 @@ Hospital::Hospital() {
 
 bool Hospital::Init() {
 	std::cin >> this->n_;
-	if (!this->city_graph_.MallocVertPtr(this->n_)) {
-		return false;
-	}
 	this->city_ = new (std::nothrow) Hospital::City[this->n_];
 	if (NULL == this->city_) {
 		std::cerr << "this->city_ = new (std::nothrow) Hospital::CityPtr[this->n_];";
 		std::cerr << std::endl << "Memory allocation problem!" << std::endl;
+		return false;
+	}
+	if (!this->city_graph_.MallocVertPtr(this->n_)) {
 		return false;
 	}
 	int64_t temp_pop;
@@ -161,14 +157,13 @@ bool Hospital::Init() {
 	if (!this->city_graph_.MallocEdgePtr(n_minus_1 << 1)) {
 		return false;
 	}
-	this->br_ = new (std::nothrow) Br[n_minus_1 << 1];
 	int tmp_city1, tmp_city2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
 		std::cin >> tmp_city1 >> tmp_city2;
 		--tmp_city1;
 		--tmp_city2;
-		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2, &this->br_[i << 1]);
-		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1, &this->br_[(i << 1) + 1]);
+		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2, NULL);
+		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1, NULL);
 	}
 	std::srand(std::time(NULL));
 	int root = std::rand() % this->city_graph_.GetSize();
