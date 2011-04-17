@@ -154,16 +154,13 @@ bool Hospital::Init() {
 		this->city_graph_.AddVert(i, &this->city_[i]);
 	}
 	int n_minus_1 = this->n_ - 1;
-	if (!this->city_graph_.MallocEdgePtr(n_minus_1 << 1)) {
-		return false;
-	}
 	int tmp_city1, tmp_city2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
 		std::cin >> tmp_city1 >> tmp_city2;
 		--tmp_city1;
 		--tmp_city2;
-		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2, NULL);
-		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1, NULL);
+		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);
+		this->city_graph_.AddNeighbor(tmp_city2, tmp_city1);
 	}
 	std::srand(std::time(NULL));
 	int root = std::rand() % this->city_graph_.GetSize();
