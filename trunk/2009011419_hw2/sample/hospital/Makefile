@@ -5,7 +5,7 @@ OBJ = main.o
 all : hospital hospital-pg c-hospital
 
 hospital : $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o hospital
+	$(CC) $(CFLAGS) $(OBJ) -DHOSPITAL_CC -o hospital
 	
 c-hospital : hospital.c
 	gcc -Wall -ggdb hospital.c -o c-hospital
@@ -14,7 +14,7 @@ hospital-pg : $(OBJ)
 	$(CC) $(CFLAGS) -pg $(OBJ) -o hospital-pg
 
 main.o : main.cc adj_list_graph.h
-	$(CC) $(CFLAGS) -c main.cc
+	$(CC) $(CFLAGS) -DHOSPITAL_CC -c main.cc
 
 adj_list_graph.h : circ_list.h list_queue.h
 	touch adj_list_graph.h

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <time.h>
 
 #define MAX_CITY 1000000
 
@@ -57,6 +58,33 @@ int Min() {
 	return min;
 }
 
+void DFS1(int cur_city) {
+	static int64_t tmp1;
+	city[cur_city].visited = VIS;
+	Adj *nb = city[cur_city].adj.next;
+	do {
+		if (city[nb->vert].visited == NO_VIS) {
+			DFS1(nb->vert);
+			tmp1 = city[nb->vert].subtree + city[nb->vert].pop;
+			city[cur_city].subtree += tmp1;
+			city[cur_city].cost += (tmp1 + city[nb->vert].cost);
+		}
+		nb = nb->next;
+	} while (nb != city[cur_city].end->next);
+}
+
+void DFS2(int cur_city) {
+	static int64_t tmp2;
+	city[cur_city].visited = VIS;
+	Adj *nb = city[cur_city].adj.next;
+	do {
+		if (city[nb->vert].visited == NO_VIS) {
+			DFS2(nb->vert);
+		}
+		nb = nb->next;
+	} while (nb != city[cur_city].end->next);
+}
+
 int main(int argc, char **argv) {
 	scanf("%d", &n);
 	int i;
@@ -73,6 +101,12 @@ int main(int argc, char **argv) {
 		--tmp_city2;
 		Bridge(tmp_city1, tmp_city2);
 	}
+	srand(time(NULL));
+	int root = rand() % n;
+	InitDFS();
+	DFS1(root);
+	InitDFS();
+	DFS2(root);
 	printf("%d\n", Min() + 1);
 	return 0;
 }
