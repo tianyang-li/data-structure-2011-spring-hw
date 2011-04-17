@@ -40,61 +40,56 @@ public:
 	};
 	typedef City *CityPtr;
 
-	class Br {  // bridge
+	class DFS1ProcCity1 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert1 {
 	public:
-	};
-	typedef Br *BrPtr;
-
-	class DFS1ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert1 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert);
 	};
 
-	class DFS1ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert2 {
+	class DFS1ProcCity2 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert2 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr>::VertexPtr to_vert);
 	};
 
-	class DFS1ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert3 {
+	class DFS1ProcCity3 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert3 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr>::VertexPtr to_vert);
 	};
 
-	class DFS1ProcCity4 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert4 {
+	class DFS1ProcCity4 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert4 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert);
 	};
 
-	class DFS2ProcCity1 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert1 {
+	class DFS2ProcCity1 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert1 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert);
 	};
 
-	class DFS2ProcCity2 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert2 {
+	class DFS2ProcCity2 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert2 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr>::VertexPtr to_vert);
 	};
 
-	class DFS2ProcCity3 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert3 {
+	class DFS2ProcCity3 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert3 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert
+				, AdjListGraph<CityPtr>::VertexPtr to_vert);
 	};
 
-	class DFS2ProcCity4 : public AdjListGraph<CityPtr, BrPtr>::NoEdgeDFSProcVert4 {
+	class DFS2ProcCity4 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert4 {
 	public:
-		inline void Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert);
+		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+				, AdjListGraph<CityPtr>::VertexPtr from_vert);
 	};
 
 	Hospital();
@@ -107,7 +102,7 @@ public:
 
 private:
 	int n_;  // # of cities
-	AdjListGraph<Hospital::CityPtr, BrPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
+	AdjListGraph<Hospital::CityPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
 	Hospital::City *city_;  // point to city data
 
 	DFS1ProcCity1 dfs1_proc_city1_;
@@ -161,49 +156,51 @@ bool Hospital::Init() {
 	return true;
 }
 
-inline void Hospital::DFS1ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert) {
+inline void Hospital::DFS1ProcCity1::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
 }
 
-inline void Hospital::DFS1ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert) {
+inline void Hospital::DFS1ProcCity2::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
 }
 
-inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert) {
-	int64_t tmp2 = to_vert->data->subtree_weight + to_vert->data->pop;
+inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
+	static int64_t tmp2;
+	tmp2 = to_vert->data->subtree_weight + to_vert->data->pop;
 	cur_vert->data->subtree_weight += tmp2;
 	cur_vert->data->cost += (to_vert->data->cost + tmp2);  // cost of current vertex
 }
 
-inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert) {
+inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
 }
 
-inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert) {
+inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
 	if (NULL != from_vert) {
-		int64_t tmp1 = from_vert->data->subtree_weight - cur_vert->data->pop + from_vert->data->pop;
+		static int64_t tmp1;
+		tmp1 = from_vert->data->subtree_weight - cur_vert->data->pop + from_vert->data->pop;
 		cur_vert->data->cost = from_vert->data->cost - cur_vert->data->subtree_weight + tmp1
 				- cur_vert->data->pop - cur_vert->data->subtree_weight;
 		cur_vert->data->subtree_weight = tmp1;
 	}
 }
 
-inline void Hospital::DFS2ProcCity2::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert) {
+inline void Hospital::DFS2ProcCity2::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
 }
 
-inline void Hospital::DFS2ProcCity3::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr to_vert) {
+inline void Hospital::DFS2ProcCity3::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert
+		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
 }
 
-inline void Hospital::DFS2ProcCity4::Proc(AdjListGraph<CityPtr, BrPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr, BrPtr>::VertexPtr from_vert) {
+inline void Hospital::DFS2ProcCity4::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
+		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
 }
 
 int Hospital::MinCity() {
