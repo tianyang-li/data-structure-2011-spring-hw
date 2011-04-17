@@ -8,7 +8,7 @@ hospital : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -DHOSPITAL_CC -o hospital
 	
 c-hospital : hospital.c
-	gcc -Wall -ggdb hospital.c -o c-hospital
+	gcc -Wall -DHOSPITAL_C -ggdb hospital.c -o c-hospital
 	
 hospital-pg : $(OBJ)
 	$(CC) $(CFLAGS) -pg $(OBJ) -o hospital-pg
