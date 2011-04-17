@@ -194,9 +194,9 @@ inline bool AdjListGraph<T, U>::MallocEdgePtr(size_t more_edge) {
 		while (size_need >= this->edge_tab_size_) {
 			this->edge_tab_size_ <<= 1;
 		}
-		typename AdjListGraph<T, U>::EdgePtr *new_edge = new (std::nothrow) typename AdjListGraph<T, U>::EdgePtr;
+		typename AdjListGraph<T, U>::EdgePtr *new_edge = new (std::nothrow) typename AdjListGraph<T, U>::EdgePtr[this->edge_tab_size_];
 		if (NULL == new_edge) {
-			std::cerr << "AdjListGraph<T, U>::EdgePtr *new_edge = new (std::nothrow) AdjListGraph<T, U>::EdgePtr;";
+			std::cerr << "AdjListGraph<T, U>::EdgePtr *new_edge = new (std::nothrow) AdjListGraph<T, U>::EdgePtr[this->edge_tab_size_];";
 			std::cerr << std::endl << "Memory allocation error" << std::endl;
 			return false;
 		}
