@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <stdint.h>
 #include <ctime>
+#include <cstdio>
 
 #include "adj_list_graph.h"
 #include "circ_list.h"
@@ -132,14 +133,14 @@ bool Hospital::Init() {
 	}
 	int64_t temp_pop;
 	for (int i = 0; i != this->n_; ++i) {
-		std::cin >> temp_pop;
+		std::scanf("%lld", &temp_pop);
 		this->city_[i].pop = temp_pop;
 		this->city_graph_.AddVert(i, &this->city_[i]);
 	}
 	int n_minus_1 = this->n_ - 1;
 	int tmp_city1, tmp_city2;
 	for (int i = 0 ; i != n_minus_1; ++i) {
-		std::cin >> tmp_city1 >> tmp_city2;
+		std::scanf("%d %d", &tmp_city1, &tmp_city2);
 		--tmp_city1;
 		--tmp_city2;
 		this->city_graph_.AddNeighbor(tmp_city1, tmp_city2);

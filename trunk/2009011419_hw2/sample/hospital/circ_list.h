@@ -68,7 +68,13 @@ public:
 			this->len_ = 1;
 			return this->InitListNode(new_T);
 		}
-		return CircList<T>::InsertAfter(*this, this->list_ptr_->prev_, new_T);
+		static ListNode<T> *new_node;
+		new_node = new (std::nothrow) ListNode<T>(new_T);
+		new_node->next_ = this->list_ptr_;
+		new_node->prev_ = this->list_ptr_->prev_;
+		this->list_ptr_->prev_ = new_node;
+		new_node->prev_->next_ = new_node;
+		return new_node;
 	}
 
 	inline ListNode<T> *IteratePrev(ListNode<T> *cur_node) const;
@@ -86,10 +92,6 @@ protected:
 template <class T>
 inline ListNode<T> *CircList<T>::InitListNode(T const &new_T) {
 	ListNode<T> *new_node = ListNode<T>::CreateNewNode(new_T);
-
-	if (new_node == NULL) {
-		return NULL;
-	}
 
 	new_node->next_ = new_node;
 	new_node->prev_ = new_node;
