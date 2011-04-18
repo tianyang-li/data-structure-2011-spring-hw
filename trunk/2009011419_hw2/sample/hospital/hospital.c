@@ -149,7 +149,7 @@ void Search2(int cur_city) {
             stack[top].adj = stack[top].adj->next;
         }
         else {  // push
-            if ((!flag[top]) && (top > 0)) {
+            if (!flag[top] && (top > 0)) {
                 tmp = city[stack[top - 1].cur].subtree - city[stack[top].cur].pop
                         + city[stack[top - 1].cur].pop;
                 city[stack[top].cur].cost = city[stack[top - 1].cur].cost

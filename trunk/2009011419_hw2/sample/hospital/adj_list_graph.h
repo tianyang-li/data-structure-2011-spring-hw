@@ -39,7 +39,7 @@ public:
 		Vertex(T const &new_data) : data(new_data) {
 		}
 
-		CircList<typename AdjListGraph<T>::Vertex::Vertex *> adj_list;  // adjacency list
+		CircList<typename AdjListGraph<T>::Vertex *> adj_list;  // adjacency list
 		T data;
 		bool flag;  // used in DFS, BFS, etc.
 	};
@@ -76,16 +76,6 @@ public:
 		// args should have been set in each vertex, edge
 	};
 
-	class DFSStack {
-	public:
-		DFSStack() : proc_flag(false) {
-		}
-
-		VertexPtr cur;
-		VertexPtr adj;
-		bool proc_flag;
-	};
-
 	AdjListGraph();  // alloc memory for ptr
 	~AdjListGraph();
 
@@ -116,9 +106,6 @@ public:
 	inline bool NeedVertPtr(std::size_t more_vert = 1) {
 		return (this->vert_tab_size_ <= (this->V_ + more_vert));
 	}
-
-	inline void NoRecNoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
-			, NoEdgeDFSProcVert3 &proc3, NoEdgeDFSProcVert4 &proc4);
 
 protected:
 	static std::size_t const kInitTabSize = 32;
@@ -202,32 +189,6 @@ inline void AdjListGraph<T>::NoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc
 		cur_nb = start->adj_list.IterateNext(cur_nb);
 	}
 	proc4.Proc(start, from_vert);
-}
-
-template <class T>
-inline void AdjListGraph<T>::NoRecNoEdgeDFS(VertexPtr start, NoEdgeDFSProcVert1 &proc1, NoEdgeDFSProcVert2 &proc2
-		, NoEdgeDFSProcVert3 &proc3, NoEdgeDFSProcVert4 &proc4) {
-	DFSStack tmp_frame;
-	ListStack<DFSStack> stack;
-	start->flag = true;
-	tmp_frame.cur = start;
-	tmp_frame.adj = start->adj_list.GetHead();
-	stack.Push(tmp_frame);
-	VertexPtr from_vert, cur_vert, to_vert;
-	while (true) {
-		if (NULL == stack.Top().cur->adj_list.IterateNext(stack.Top().adj)) {
-			to_vert = stack.Top().cur;
-			stack.Pop();
-			if (stack.Empty()) {
-				break;
-			}
-			cur_vert = stack.Top().cur;
-			proc3.Proc(cur_vert, from_vert, to_vert);  // TODO: somehow get from_vert?
-		}
-		else {
-
-		}
-	}
 }
 
 #endif
