@@ -41,61 +41,19 @@ public:
 	};
 	typedef City *CityPtr;
 
-	class DFS1ProcCity1 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert1 {
+	class DFSData {
 	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert);
-	};
+		DFSData() : cur(NULL), to(NULL) {
+		}
 
-	class DFS1ProcCity2 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert2 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr>::VertexPtr to_vert);
-	};
-
-	class DFS1ProcCity3 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert3 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr>::VertexPtr to_vert);
-	};
-
-	class DFS1ProcCity4 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert4 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert);
-	};
-
-	class DFS2ProcCity1 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert1 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert);
-	};
-
-	class DFS2ProcCity2 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert2 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr>::VertexPtr to_vert);
-	};
-
-	class DFS2ProcCity3 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert3 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert
-				, AdjListGraph<CityPtr>::VertexPtr to_vert);
-	};
-
-	class DFS2ProcCity4 : public AdjListGraph<CityPtr>::NoEdgeDFSProcVert4 {
-	public:
-		inline void Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-				, AdjListGraph<CityPtr>::VertexPtr from_vert);
+		AdjListGraph<CityPtr>::VertexPtr cur;
+		ListNode<AdjListGraph<CityPtr>::VertexPtr> *to;
 	};
 
 	Hospital();
 	~Hospital() {
 		delete [] this->city_;
+		delete [] this->stack;
 	}
 
 	bool Init();
@@ -106,15 +64,9 @@ private:
 	AdjListGraph<Hospital::CityPtr> city_graph_;  // sort of like a bi-directed graph (non-directed edge is divided up into 2 reverse directed edges)
 	Hospital::City *city_;  // point to city data
 
-	DFS1ProcCity1 dfs1_proc_city1_;
-	DFS1ProcCity2 dfs1_proc_city2_;
-	DFS1ProcCity3 dfs1_proc_city3_;
-	DFS1ProcCity4 dfs1_proc_city4_;
-
-	DFS2ProcCity1 dfs2_proc_city1_;
-	DFS2ProcCity2 dfs2_proc_city2_;
-	DFS2ProcCity3 dfs2_proc_city3_;
-	DFS2ProcCity4 dfs2_proc_city4_;
+	DFSData *stack;
+	inline void DFS1(AdjListGraph<CityPtr>::VertexPtr start);
+	inline void DFS2(AdjListGraph<CityPtr>::VertexPtr start);
 };
 
 Hospital::Hospital() {
@@ -148,61 +100,94 @@ bool Hospital::Init() {
 	}
 	std::srand(std::time(NULL));
 	int root = std::rand() % this->city_graph_.GetSize();
-	// TODO: use NoRecNoEdgeDFS() instead
+	AdjListGraph<CityPtr>::VertexPtr start = this->city_graph_.GetVertexPtr(root);
+	// TODO: use DFS1() DFS2(), use my own stack
+	this->stack = new (std::nothrow) DFSData[this->n_];
 	this->city_graph_.InitVertFlag();
+	/*
 	this->city_graph_.NoEdgeDFS(this->city_graph_.GetVertexPtr(root), this->dfs1_proc_city1_
 			, this->dfs1_proc_city2_, this->dfs1_proc_city3_, this->dfs1_proc_city4_);
+	*/
+	this->DFS1(start);
 	this->city_graph_.InitVertFlag();
+	/*
 	this->city_graph_.NoEdgeDFS(this->city_graph_.GetVertexPtr(root), this->dfs2_proc_city1_
 			, this->dfs2_proc_city2_, this->dfs2_proc_city3_, this->dfs2_proc_city4_);
+	*/
+	this->DFS2(start);
 	return true;
 }
 
-inline void Hospital::DFS1ProcCity1::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
-}
-
-inline void Hospital::DFS1ProcCity2::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
-}
-
-inline void Hospital::DFS1ProcCity3::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
-	static int64_t tmp2;
-	tmp2 = to_vert->data->subtree_weight + to_vert->data->pop;
-	cur_vert->data->subtree_weight += tmp2;
-	cur_vert->data->cost += (to_vert->data->cost + tmp2);  // cost of current vertex
-}
-
-inline void Hospital::DFS1ProcCity4::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
-}
-
-inline void Hospital::DFS2ProcCity1::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
-	if (NULL != from_vert) {
-		static int64_t tmp1;
-		tmp1 = from_vert->data->subtree_weight - cur_vert->data->pop + from_vert->data->pop;
-		cur_vert->data->cost = from_vert->data->cost - cur_vert->data->subtree_weight + tmp1
-				- cur_vert->data->pop - cur_vert->data->subtree_weight;
-		cur_vert->data->subtree_weight = tmp1;
+inline void Hospital::DFS1(AdjListGraph<CityPtr>::VertexPtr start) {
+	int64_t tmp;
+	int top = 0;
+	this->stack[0].cur = start;
+	this->stack[0].to = start->adj_list.GetHead();
+	start->flag = true;
+	while (true) {
+		if (stack[top].to == NULL) {
+			--top;
+			if (top == -1) {
+				break;
+			}
+			tmp = stack[top].to->data_->data->subtree_weight + stack[top].to->data_->data->pop;
+			stack[top].cur->data->subtree_weight += tmp;
+			stack[top].cur->data->cost += (tmp + stack[top].to->data_->data->cost);
+			stack[top].to = stack[top].cur->adj_list.IterateNext(stack[top].to);
+		}
+		else {
+			if (!stack[top].to->data_->flag) {
+				stack[top].to->data_->flag = true;
+				stack[top + 1].cur = stack[top].to->data_;
+				++top;
+				stack[top].to = stack[top].cur->adj_list.GetHead();
+			}
+			else {
+				stack[top].to = stack[top].cur->adj_list.IterateNext(stack[top].to);
+			}
+		}
 	}
 }
 
-inline void Hospital::DFS2ProcCity2::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
-}
-
-inline void Hospital::DFS2ProcCity3::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert
-		, AdjListGraph<CityPtr>::VertexPtr to_vert) {
-}
-
-inline void Hospital::DFS2ProcCity4::Proc(AdjListGraph<CityPtr>::VertexPtr cur_vert
-		, AdjListGraph<CityPtr>::VertexPtr from_vert) {
+inline void Hospital::DFS2(AdjListGraph<CityPtr>::VertexPtr start) {
+	bool *flag;
+	flag = new (std::nothrow) bool[this->n_];
+	int64_t tmp;
+	int top = 0;
+	this->stack[0].cur = start;
+	this->stack[0].to = start->adj_list.GetHead();
+	start->flag = true;
+	while (true) {
+		if (stack[top].to == NULL) {
+			--top;
+			if (top == -1) {
+				break;
+			}
+			stack[top].to = stack[top].cur->adj_list.IterateNext(stack[top].to);
+		}
+		else {
+			if (!flag[top] && top > 0) {
+				tmp = stack[top - 1].cur->data->subtree_weight - stack[top].cur->data->pop
+						+ stack[top - 1].cur->data->pop;
+				stack[top].cur->data->cost = stack[top - 1].cur->data->cost +
+						- (stack[top].cur->data->subtree_weight << 1) + tmp
+						- stack[top].cur->data->pop;
+				stack[top].cur->data->subtree_weight = tmp;
+				flag[top] = 1;
+			}
+			if (!stack[top].to->data_->flag) {
+				stack[top].to->data_->flag = true;
+				stack[top + 1].cur = stack[top].to->data_;
+				++top;
+				stack[top].to = stack[top].cur->adj_list.GetHead();
+				flag[top] = false;
+			}
+			else {
+				stack[top].to = stack[top].cur->adj_list.IterateNext(stack[top].to);
+			}
+		}
+	}
+	delete [] flag;
 }
 
 int Hospital::MinCity() {
