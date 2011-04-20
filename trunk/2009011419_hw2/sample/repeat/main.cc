@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <new>
 #include <iostream>
+#include <cstdio>
 
 #include "kmp.h"
 
@@ -88,7 +89,7 @@ bool Repeat::InputStr() {
 	}
 	char inp_char;
 	char *new_str;
-	while (std::cin >> inp_char) {
+	while (std::scanf("%c", &inp_char) > 0) {
 		if (this->n_ + 1 == this->tab_len_) {
 			this->tab_len_ <<= 1;
 			new_str = new (std::nothrow) char[this->tab_len_];

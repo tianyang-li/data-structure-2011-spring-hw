@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <cstdio>
 
 #include "list_stack.h"
 
@@ -38,11 +39,11 @@ void Log::Proc() {
 	int action;  // 0 - in, 1 - out, 2 - query
 	int mass;  // mass IO
 	for (int i = 0; i != n; ++i) {
-		std::cin >> action;
+		std::scanf("%d", &action);
 		switch (action) {
 		//XXX: no error checking here!
 		case 0:
-			std::cin >> mass;
+			std::scanf("%d", &mass);
 			if (!this->max_.Empty()) {
 				if (mass >= this->max_.Top()) {
 					this->max_.Push(mass);
@@ -61,7 +62,7 @@ void Log::Proc() {
 			}
 			break;
 		case 2:
-			std::cout << this->max_.Top() << std::endl;
+			std::printf("%d\n", this->max_.Top());
 			break;
 		}
 	}
