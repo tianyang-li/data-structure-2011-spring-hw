@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include "dict-tree.h"
+
 using namespace std;
 
 class DirTree {
@@ -20,6 +22,7 @@ public:
 	inline void Init();
 
 private:
+	DictTree<Path> dir;
 };
 
 inline void DirTree::Init() {
