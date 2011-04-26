@@ -97,6 +97,18 @@ private:
 	private:
 	};
 
+	class Dir {
+	public:
+		inline Dir() {
+		}
+
+		inline ~Dir() {
+		}
+
+		RBTree<Path> dat;  // contents in dir
+	private:
+	};
+
 public:
 	inline DirTree() {
 	}
