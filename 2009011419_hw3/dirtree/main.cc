@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "dict-tree.h"
+#include "red-black-tree.h"
 
 using namespace std;
 
@@ -10,7 +10,6 @@ class DirTree {
 private:
 	static int const kMaxLen = 256;  // max len of path names
 
-public:
 	class Path {
 	public:
 		inline ~Path() {
@@ -98,6 +97,7 @@ public:
 	private:
 	};
 
+public:
 	inline DirTree() {
 	}
 
@@ -107,13 +107,7 @@ public:
 	inline void Init();
 
 private:
-	DictTree<Path> dir;
 };
-
-template <>
-inline bool RBTree<DirTree::Path>::Compare(DirTree::Path const &t1, DirTree::Path const &t2) {
-	return (t1 < t2);
-}
 
 inline void DirTree::Init() {
 	int n;

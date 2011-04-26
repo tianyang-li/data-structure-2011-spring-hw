@@ -7,7 +7,7 @@ all : temperature
 temperature : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o temperature
 
-main.o : main.cc
+main.o : main.cc range-tree.h
 	$(CC) $(CFLAGS) -c main.cc
 
 .PHONY : clean

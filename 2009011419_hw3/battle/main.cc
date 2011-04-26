@@ -22,9 +22,10 @@ public:
 private:
 	int n;  // # of ships
 	int m;  // # of commands
+	DJSet<int> ship;
 
 	inline void Init() {
-		std::cin >> n >> m;
+		cin >> n >> m;
 	}
 };
 
@@ -39,10 +40,10 @@ inline void Battle::Proc() {
 	char op;  // current operation
 	int s1, s2;  // ships
 	for (int i = 0; i != m; ++i) {
-		std::scanf("%c %d %d", &op, &s1, &s2);
+		scanf("%c %d %d", &op, &s1, &s2);
 		switch (op) {
 		case 'Q':
-			std::printf("%c\n", Query(s1, s2));
+			printf("%c\n", Query(s1, s2));
 			break;
 		case 'M':
 			Merge(s1, s2);
