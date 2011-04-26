@@ -48,9 +48,25 @@ public:
 	inline RBTree() : root(NULL) {
 	}
 
+	inline NodePtr Insert(T const &new_key);
+	inline NodePtr Search(T const &key);
+
 private:
-	inline static bool Compare(T const &t1, T const &t2);
 };
+
+template<class T>
+inline typename RBTree<T>::NodePtr RBTree<T>::Insert(T const &new_key) {
+
+}
+
+template <class T>
+inline typename RBTree<T>::NodePtr RBTree<T>::Search(T const &key) {
+	if (root != NULL) {
+		NodePtr cur = root;
+		// TODO
+	}
+	return NULL;
+}
 
 #endif
 

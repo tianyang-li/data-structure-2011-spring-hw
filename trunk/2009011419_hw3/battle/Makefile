@@ -7,7 +7,7 @@ all : battle
 battle : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o battle
 	
-main.o : main.cc
+main.o : main.cc djset.h
 	$(CC) $(CFLAGS) -c main.cc
 
 .PHONY : clean

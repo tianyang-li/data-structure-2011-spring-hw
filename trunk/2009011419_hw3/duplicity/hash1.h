@@ -18,39 +18,7 @@
  * E-Mail tmy1018 gmail com
  */
 
-#ifndef DICT_TREE_H
-#define DICT_TREE_H
-
-#include <iostream>
-#include <new>
-#include <cstddef>
-
-#include "red-black-tree.h"
-
-template <class T>
-class DictTree {
-public:
-	class Node {
-	public:
-		inline Node() : par(NULL) {
-		}
-		inline Node(T const &new_data) : par(NULL), data(new_data) {
-		}
-
-		Node *par;  // parent
-		RBTree<T> ch;  // children
-		T data;
-	private:
-	};
-	typedef Node *NodePtr;
-
-	NodePtr root;
-
-	inline DictTree() : root(NULL) {
-	}
-
-private:
-};
+#ifndef HASH1_H
+#define HASH1_H
 
 #endif
-
