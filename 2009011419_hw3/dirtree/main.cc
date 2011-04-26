@@ -3,6 +3,7 @@
 #include <cstdio>
 
 #include "red-black-tree.h"
+#include "simple-list-1.h"
 
 using namespace std;
 
@@ -106,6 +107,10 @@ private:
 		}
 
 		RBTree<Path> dat;  // contents in dir
+
+		inline void ls() {  // similar to Linux command ls. list dat in dir
+
+		}
 	private:
 	};
 
