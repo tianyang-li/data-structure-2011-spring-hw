@@ -49,6 +49,7 @@ public:
 	}
 
 private:
+	inline static bool Compare(T const &t1, T const &t2);
 };
 
 #endif
