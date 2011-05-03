@@ -27,19 +27,23 @@
 
 template <class T>
 class RBTree {
+	enum Color {RED, BLACK};
+
 public:
 	class Node {
 	public:
-		inline Node() : par(NULL), rc(NULL), lc(NULL) {
+		inline Node() : par(NULL), rc(NULL), lc(NULL), col(BLACK) {
 		}
 
-		inline Node(T const &new_data) : par(NULL), rc(NULL), lc(NULL), data(new_data) {
+		inline Node(T const &new_data) : par(NULL), rc(NULL), lc(NULL), data(new_data), col(BLACK) {
 		}
 
 		Node *par;  // parent
 		Node *rc, *lc;  // right-child, left-child
 		T data;
+
 	private:
+		Color col;
 	};
 	typedef Node *NodePtr;
 
