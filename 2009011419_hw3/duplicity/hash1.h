@@ -21,4 +21,22 @@
 #ifndef HASH1_H
 #define HASH1_H
 
+#include <stdint.h>
+#include <cstddef>
+
+// FNV hash http://isthe.com/chongo/tech/comp/fnv/
+inline uint32_t Hash1(char *str) {
+	static uint32_t const kOffsetBasis = 2166136261;
+	static uint32_t const kFNVPrime = 16777619;
+	// these 2 constants taken from http://isthe.com/chongo/tech/comp/fnv/
+	uint32_t hash = kOffsetBasis;
+	while (*str != '\0') {
+		// hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+		// see hash_32.c at http://isthe.com/chongo/tech/comp/fnv/
+		hash *= kFNVPrime;
+		hash ^= (uint32_t)(*str);
+	}
+	return hash;
+}
+
 #endif
