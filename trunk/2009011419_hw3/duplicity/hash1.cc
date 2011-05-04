@@ -18,6 +18,5 @@
  * E-Mail tmy1018 gmail com
  */
 
-
 #include "hash1.h"
 
