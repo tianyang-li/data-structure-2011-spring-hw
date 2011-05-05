@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <new>
 
 #include "djset.h"
 
@@ -13,6 +14,7 @@ public:
 	}
 
 	inline ~Battle() {
+		delete [] ship;
 	}
 
 	inline void Proc();
@@ -20,12 +22,15 @@ public:
 	inline void Merge(int s1, int s2);
 
 private:
+	typedef DJSet<int> Ship;
+	typedef DJSet<int> *ShipPtr;
 	int n;  // # of ships
 	int m;  // # of commands
-	DJSet<int> ship;
+	ShipPtr ship;
 
 	inline void Init() {
 		cin >> n >> m;
+		ship = new (nothrow) Ship[n];
 	}
 };
 
@@ -34,6 +39,7 @@ inline char Battle::Query(int s1, int s2) {
 }
 
 inline void Battle::Merge(int s1, int s2) {
+	Ship::Union(ship[s1], ship[s2]);
 }
 
 inline void Battle::Proc() {
