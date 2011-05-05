@@ -21,12 +21,29 @@
 #ifndef RANGE_TREE_H
 #define RANGE_TREE_H
 
+/*
+ * Reference:
+ *
+ * Computational Geometry: Algorithms and Applications
+ * Third Edition (March 2008)
+ * Mark de Berg, TU Eindhoven (the Netherlands)
+ * Otfried Cheong, KAIST (Korea)
+ * Marc van Kreveld, Mark Overmars, Utrecht University (the Netherlands)
+ */
+
 template <class T>
 class RangeTree {
 public:
 	class Coord {
 	public:
 		T x, y;
+
+		inline bool operator<(Coord const &cur) const {
+			return ((x < cur.x) || ((x == cur.x) && (y < cur.y)));
+		}
+		inline bool operator>(Coord const &cur) const {
+			return ((x > cur.x) || ((x == cur.x) && (y > cur.y)));
+		}
 
 	private:
 	};
