@@ -56,7 +56,19 @@ public:
 	inline NodePtr Search(T const &key);
 
 private:
+	inline void LeftRot(NodePtr cur);
+	inline void RightRot(NodePtr cur);
 };
+
+template <class T>
+inline void RBTree<T>::LeftRot(NodePtr cur) {
+
+}
+
+template <class T>
+inline void RBTree<T>::RightRot(NodePtr cur) {
+
+}
 
 template<class T>
 inline typename RBTree<T>::NodePtr RBTree<T>::Insert(T const &new_key) {
