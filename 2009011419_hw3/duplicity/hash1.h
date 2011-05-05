@@ -25,7 +25,7 @@
 #include <cstddef>
 
 // FNV hash http://isthe.com/chongo/tech/comp/fnv/
-inline uint32_t Hash1(char *str) {
+inline uint32_t Hash1(char const *str) {
 	static uint32_t const kOffsetBasis = 2166136261u;
 	static uint32_t const kFNVPrime = 16777619u;
 	// these 2 constants taken from http://isthe.com/chongo/tech/comp/fnv/
@@ -35,6 +35,7 @@ inline uint32_t Hash1(char *str) {
 		// see hash_32.c at http://isthe.com/chongo/tech/comp/fnv/
 		hash *= kFNVPrime;
 		hash ^= (uint32_t)(*str);
+		++str;
 	}
 	return hash;
 }
