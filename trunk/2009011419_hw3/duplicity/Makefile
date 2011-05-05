@@ -6,6 +6,7 @@ all : duplicity
 
 duplicity : $(OBJ)
 	$(CC) $(CFLGAS) $(OBJ) -o duplicity
+	$(CC) $(CFLAGS) $(OBJ) -pg -o duplicity-gp
 	
 main.o : main.cc
 	$(CC) $(CFLAGS) -c main.cc
