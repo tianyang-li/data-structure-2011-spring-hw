@@ -35,7 +35,10 @@ private:
 };
 
 inline char Battle::Query(int s1, int s2) {
-	return 'Y';
+	if (Ship::FindSet(ship[s1]) == Ship::FindSet(ship[s2])) {
+		return 'Y';
+	}
+	return 'N';
 }
 
 inline void Battle::Merge(int s1, int s2) {
