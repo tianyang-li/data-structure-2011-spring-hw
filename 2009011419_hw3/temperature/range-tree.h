@@ -24,6 +24,16 @@
 template <class T>
 class RangeTree {
 public:
+	class Coord {
+	public:
+		T x, y;
+
+	private:
+	};
+
+	inline RangeTree();
+	inline ~RangeTree();
+
 private:
 };
 
