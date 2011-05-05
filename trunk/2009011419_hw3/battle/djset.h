@@ -32,12 +32,24 @@ public:
 	}
 	inline ~DJSet() {
 	}
-	inline static void Union(DJSet &x, DJSet &y) {
-		Link(FindSet(x), FindSet(y));
+	inline static void Union(DJSet<T> &x, DJSet<T> &y) {
+		Link(*FindSet(x), *FindSet(y));
 	}
-	inline static void Link(DJSet &x, DJSet &y) {
+	inline static void Link(DJSet<T> &x, DJSet<T> &y) {
+		if (x.rank > y.rank) {
+			y.par = &x;
+			return;
+		}
+		x.par = &y;
+		if (x.rank == y.rank) {
+			++y.rank;
+		}
 	}
-	inline static DJSet<T> *FindSet(DJSet const &x) {
+	inline static DJSet<T> *FindSet(DJSet<T> &x) {
+		if (x.par != &x) {
+			x.par = FindSet(*x.par);
+		}
+		return x.par;
 	}
 
 private:
