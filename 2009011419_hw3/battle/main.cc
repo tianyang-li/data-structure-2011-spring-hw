@@ -29,7 +29,7 @@ private:
 	ShipPtr ship;
 
 	inline void Init() {
-		cin >> n >> m;
+		scanf("%d %d\n", &n, &m);
 		ship = new (nothrow) Ship[n];
 	}
 };
@@ -49,7 +49,7 @@ inline void Battle::Proc() {
 	char op;  // current operation
 	int s1, s2;  // ships
 	for (int i = 0; i != m; ++i) {
-		scanf("%c %d %d", &op, &s1, &s2);
+		scanf("%c %d %d\n", &op, &s1, &s2);
 		switch (op) {
 		case 'Q':
 			printf("%c\n", Query(s1, s2));
