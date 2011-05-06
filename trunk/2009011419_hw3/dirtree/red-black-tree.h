@@ -32,10 +32,10 @@ class RBTree {
 public:
 	class Node {
 	public:
-		inline Node() : par(NULL), rc(NULL), lc(NULL), col(BLACK) {
+		inline Node() : par(NULL), rc(NULL), lc(NULL), col(RED) {
 		}
 
-		inline Node(T const &new_data) : par(NULL), rc(NULL), lc(NULL), data(new_data), col(BLACK) {
+		inline Node(T const &new_data) : par(NULL), rc(NULL), lc(NULL), data(new_data), col(RED) {
 		}
 
 		Node *par;  // parent
@@ -58,7 +58,12 @@ public:
 private:
 	inline void LeftRot(NodePtr x);
 	inline void RightRot(NodePtr y);
+	inline void InsertFix(NodePtr z);
 };
+
+template <class T>
+inline void RBTree<T>::InsertFix(NodePtr z) {
+}
 
 template <class T>
 inline void RBTree<T>::LeftRot(NodePtr x) {
@@ -108,7 +113,36 @@ inline void RBTree<T>::RightRot(NodePtr y) {
 
 template<class T>
 inline typename RBTree<T>::NodePtr RBTree<T>::Insert(T const &new_key) {
-
+	NodePtr y = NULL, x = root;
+	while (NULL != x) {
+		y = x;
+		if (x->data > new_key) {
+			x = x->lc;
+		}
+		else {
+			if (x->data < new_key) {
+				x = x->rc;
+			}
+			else {
+				return NULL;
+			}
+		}
+	}
+	NodePtr z = new Node(new_key);
+	z->par = y;
+	if (NULL == y) {
+		root = z;
+	}
+	else {
+		if (new_key < y->data) {
+			y->lc = z;
+		}
+		else {
+			y->rc = z;
+		}
+	}
+	// lc, rc, col in z are all initialized
+	InsertFix(z);
 }
 
 template <class T>
