@@ -149,7 +149,7 @@ private:
 	};
 
 public:
-	inline DirTree() {
+	inline DirTree() : indent(0) {
 	}
 
 	inline ~DirTree() {
@@ -157,13 +157,19 @@ public:
 	}
 
 	inline void Init();
-	inline void Proc();
+	inline void Proc(Dir *dir);
 
 private:
 	Dir *root;
+	int indent;  // # of spaces that need to be printed
 
 	inline void AddPath(char const *path);
 	inline Dir *AddEntry(Path const &path, Dir &cur_dir);
+	inline void PrintSpace() {
+		for (int i = 0; i != indent; ++i) {
+			putchar(' ');
+		}
+	}
 };
 
 template <>
@@ -194,8 +200,9 @@ inline DirTree::Dir *DirTree::AddEntry(Path const &path, Dir &cur_dir) {
 	return rbt_node->data.sub;
 }
 
-inline void DirTree::Proc() {
-
+inline void DirTree::Proc(Dir *dir) {
+	indent += 2;
+	indent -= 2;
 }
 
 inline void DirTree::Init() {
