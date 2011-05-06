@@ -31,6 +31,8 @@ class RBTree {
 
 public:
 	class Node {
+		friend class RBTree<T>;
+
 	public:
 		inline Node() : par(NULL), rc(NULL), lc(NULL), col(RED) {
 		}
@@ -61,9 +63,9 @@ public:
 	inline NodePtr Prev(NodePtr const cur) const;  // predecessor
 
 private:
-	inline void LeftRot(NodePtr x);
-	inline void RightRot(NodePtr y);
-	inline void InsertFix(NodePtr z);
+	inline void LeftRot(NodePtr const x);
+	inline void RightRot(NodePtr const y);
+	inline void InsertFix(NodePtr const z);
 };
 
 template <class T>
@@ -100,11 +102,51 @@ inline typename RBTree<T>::NodePtr RBTree<T>::Next(NodePtr const cur) const {
 }
 
 template <class T>
-inline void RBTree<T>::InsertFix(NodePtr z) {
+inline void RBTree<T>::InsertFix(NodePtr const cur) {
+	NodePtr z = cur, y;
+	while ((NULL != z->par) && (RED == z->par->col)) {
+		if (z->par == z->par->par->lc) {
+			y = z->par->par->rc;
+			if (RED == y->col) {
+				z->par->col = BLACK;
+				y->col = BLACK;
+				z->par->par->col = RED;
+				z = z->par->par;
+			}
+			else {
+				if (z == z->par->rc) {
+					z = z->par;
+					LeftRot(z);
+				}
+				z->par->col = BLACK;
+				z->par->par->col = RED;
+				RightRot(z->par->par);
+			}
+		}
+		else {
+			y = z->par->par->lc;
+			if (RED == y->col) {
+				z->par->col = BLACK;
+				y->col = BLACK;
+				z->par->par->col = RED;
+				z = z->par->par;
+			}
+			else {
+				if (z == z->par->lc) {
+					z = z->par;
+					RightRot(z);
+				}
+				z->par->col = BLACK;
+				z->par->par->col = RED;
+				LeftRot(z->par->par);
+			}
+		}
+	}
+	root->col = BLACK;
 }
 
 template <class T>
-inline void RBTree<T>::LeftRot(NodePtr x) {
+inline void RBTree<T>::LeftRot(NodePtr const x) {
 	NodePtr y = x->rc;
 	x->rc = y->lc;
 	if (NULL != y->lc) {
@@ -127,7 +169,7 @@ inline void RBTree<T>::LeftRot(NodePtr x) {
 }
 
 template <class T>
-inline void RBTree<T>::RightRot(NodePtr y) {
+inline void RBTree<T>::RightRot(NodePtr const y) {
 	NodePtr x = y->lc;
 	y->lc = x->rc;
 	if (NULL != x->rc) {
@@ -162,7 +204,7 @@ inline typename RBTree<T>::NodePtr RBTree<T>::Insert(T const &new_key) {
 				x = x->rc;
 			}
 			else {
-				return NULL;
+				return x;
 			}
 		}
 	}
@@ -181,6 +223,7 @@ inline typename RBTree<T>::NodePtr RBTree<T>::Insert(T const &new_key) {
 	}
 	// lc, rc, col in z are all initialized
 	InsertFix(z);
+	return z;
 }
 
 template <class T>
