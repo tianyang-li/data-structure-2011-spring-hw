@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstddef>
+#include <new>
 
 #include "red-black-tree.h"
 
@@ -152,22 +153,35 @@ public:
 	}
 
 	inline ~DirTree() {
+		delete root;
 	}
 
 	inline void Init();
 	inline void Proc();
 
 private:
-	inline void AddPath(char *path) {
+	Dir *root;
 
-	}
+	inline void AddPath(char *path);
+	inline Dir *AddEntry(Path const &path, Dir &cur_dir);
 };
+
+inline void DirTree::AddPath(char *path) {
+
+}
+
+inline DirTree::Dir *DirTree::AddEntry(Path const &path, Dir &cur_dir) {
+	RBTree<Path>::NodePtr rbt_node = cur_dir.dat.Insert(path);
+	rbt_node->data.sub = new (nothrow) Dir;
+	return rbt_node->data.sub;
+}
 
 inline void DirTree::Proc() {
 
 }
 
 inline void DirTree::Init() {
+	root = new (nothrow) Dir;
 	int n;
 	cin >> n;
 	char tmp_path[kMaxLen];
