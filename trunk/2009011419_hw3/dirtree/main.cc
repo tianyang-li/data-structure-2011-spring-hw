@@ -162,12 +162,30 @@ public:
 private:
 	Dir *root;
 
-	inline void AddPath(char *path);
+	inline void AddPath(char const *path);
 	inline Dir *AddEntry(Path const &path, Dir &cur_dir);
 };
 
-inline void DirTree::AddPath(char *path) {
+template <>
+inline RBTree<DirTree::Path>::Node::~Node() {
+	delete data.sub;
+}
 
+inline void DirTree::AddPath(char const *path) {
+	Path tmp;
+	int j = 0;
+	Dir *dir = root;
+	for (int i = 0; path[i] != '\0'; ++i) {
+		if ((path[i] != '/') || (path[i] != '\0')) {
+			tmp.path[j] = path[i];
+			++j;
+		}
+		else {
+			tmp.path[j] = '\0';
+			j = 0;
+			dir = AddEntry(tmp, *dir);
+		}
+	}
 }
 
 inline DirTree::Dir *DirTree::AddEntry(Path const &path, Dir &cur_dir) {

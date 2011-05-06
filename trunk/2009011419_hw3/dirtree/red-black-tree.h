@@ -36,8 +36,9 @@ public:
 	public:
 		inline Node() : par(NULL), rc(NULL), lc(NULL), col(RED) {
 		}
-
 		inline Node(T const &new_data) : par(NULL), rc(NULL), lc(NULL), data(new_data), col(RED) {
+		}
+		inline ~Node() {
 		}
 
 		Node *par;  // parent
