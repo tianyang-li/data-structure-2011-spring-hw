@@ -56,18 +56,54 @@ public:
 	inline NodePtr Search(T const &key);
 
 private:
-	inline void LeftRot(NodePtr cur);
-	inline void RightRot(NodePtr cur);
+	inline void LeftRot(NodePtr x);
+	inline void RightRot(NodePtr y);
 };
 
 template <class T>
-inline void RBTree<T>::LeftRot(NodePtr cur) {
-//TODO
+inline void RBTree<T>::LeftRot(NodePtr x) {
+	NodePtr y = x->rc;
+	x->rc = y->lc;
+	if (NULL != y->lc) {
+		y->lc->par = x;
+	}
+	y->par = x->par;
+	if (NULL == x->par) {
+		root = y;
+	}
+	else {
+		if (x == x->par->lc) {
+			x->par->lc = y;
+		}
+		else {
+			x->par->rc = y;
+		}
+	}
+	y->lc = x;
+	x->par = y;
 }
 
 template <class T>
-inline void RBTree<T>::RightRot(NodePtr cur) {
-//TODO
+inline void RBTree<T>::RightRot(NodePtr y) {
+	NodePtr x = y->lc;
+	y->lc = x->rc;
+	if (NULL != x->rc) {
+		x->rc->par = y;
+	}
+	x->par = y->par;
+	if (NULL == y->par) {
+		root = x;
+	}
+	else {
+		if (y == y->par->lc) {
+			y->par->lc = x;
+		}
+		else {
+			y->par->rc = x;
+		}
+	}
+	x->rc = y;
+	y->par = x;
 }
 
 template<class T>
