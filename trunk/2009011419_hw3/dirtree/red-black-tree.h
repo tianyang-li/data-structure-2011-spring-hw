@@ -62,12 +62,12 @@ private:
 
 template <class T>
 inline void RBTree<T>::LeftRot(NodePtr cur) {
-
+//TODO
 }
 
 template <class T>
 inline void RBTree<T>::RightRot(NodePtr cur) {
-
+//TODO
 }
 
 template<class T>
