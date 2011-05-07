@@ -24,6 +24,8 @@
 #include <new>
 #include <cstddef>
 
+#include "quick-sort.h"
+
 /*
  * Reference:
  *
@@ -34,12 +36,13 @@
  * Marc van Kreveld, Mark Overmars, Utrecht University (the Netherlands)
  */
 
-template <class T>
+template <class T, class U>
 class RangeTree {
 public:
 	class Coord {
 	public:
 		T x, y;
+		U data;
 
 		inline bool operator<(Coord const &cur) const {
 			return ((x < cur.x) || ((x == cur.x) && (y < cur.y)));
@@ -60,16 +63,22 @@ public:
 		points = new (std::nothrow) Coord[tot];
 		return points;
 	}
+	inline void BuildTree();
 
 private:
 };
 
-template <class T>
-inline RangeTree<T>::RangeTree() : points(NULL) {
+template <class T, class U>
+inline void RangeTree<T, U>::BuildTree() {
+	QuickSort(points, 0, size - 1);
 }
 
-template <class T>
-inline RangeTree<T>::~RangeTree() {
+template <class T, class U>
+inline RangeTree<T, U>::RangeTree() : points(NULL) {
+}
+
+template <class T, class U>
+inline RangeTree<T, U>::~RangeTree() {
 	delete [] points;
 }
 
