@@ -12,6 +12,9 @@ private:
 	struct Info {
 		size_t n;  // # of stations
 		float temp; // temperature
+
+		inline Info() : n(0), temp(0) {
+		}
 	};
 	typedef RangeTree<int, Info>::Coord::Tuple Point;
 
@@ -32,9 +35,15 @@ private:
 inline void Temp::PreProc(RangeTree<int, Info>::CoordPtr const cur) {
 	if (NULL != cur->lc) {
 		PreProc(cur->lc);
+		cur->data.n = cur->lc->data.n;
+		cur->data.temp = cur->lc->data.temp;
 	}
 	if (NULL != cur->rc) {
 		PreProc(cur->rc);
+		size_t tmp = cur->data.n + cur->rc->data.n;
+		cur->data.temp = (float(cur->rc->data.n) * cur->rc->data.temp + float(cur->data.n) * cur->data.temp)
+				/ (float(tmp));
+		cur->data.n = tmp;
 	}
 }
 
@@ -50,6 +59,7 @@ inline void Temp::Init() {
 	stat.SetSize(n);
 	for (size_t i = 0; i != n; ++i) {
 		scanf("%d %d %f", &(stat.points[i].tuple.x), &(stat.points[i].tuple.y), &(stat.points[i].data.temp));
+		stat.points[i].data.n = 1;
 	}
 	stat.BuildTree();
 	PreProc(stat.root);

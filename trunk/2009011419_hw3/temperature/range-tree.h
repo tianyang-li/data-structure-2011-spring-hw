@@ -122,6 +122,7 @@ inline typename RangeTree<T, U>::Coord *RangeTree<T, U>::CreateCoord(std::size_t
 	std::size_t mid = (low + high) >> 1;
 	coord->lc = CreateCoord(low, mid, coord);
 	coord->rc = CreateCoord(mid + 1, high, coord);
+	coord->tuple = points[mid].tuple;
 	return coord;
 }
 
