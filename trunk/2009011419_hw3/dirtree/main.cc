@@ -27,7 +27,7 @@ private:
 
 		inline Path(Path const &cur) : sub(cur.sub) {
 			for (int i = 0; i != kMaxLen; ++i) {
-				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
+				if (cur.path[i] == '\0') {
 					break;
 				}
 				path[i] = cur.path[i];
@@ -60,21 +60,6 @@ private:
 			return false;
 		}
 
-		inline bool operator<=(Path const &cur) const {  // *this <= cur
-			for (int i = 0; i != kMaxLen; ++i) {
-				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
-					break;
-				}
-				if (cur.path[i] > path[i]) {
-					return true;
-				}
-				if (cur.path[i] < path[i]) {
-					return false;
-				}
-			}
-			return true;
-		}
-
 		inline bool operator>(Path const &cur) const {  // *this > cur
 			for (int i = 0; i != kMaxLen; ++i) {
 				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
@@ -88,21 +73,6 @@ private:
 				}
 			}
 			return false;
-		}
-
-		inline bool operator>=(Path const &cur) const {  // *this >= cur
-			for (int i = 0; i != kMaxLen; ++i) {
-				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
-					break;
-				}
-				if (cur.path[i] < path[i]) {
-					return true;
-				}
-				if (cur.path[i] > path[i]) {
-					return false;
-				}
-			}
-			return true;
 		}
 
 		inline bool operator==(Path const &cur) const {
@@ -149,7 +119,7 @@ private:
 	};
 
 public:
-	inline DirTree() : indent(0) {
+	inline DirTree() : indent(-2) {
 	}
 
 	inline ~DirTree() {
@@ -202,13 +172,18 @@ inline void DirTree::AddPath(char const *path) {
 
 inline DirTree::Dir *DirTree::AddEntry(Path const &path, Dir &cur_dir) {
 	RBTree<Path>::NodePtr rbt_node = cur_dir.dat.Insert(path);
-	rbt_node->data.sub = new (nothrow) Dir;
+	if (NULL == rbt_node->data.sub) {
+		rbt_node->data.sub = new (nothrow) Dir;
+	}
 	return rbt_node->data.sub;
 }
 
 inline void DirTree::Proc(Dir *dir) {
 	indent += 2;
-	RBTree<Path>::NodePtr cur = dir->dat.root;
+	RBTree<Path>::NodePtr cur = NULL;
+	if (NULL != dir->dat.root) {
+		cur = RBTree<Path>::Min(dir->dat.root);
+	}
 	while (NULL != cur) {
 		PrintSpace();
 		printf("%s\n", cur->data.path);
