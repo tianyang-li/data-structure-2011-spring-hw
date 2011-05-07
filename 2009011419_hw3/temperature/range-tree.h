@@ -68,4 +68,9 @@ template <class T>
 inline RangeTree<T>::RangeTree() : points(NULL) {
 }
 
+template <class T>
+inline RangeTree<T>::~RangeTree() {
+	delete [] points;
+}
+
 #endif
