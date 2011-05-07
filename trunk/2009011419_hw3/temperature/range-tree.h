@@ -41,18 +41,61 @@ class RangeTree {
 public:
 	class Coord {
 	public:
-		T x, y;
+		struct Tuple {
+			T x, y;
+
+			inline bool operator<(Tuple const &cur) const {
+				return ((x < cur.x) || ((x == cur.x) && (y < cur.y)));
+			}
+			inline bool operator>(Tuple const &cur) const {
+				return ((x > cur.x) || ((x == cur.x) && (y > cur.y)));
+			}
+			inline static bool YLess(Tuple const &x, Tuple const &y) {
+				return ((x.y < y.y) || ((x.y == y.y) && (x.x < y.x)));
+			}
+			inline static bool YMore(Tuple const &x, Tuple const &y) {
+				return ((x.y > y.y) || ((x.y == y.y) && (x.x > y.x)));
+			}
+		} tuple;
+
 		U data;
 
+		// compares (px|py)
 		inline bool operator<(Coord const &cur) const {
-			return ((x < cur.x) || ((x == cur.x) && (y < cur.y)));
+			return (tuple < cur.tuple);
 		}
 		inline bool operator>(Coord const &cur) const {
-			return ((x > cur.x) || ((x == cur.x) && (y > cur.y)));
+			return (tuple > cur.tuple);
+		}
+		inline static bool YLess(Coord const &x, Coord const &y) {
+			return Tuple::YLess(x.tuple, y.tuple);
+		}
+		inline static bool YMore(Coord const &x, Coord const &y) {
+			return Tuple::YMore(x.tuple, y.tuple);
 		}
 
 	private:
 	};
+
+	class Node {
+	public:
+		Node *lc, *rc, *par;
+		Coord::Tuple tuple;
+
+		inline Node() : lc(NULL), rc(NULL), par(NULL) {
+		}
+		inline ~Node() {
+			if (NULL != lc) {
+				delete lc;
+			}
+			if (NULL != rc) {
+				delete rc;
+			}
+		}
+
+	private:
+	};
+
 	Coord *points;
 	std::size_t size;  // # of points in tree
 
