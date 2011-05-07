@@ -21,6 +21,9 @@
 #ifndef RANGE_TREE_H
 #define RANGE_TREE_H
 
+#include <new>
+#include <cstddef>
+
 /*
  * Reference:
  *
@@ -47,11 +50,22 @@ public:
 
 	private:
 	};
+	Coord *points;
+	std::size_t size;  // # of points in tree
 
 	inline RangeTree();
 	inline ~RangeTree();
+	inline Coord *SetSize(std::size_t tot) {
+		size = tot;
+		points = new (std::nothrow) Coord[tot];
+		return points;
+	}
 
 private:
 };
+
+template <class T>
+inline RangeTree<T>::RangeTree() : points(NULL) {
+}
 
 #endif
