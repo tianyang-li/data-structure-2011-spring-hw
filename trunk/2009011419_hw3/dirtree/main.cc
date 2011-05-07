@@ -46,7 +46,8 @@ private:
 		}
 
 		inline bool operator<(Path const &cur) const {  // *this < cur
-			for (int i = 0; i != kMaxLen; ++i) {
+			int i = 0;
+			while (true) {
 				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
 					break;
 				}
@@ -56,12 +57,17 @@ private:
 				if (cur.path[i] < path[i]) {
 					return false;
 				}
+				++i;
+			}
+			if (cur.path[i] != '\0') {
+				return true;
 			}
 			return false;
 		}
 
 		inline bool operator>(Path const &cur) const {  // *this > cur
-			for (int i = 0; i != kMaxLen; ++i) {
+			int i = 0;
+			while (true) {
 				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
 					break;
 				}
@@ -71,6 +77,10 @@ private:
 				if (cur.path[i] > path[i]) {
 					return false;
 				}
+				++i;
+			}
+			if (path[i] != '\0') {
+				return true;
 			}
 			return false;
 		}
