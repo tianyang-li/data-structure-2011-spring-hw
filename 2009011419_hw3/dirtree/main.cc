@@ -206,10 +206,10 @@ inline void DirTree::Proc(Dir *dir) {
 inline void DirTree::Init() {
 	root = new (nothrow) Dir;
 	int n;
-	scanf("%d\n", &n);
+	scanf("%d", &n);
 	char tmp_path[kMaxLen];
 	for (int i = 0; i != n; ++i) {
-		scanf("%s\n", tmp_path);
+		scanf("%s", tmp_path);
 		AddPath(tmp_path);
 	}
 }
