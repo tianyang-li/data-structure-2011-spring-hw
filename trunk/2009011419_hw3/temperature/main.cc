@@ -9,9 +9,11 @@ using namespace std;
 
 class Temp {
 private:
-	struct Point {
-		int x, y;
+	struct Info {
+		size_t n;  // # of stations
+		float temp; // temperature
 	};
+	typedef RangeTree<int, Info>::Coord::Tuple Point;
 
 public:
 	inline Temp();
@@ -20,11 +22,21 @@ public:
 	inline void Proc();
 
 private:
-	RangeTree<int, float> stat;  // stationss
+	RangeTree<int, Info> stat;  // stationss
 	size_t m;
 
 	inline float Query(Point const &LL, Point const &UR) const;
+	inline void PreProc(RangeTree<int, Info>::CoordPtr const cur);
 };
+
+inline void Temp::PreProc(RangeTree<int, Info>::CoordPtr const cur) {
+	if (NULL != cur->lc) {
+		PreProc(cur->lc);
+	}
+	if (NULL != cur->rc) {
+		PreProc(cur->rc);
+	}
+}
 
 inline float Temp::Query(Point const &LL, Point const &UR) const {
 }
@@ -37,9 +49,10 @@ inline void Temp::Init() {
 	scanf("%d %d", &n, &m);
 	stat.SetSize(n);
 	for (size_t i = 0; i != n; ++i) {
-		scanf("%d %d %f", &(stat.points[i].tuple.x), &(stat.points[i].tuple.y), &(stat.points[i].data));
+		scanf("%d %d %f", &(stat.points[i].tuple.x), &(stat.points[i].tuple.y), &(stat.points[i].data.temp));
 	}
 	stat.BuildTree();
+	PreProc(stat.root);
 }
 
 inline Temp::Temp() {
