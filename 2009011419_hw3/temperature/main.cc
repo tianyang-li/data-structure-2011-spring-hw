@@ -37,7 +37,7 @@ inline void Temp::Init() {
 	scanf("%d %d", &n, &m);
 	stat.SetSize(n);
 	for (size_t i = 0; i != n; ++i) {
-		scanf("%d %d %f", &(stat.points[i].x), &(stat.points[i].y), &(stat.points[i].data));
+		scanf("%d %d %f", &(stat.points[i].tuple.x), &(stat.points[i].tuple.y), &(stat.points[i].data));
 	}
 	stat.BuildTree();
 }
@@ -50,7 +50,7 @@ inline void Temp::Proc() {
 	Point UR;  // upper right corner
 	for (size_t i = 0; i != m; ++i) {
 		scanf("%d %d %d %d", &(LL.x), &(LL.y), &(UR.x), &(UR.y));  // inclusive (for stations)
-		printf("%.2f", Query(LL, UR));
+		printf("%.2f\n", Query(LL, UR));
 	}
 }
 
