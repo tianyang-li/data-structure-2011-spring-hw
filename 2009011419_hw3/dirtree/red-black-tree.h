@@ -54,6 +54,7 @@ public:
 
 	inline RBTree() : root(NULL) {
 	}
+	inline ~RBTree();
 
 	inline NodePtr Insert(T const &new_key);
 	inline NodePtr Search(T const &key);
@@ -67,7 +68,18 @@ private:
 	inline void LeftRot(NodePtr const x);
 	inline void RightRot(NodePtr const y);
 	inline void InsertFix(NodePtr const z);
+	static inline void Destroy(NodePtr const x) {
+		if (NULL != x) {
+			Destroy(x->lc);
+			Destroy(x->rc);
+		}
+	}
 };
+
+template <class T>
+inline RBTree<T>::~RBTree() {
+	Destroy(root);
+}
 
 template <class T>
 inline typename RBTree<T>::NodePtr RBTree<T>::Min(NodePtr const cur) {
