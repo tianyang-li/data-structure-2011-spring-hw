@@ -58,10 +58,10 @@ public:
 	inline NodePtr Insert(T const &new_key);
 	inline NodePtr Search(T const &key);
 
-	inline NodePtr Min(NodePtr const cur) const;  // first element
-	inline NodePtr Max(NodePtr const cur) const;  // last element
-	inline NodePtr Next(NodePtr const cur) const;  // successor
-	inline NodePtr Prev(NodePtr const cur) const;  // predecessor
+	static inline NodePtr Min(NodePtr const cur);  // first element
+	static inline NodePtr Max(NodePtr const cur);  // last element
+	static inline NodePtr Next(NodePtr const cur);  // successor
+	static inline NodePtr Prev(NodePtr const cur);  // predecessor
 
 private:
 	inline void LeftRot(NodePtr const x);
@@ -70,7 +70,7 @@ private:
 };
 
 template <class T>
-inline typename RBTree<T>::NodePtr RBTree<T>::Min(NodePtr const cur) const {
+inline typename RBTree<T>::NodePtr RBTree<T>::Min(NodePtr const cur) {
 	NodePtr tmp1 = cur->lc, tmp2 = cur;
 	while (NULL != tmp1) {
 		tmp2 = tmp1;
@@ -80,7 +80,7 @@ inline typename RBTree<T>::NodePtr RBTree<T>::Min(NodePtr const cur) const {
 }
 
 template <class T>
-inline typename RBTree<T>::NodePtr RBTree<T>::Max(NodePtr const cur) const {
+inline typename RBTree<T>::NodePtr RBTree<T>::Max(NodePtr const cur) {
 	NodePtr tmp1 = cur->rc, tmp2 = cur;
 	while (NULL != tmp1) {
 		tmp2 = tmp1;
@@ -90,7 +90,7 @@ inline typename RBTree<T>::NodePtr RBTree<T>::Max(NodePtr const cur) const {
 }
 
 template <class T>
-inline typename RBTree<T>::NodePtr RBTree<T>::Next(NodePtr const cur) const {
+inline typename RBTree<T>::NodePtr RBTree<T>::Next(NodePtr const cur) {
 	if (NULL != cur->rc) {
 		return Min(cur->rc);
 	}
