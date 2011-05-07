@@ -9,6 +9,9 @@ temperature : $(OBJ)
 
 main.o : main.cc range-tree.h
 	$(CC) $(CFLAGS) -c main.cc
+	
+range-tree.h : quick-sort.h
+	touch range-tree.h	
 
 .PHONY : clean
 clean :
