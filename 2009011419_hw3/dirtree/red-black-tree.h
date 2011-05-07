@@ -108,7 +108,7 @@ inline void RBTree<T>::InsertFix(NodePtr const cur) {
 	while ((NULL != z->par) && (RED == z->par->col)) {
 		if (z->par == z->par->par->lc) {
 			y = z->par->par->rc;
-			if (RED == y->col) {
+			if ((NULL != y) && (RED == y->col)) {
 				z->par->col = BLACK;
 				y->col = BLACK;
 				z->par->par->col = RED;
@@ -126,7 +126,7 @@ inline void RBTree<T>::InsertFix(NodePtr const cur) {
 		}
 		else {
 			y = z->par->par->lc;
-			if (RED == y->col) {
+			if ((NULL != y) && (RED == y->col)) {
 				z->par->col = BLACK;
 				y->col = BLACK;
 				z->par->par->col = RED;
