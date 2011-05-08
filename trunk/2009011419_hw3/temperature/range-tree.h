@@ -54,7 +54,6 @@ public:
 	class YNode {
 	public:
 		YNode *lc, *rc, *par;
-		Tuple coord;
 		Point *point;
 		int p_ptr;  // index of point (if exists)
 
@@ -208,14 +207,13 @@ inline typename RangeTree<T, U>::YNode *RangeTree<T, U>::BuildY(std::size_t cons
 	YNode *node = new (std::nothrow) YNode;
 	node->par = from;
 	if (low == high) {
-		node->coord = p[low].coord;
 		node->point = &(p[low]);
 		node->p_ptr = int(low);
 	}
 	else {
 		std::size_t mid = (low + high) >> 1;
-		node->coord = p[mid].coord;
 		node->point = new (std::nothrow) Point;
+		node->point->coord = p[mid].coord;
 		node->lc = BuildY(low, mid, from, p);
 		node->rc = BuildY(mid + 1, high, from, p);
 	}

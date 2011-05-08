@@ -29,7 +29,34 @@ private:
 	size_t m;
 
 	inline float Query(Point const &LL, Point const &UR) const;
+	inline void PreProc(RangeTree<int, Info>::XNodePtr const root);
+	inline void ProcY(RangeTree<int, Info>::YNodePtr const root);
 };
+
+inline void Temp::ProcY(RangeTree<int, Info>::YNodePtr const root) {
+	if (root->lc) {
+		ProcY(root->lc);
+		root->point->data.n = root->lc->point->data.n;
+		root->point->data.temp = root->lc->point->data.temp;
+	}
+	if (root->rc) {
+		ProcY(root->rc);
+		size_t n = root->point->data.n + root->rc->point->data.n;
+		root->point->data.temp = (float(root->point->data.n) * root->point->data.temp + float(root->rc->point->data.n) * root->rc->point->data.temp)
+				/ (float(n));
+		root->point->data.n = n;
+	}
+}
+
+inline void Temp::PreProc(RangeTree<int, Info>::XNodePtr const root) {
+	ProcY(root->root);
+	if (root->lc) {
+		PreProc(root->lc);
+	}
+	if (root->rc) {
+		PreProc(root->rc);
+	}
+}
 
 inline float Temp::Query(Point const &LL, Point const &UR) const {
 }
@@ -46,6 +73,7 @@ inline void Temp::Init() {
 		stat.points[i].data.n = 1;
 	}
 	stat.BuildTree();
+	PreProc(stat.root);
 }
 
 inline Temp::Temp() {
