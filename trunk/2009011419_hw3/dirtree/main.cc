@@ -26,21 +26,27 @@ private:
 		}
 
 		inline Path(Path const &cur) : sub(cur.sub) {
-			for (int i = 0; i != kMaxLen; ++i) {
+			int i = 0;
+			while ('\0' != cur.path[i]) {
 				if (cur.path[i] == '\0') {
 					break;
 				}
 				path[i] = cur.path[i];
+				++i;
 			}
+			path[i] = '\0';
 		}
 
 		inline Path &operator=(Path const &cur) {
-			for (int i = 0; i != kMaxLen; ++i) {
+			int i = 0;
+			while ('\0' != cur.path[i]) {
 				if ((path[i] == '\0') || (cur.path[i] == '\0')) {
 					break;
 				}
 				path[i] = cur.path[i];
+				++i;
 			}
+			path[i] = '\0';
 			sub = cur.sub;
 			return *this;
 		}
