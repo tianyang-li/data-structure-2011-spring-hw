@@ -53,8 +53,9 @@ public:
 	public:
 		YNode *lc, *rc, *par;
 		Tuple coord;
+		Point *point;
 
-		inline YNode() : lc(NULL), rc(NULL), par(NULL) {
+		inline YNode() : lc(NULL), rc(NULL), par(NULL), point(NULL) {
 		}
 		inline ~YNode() {
 			if (lc) {
@@ -70,15 +71,26 @@ public:
 	class XNode {
 	public:
 		XNode *lc, *rc, *par;
-		YNodePtr y;
+		YNode *root;
 		Tuple coord;
 
-		inline XNode() : lc(NULL), rc(NULL), par(NULL), y(NULL) {
+		inline XNode() : lc(NULL), rc(NULL), par(NULL), root(NULL) {
+		}
+		inline ~XNode() {
+			if (lc) {
+				delete lc;
+			}
+			if (rc) {
+				delete rc;
+			}
+			delete root;
 		}
 	private:
 	};
+	typedef XNode *XNodePtr;
 
 	Point *points;
+	XNode *root;
 
 	inline RangeTree();
 	inline ~RangeTree();
@@ -87,9 +99,23 @@ public:
 		points = new (std::nothrow) Point[tot];
 		return points;
 	}
+	inline void BuildTree();
 
 private:
 	size_t size;
+
+	inline static bool XLess(Point const &a, Point const &b) {
+		return ((a.coord.x < b.coord.x) || ((a.coord.x == b.coord.x) && (a.coord.y < b.coord.y)));
+	}
+	inline static bool XMore(Point const &a, Point const &b) {
+		return ((a.coord.x > b.coord.x) || ((a.coord.x == b.coord.x) && (a.coord.y > b.coord.y)));
+	}
+	inline static bool YLess(Point const &a, Point const &b) {
+		return ((a.coord.y < b.coord.y) || ((a.coord.y == b.coord.y) && (a.coord.x < b.coord.x)));
+	}
+	inline static bool YMore(Point const &a, Point const &b) {
+		return ((a.coord.y > b.coord.y) || ((a.coord.y == b.coord.y) && (a.coord.x > b.coord.x)));
+	}
 };
 
 template <class T, class U>
@@ -99,6 +125,12 @@ inline RangeTree<T, U>::RangeTree() : points(NULL) {
 template <class T, class U>
 inline RangeTree<T, U>::~RangeTree() {
 	delete [] points;
+	delete root;
+}
+
+template <class T, class U>
+inline void RangeTree<T, U>::BuildTree() {
+	QuickSort<Point>::Sort(points, 0, size - 1, &XLess, &XMore);
 }
 
 #endif
