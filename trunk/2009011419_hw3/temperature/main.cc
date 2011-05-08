@@ -31,7 +31,21 @@ private:
 	inline float Query(Point const &LL, Point const &UR) const;
 	inline void PreProc(RangeTree<int, Info>::XNodePtr const root);
 	inline void ProcY(RangeTree<int, Info>::YNodePtr const root);
+	inline RangeTree<int, Info>::XNodePtr XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const;
 };
+
+inline RangeTree<int, Temp::Info>::XNodePtr Temp::XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const {
+	RangeTree<int, Info>::XNodePtr node = root;
+	while (node && ((x2 < node->coord.x) || (x1 >= node->coord.x)) && (node->lc || node->rc)) {
+		if (x2 < node->coord.x) {
+			node = node->lc;
+		}
+		else {
+			node = node->rc;
+		}
+	}
+	return node;
+}
 
 inline void Temp::ProcY(RangeTree<int, Info>::YNodePtr const root) {
 	if (root->lc) {
@@ -59,6 +73,32 @@ inline void Temp::PreProc(RangeTree<int, Info>::XNodePtr const root) {
 }
 
 inline float Temp::Query(Point const &LL, Point const &UR) const {
+	// query range (x1, x2) X (y1, y2) is now
+	// ((x1|-inf),(x2|+inf)) X ((y1|-inf), ((y2|+inf)))
+	RangeTree<int, Info>::XNode *node = XFindSplit(LL.x, UR.x, stat.root);
+	if (!node) {
+		return 0;
+	}
+	Info info;
+	if ((!node->lc) && (!node->rc)) {
+		if ((node->coord.y <= UR.y) && (node->coord.y >= LL.y)) {
+			info.n = node->root->point->data.n;
+			info.temp = node->root->point->data.temp;
+		}
+	}
+	else {
+		RangeTree<int, Info>::XNode *node1 = node->lc;
+		while (node1 && (node->lc || node->rc)) {
+			if (LL.x <= node1->coord.x) {
+				node1 = node1->lc;
+			}
+			else {
+				node1 = node1->rc;
+			}
+		}
+		node1 = node->rc;
+	}
+	return info.temp;
 }
 
 inline Temp::~Temp() {
