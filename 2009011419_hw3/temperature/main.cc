@@ -32,7 +32,13 @@ private:
 	inline void PreProc(RangeTree<int, Info>::XNodePtr const root);
 	inline void ProcY(RangeTree<int, Info>::YNodePtr const root);
 	inline RangeTree<int, Info>::XNodePtr XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const;
+	inline float Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr split) const;
 };
+
+inline float Temp::Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr split) const {
+	Info info;
+	return info.temp;
+}
 
 inline RangeTree<int, Temp::Info>::XNodePtr Temp::XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const {
 	RangeTree<int, Info>::XNodePtr node = root;
@@ -79,26 +85,7 @@ inline float Temp::Query(Point const &LL, Point const &UR) const {
 	if (!node) {
 		return 0;
 	}
-	Info info;
-	if ((!node->lc) && (!node->rc)) {
-		if ((node->coord.y <= UR.y) && (node->coord.y >= LL.y)) {
-			info.n = node->root->point->data.n;
-			info.temp = node->root->point->data.temp;
-		}
-	}
-	else {
-		RangeTree<int, Info>::XNode *node1 = node->lc;
-		while (node1 && (node->lc || node->rc)) {
-			if (LL.x <= node1->coord.x) {
-				node1 = node1->lc;
-			}
-			else {
-				node1 = node1->rc;
-			}
-		}
-		node1 = node->rc;
-	}
-	return info.temp;
+	return Average(LL.x, UR.x, LL.y, UR.y, node);
 }
 
 inline Temp::~Temp() {
