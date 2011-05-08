@@ -58,13 +58,13 @@ inline int QuickSort<T>::Partition(T *array, int low, int high, Compare less, Co
 	pivot = high;
 	--high;
 	while (low <= high) {
-		while (less(array[low], pivot_val)) {
+		while (less(array[low], pivot_val)) {  // array[low] < pivot_val
 			++low;
 			if (low > pivot) {
 				break;
 			}
 		}
-		while (more(array[high], pivot_val)) {
+		while (more(array[high], pivot_val)) {  // array[high] > pivot_val
 			--high;
 			if (high < 0) {
 				break;

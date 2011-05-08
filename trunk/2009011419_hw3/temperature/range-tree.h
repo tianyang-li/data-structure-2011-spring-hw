@@ -18,6 +18,7 @@
  * E-Mail tmy1018 gmail com
  */
 
+// static range tree
 #ifndef RANGE_TREE_H
 #define RANGE_TREE_H
 
@@ -48,6 +49,7 @@ public:
 		Tuple coord;
 		U data;
 	};
+	typedef Point *PointPtr;
 
 	class YNode {
 	public:
@@ -73,8 +75,9 @@ public:
 		XNode *lc, *rc, *par;
 		YNode *root;
 		Tuple coord;
+		Point *p;
 
-		inline XNode() : lc(NULL), rc(NULL), par(NULL), root(NULL) {
+		inline XNode() : lc(NULL), rc(NULL), par(NULL), root(NULL), p(NULL) {
 		}
 		inline ~XNode() {
 			if (lc) {
@@ -84,6 +87,7 @@ public:
 				delete rc;
 			}
 			delete root;
+			delete [] p;
 		}
 	private:
 	};
@@ -116,7 +120,48 @@ private:
 	inline static bool YMore(Point const &a, Point const &b) {
 		return ((a.coord.y > b.coord.y) || ((a.coord.y == b.coord.y) && (a.coord.x > b.coord.x)));
 	}
+
+	inline XNode *BuildX(std::size_t const low, std::size_t const high, XNodePtr const from);
+	inline YNode *BuildY(std::size_t const low, std::size_t const high, YNodePtr const from, PointPtr const p);
 };
+
+template <class T, class U>
+inline typename RangeTree<T, U>::XNode *RangeTree<T, U>::BuildX(std::size_t const low, std::size_t const high, XNodePtr const from) {
+	if (low > high) {
+		return NULL;
+	}
+	XNode *node = new (std::nothrow) XNode;
+	node->par = from;
+	node->p = new (std::nothrow) Point[high - low + 1];
+	for (std::size_t i = low; i <= high; ++i) {
+		node->p[i - low] = points[i];
+	}
+	node->root = BuildY(low, high, NULL, node->p);
+	if (low != high) {
+		std::size_t mid = (low + high) >> 1;
+		node->lc = BuildX(low, mid, node);
+		node->rc = BuildX(mid + 1, high, node);
+	}
+	return node;
+}
+
+template <class T, class U>
+inline typename RangeTree<T, U>::YNode *RangeTree<T, U>::BuildY(std::size_t const low, std::size_t const high, YNodePtr const from, PointPtr const p) {
+	if (low > high) {
+		return NULL;
+	}
+	YNode *node = new (std::nothrow) YNode;
+	node->par = from;
+	if (low == high) {
+		node->point = &(p[low]);
+	}
+	else {
+		std::size_t mid = (low + high) >> 1;
+		node->lc = BuildY(low, mid, from, p);
+		node->rc = BuildY(mid + 1, high, from, p);
+	}
+	return node;
+}
 
 template <class T, class U>
 inline RangeTree<T, U>::RangeTree() : points(NULL) {
@@ -131,6 +176,7 @@ inline RangeTree<T, U>::~RangeTree() {
 template <class T, class U>
 inline void RangeTree<T, U>::BuildTree() {
 	QuickSort<Point>::Sort(points, 0, size - 1, &XLess, &XMore);
+	root = BuildX(0, size - 1, NULL);
 }
 
 #endif
