@@ -29,11 +29,7 @@ private:
 	size_t m;
 
 	inline float Query(Point const &LL, Point const &UR) const;
-	inline void PreProc(RangeTree<int, Info>::CoordPtr const cur);  // TODO: type may be changed
 };
-
-inline void Temp::PreProc(RangeTree<int, Info>::CoordPtr const cur) {
-}
 
 inline float Temp::Query(Point const &LL, Point const &UR) const {
 }
@@ -50,7 +46,6 @@ inline void Temp::Init() {
 		stat.points[i].data.n = 1;
 	}
 	stat.BuildTree();
-	PreProc(stat.root);
 }
 
 inline Temp::Temp() {

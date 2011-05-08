@@ -37,7 +37,8 @@ inline void Swap(T &x, T &y) {
 template <class T>
 class QuickSort {
 public:
-	typedef bool (*Compare)(T const &x, T const y);
+	typedef bool (*Compare)(T const &x, T const &y);
+
 	inline static void Sort(T *array, int low, int high, Compare less, Compare more);
 
 private:
@@ -85,8 +86,8 @@ inline void QuickSort<T>::Sort(T *array, int low, int high, Compare less, Compar
 	// increasing order
 	if (low < high) {
 		int pivot = Partition(array, low, high, less, more);
-		QuickSort(array, low, pivot - 1, less, more);
-		QuickSort(array, pivot + 1, high, less, more);
+		Sort(array, low, pivot - 1, less, more);
+		Sort(array, pivot + 1, high, less, more);
 	}
 }
 
