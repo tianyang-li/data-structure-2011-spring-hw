@@ -36,110 +36,69 @@
  * Marc van Kreveld, Mark Overmars, Utrecht University (the Netherlands)
  */
 
+// T is coordiante type, U is type of data associated with each point
 template <class T, class U>
 class RangeTree {
 public:
-	class Coord;
+	struct Tuple {  // coordinates
+		T x, y;
+	};
 
-	class Coord {
-	public:
-		Coord *par, *lc, *rc;
-		struct Tuple {
-			T x, y;
-
-			inline bool operator<(Tuple const &cur) const {
-				return ((x < cur.x) || ((x == cur.x) && (y < cur.y)));
-			}
-			inline bool operator>(Tuple const &cur) const {
-				return ((x > cur.x) || ((x == cur.x) && (y > cur.y)));
-			}
-			inline static bool YLess(Tuple const &x, Tuple const &y) {
-				return ((x.y < y.y) || ((x.y == y.y) && (x.x < y.x)));
-			}
-			inline static bool YMore(Tuple const &x, Tuple const &y) {
-				return ((x.y > y.y) || ((x.y == y.y) && (x.x > y.x)));
-			}
-		} tuple;
-
+	struct Point {
+		Tuple coord;
 		U data;
+	};
 
-		// compares (px|py)
-		inline bool operator<(Coord const &cur) const {
-			return (tuple < cur.tuple);
-		}
-		inline bool operator>(Coord const &cur) const {
-			return (tuple > cur.tuple);
-		}
-		inline static bool YLess(Coord const &x, Coord const &y) {
-			return Tuple::YLess(x.tuple, y.tuple);
-		}
-		inline static bool YMore(Coord const &x, Coord const &y) {
-			return Tuple::YMore(x.tuple, y.tuple);
-		}
+	class YNode {
+	public:
+		YNode *lc, *rc, *par;
+		Tuple coord;
 
-		inline Coord() : par(NULL), lc(NULL), rc(NULL) {
+		inline YNode() : lc(NULL), rc(NULL), par(NULL) {
 		}
-		inline ~Coord() {
-			if (NULL != lc) {
+		inline ~YNode() {
+			if (lc) {
 				delete lc;
 			}
-			if (NULL != rc) {
+			if (rc) {
 				delete rc;
 			}
 		}
+	};
+	typedef YNode *YNodePtr;
+
+	class XNode {
+	public:
+		XNode *lc, *rc, *par;
+		YNodePtr y;
+		Tuple coord;
+
+		inline XNode() : lc(NULL), rc(NULL), par(NULL), y(NULL) {
+		}
 	private:
 	};
-	typedef Coord *CoordPtr;
 
-	Coord *points;
-	std::size_t size;  // # of points in tree
-	Coord *root;
+	Point *points;
 
 	inline RangeTree();
 	inline ~RangeTree();
-	inline Coord *SetSize(std::size_t tot) {
+	inline Point *SetSize(std::size_t tot) {
 		size = tot;
-		points = new (std::nothrow) Coord[tot];
+		points = new (std::nothrow) Point[tot];
 		return points;
 	}
-	inline void BuildTree();
 
 private:
-	// create Coord for points in range [low, high]
-	inline Coord *CreateCoord(std::size_t const low, std::size_t const high, CoordPtr const from);
+	size_t size;
 };
 
 template <class T, class U>
-inline typename RangeTree<T, U>::Coord *RangeTree<T, U>::CreateCoord(std::size_t const low, std::size_t const high, CoordPtr const from) {
-	if (high < low) {
-		return NULL;
-	}
-	if (low == high) {
-		points[low].par = from;
-		return &points[low];
-	}
-	Coord *coord = new (std::nothrow) Coord;
-	std::size_t mid = (low + high) >> 1;
-	coord->lc = CreateCoord(low, mid, coord);
-	coord->rc = CreateCoord(mid + 1, high, coord);
-	coord->tuple = points[mid].tuple;
-	return coord;
-}
-
-template <class T, class U>
-inline void RangeTree<T, U>::BuildTree() {
-	QuickSort(points, 0, size - 1);
-	root = CreateCoord(0, size - 1, NULL);
-}
-
-template <class T, class U>
-inline RangeTree<T, U>::RangeTree() : points(NULL), root(NULL) {
+inline RangeTree<T, U>::RangeTree() : points(NULL) {
 }
 
 template <class T, class U>
 inline RangeTree<T, U>::~RangeTree() {
 	delete [] points;
-	delete root;
 }
 
 #endif

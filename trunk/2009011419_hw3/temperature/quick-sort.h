@@ -35,31 +35,42 @@ inline void Swap(T &x, T &y) {
 }
 
 template <class T>
-inline int Partition(T *array, int low, int high) {
+class QuickSort {
+public:
+	typedef bool (*Compare)(T const &x, T const y);
+	inline static void Sort(T *array, int low, int high, Compare less, Compare more);
+
+private:
+	inline static int Partition(T *array, int low, int high, Compare less, Compare more);
+};
+
+
+template <class T>
+inline int QuickSort<T>::Partition(T *array, int low, int high, Compare less, Compare more) {
 	// quicksort's partition
 	// [low, high] in array[]
 	// increasing order
 	// 1st partition < pivot_val, 2nd partition >= pivot_val
 	int pivot = low + int(float(high - low) * float(std::rand()) / float(RAND_MAX));
 	T pivot_val = array[pivot];
-	Swap(array[pivot], array[high]);
+	Swap<T>(array[pivot], array[high]);
 	pivot = high;
 	--high;
 	while (low <= high) {
-		while (array[low] < pivot_val) {
+		while (less(array[low], pivot_val)) {
 			++low;
 			if (low > pivot) {
 				break;
 			}
 		}
-		while (array[high] > pivot_val) {
+		while (more(array[high], pivot_val)) {
 			--high;
 			if (high < 0) {
 				break;
 			}
 		}
 		if (low < high) {
-			Swap(array[low], array[high]);
+			Swap<T>(array[low], array[high]);
 			++low;
 			--high;
 		}
@@ -69,13 +80,13 @@ inline int Partition(T *array, int low, int high) {
 }
 
 template <class T>
-inline void QuickSort(T *array, int low, int high) {
+inline void QuickSort<T>::Sort(T *array, int low, int high, Compare less, Compare more) {
 	// sort array[] in range [low, high]
 	// increasing order
 	if (low < high) {
-		int pivot = Partition(array, low, high);
-		QuickSort(array, low, pivot - 1);
-		QuickSort(array, pivot + 1, high);
+		int pivot = Partition(array, low, high, less, more);
+		QuickSort(array, low, pivot - 1, less, more);
+		QuickSort(array, pivot + 1, high, less, more);
 	}
 }
 

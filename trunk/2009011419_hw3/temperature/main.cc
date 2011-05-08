@@ -16,7 +16,7 @@ private:
 		inline Info() : n(0), temp(0) {
 		}
 	};
-	typedef RangeTree<int, Info>::Coord::Tuple Point;
+	typedef RangeTree<int, Info>::Tuple Point;
 
 public:
 	inline Temp();
@@ -29,22 +29,10 @@ private:
 	size_t m;
 
 	inline float Query(Point const &LL, Point const &UR) const;
-	inline void PreProc(RangeTree<int, Info>::CoordPtr const cur);
+	inline void PreProc(RangeTree<int, Info>::CoordPtr const cur);  // TODO: type may be changed
 };
 
 inline void Temp::PreProc(RangeTree<int, Info>::CoordPtr const cur) {
-	if (NULL != cur->lc) {
-		PreProc(cur->lc);
-		cur->data.n = cur->lc->data.n;
-		cur->data.temp = cur->lc->data.temp;
-	}
-	if (NULL != cur->rc) {
-		PreProc(cur->rc);
-		size_t tmp = cur->data.n + cur->rc->data.n;
-		cur->data.temp = (float(cur->rc->data.n) * cur->rc->data.temp + float(cur->data.n) * cur->data.temp)
-				/ (float(tmp));
-		cur->data.n = tmp;
-	}
 }
 
 inline float Temp::Query(Point const &LL, Point const &UR) const {
@@ -58,7 +46,7 @@ inline void Temp::Init() {
 	scanf("%d %d", &n, &m);
 	stat.SetSize(n);
 	for (size_t i = 0; i != n; ++i) {
-		scanf("%d %d %f", &(stat.points[i].tuple.x), &(stat.points[i].tuple.y), &(stat.points[i].data.temp));
+		scanf("%d %d %f", &(stat.points[i].coord.x), &(stat.points[i].coord.y), &(stat.points[i].data.temp));
 		stat.points[i].data.n = 1;
 	}
 	stat.BuildTree();
