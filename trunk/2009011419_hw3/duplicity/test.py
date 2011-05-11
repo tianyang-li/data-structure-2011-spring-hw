@@ -1,14 +1,19 @@
 #!/usr/bin/python
 
 import sys
+import random
 
-str = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz'
-
+random.seed()
 
 i = 1
 while i != int(sys.argv[1]):
-	print str
-	i = i + 1
+    len = random.randint(1, 40)
+    j = 0
+    while j != len:
+        sys.stdout.write("%c" % chr(random.randint(ord('a'), ord('z'))))
+        j = j + 1
+    print "\n",
+    i = i + 1
 
 
 
