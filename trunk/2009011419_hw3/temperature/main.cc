@@ -24,7 +24,12 @@ private:
 		inline Info() : n(0), temp(0) {
 		}
 	};
+
 	typedef RangeTree<int, Info>::Tuple Point;
+
+	struct FCRange {
+		int i1, i2;  // range of Y to search in fractional cascading
+	};
 
 public:
 	inline Temp();
@@ -41,7 +46,7 @@ private:
 	inline void ProcY(RangeTree<int, Info>::YNodePtr const root);
 	inline RangeTree<int, Info>::XNodePtr XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const;
 	inline int Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const;
-	inline Info YRangeInfo(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const;
+	inline Info YRangeInfo(int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split, FCRange & fcr) const;
 	inline RangeTree<int, Info>::YNodePtr YFindSplit(int const y1, int const y2, RangeTree<int, Info>::YNodePtr const root) const;
 };
 
@@ -58,13 +63,15 @@ inline RangeTree<int, Temp::Info>::YNodePtr Temp::YFindSplit(int const y1, int c
 	return node;
 }
 
-inline Temp::Info Temp::YRangeInfo(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const {
+inline Temp::Info Temp::YRangeInfo(int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split, FCRange &fcr) const {
 	RangeTree<int, Info>::YNodePtr node = YFindSplit(y1, y2, split->root);
 	Info info;
 	if (!node) {
 		return info;
 	}
 	if (!node->lc && !node->rc) {
+		fcr.i1 = node->p_ptr;
+		fcr.i2 = node->p_ptr;
 		return node->point->data;
 	}
 	RangeTree<int, Info>::YNodePtr node1 = node->lc;
@@ -73,12 +80,18 @@ inline Temp::Info Temp::YRangeInfo(int const x1, int const x2, int const y1, int
 			if (node1->rc) {
 				info.n += node1->rc->point->data.n;
 				info.temp += node1->rc->point->data.temp;
+				fcr.i1 = node1->p_ptr + 1;
 				node1 = node1->lc;
 			}
 			else {
 				node1 = node1->rc;
 			}
 		}
+	}
+	if (node1) {
+		info.n += node1->point->data.n;
+		info.temp += node1->point->data.temp;
+		fcr.i1 = node1->p_ptr;
 	}
 	node1 = node->rc;
 	while (node1 && (node1->rc || node1->lc)) {
@@ -86,6 +99,7 @@ inline Temp::Info Temp::YRangeInfo(int const x1, int const x2, int const y1, int
 			if (node1->lc) {
 				info.n += node1->lc->point->data.n;
 				info.temp += node1->rc->point->data.temp;
+				fcr.i2 = node1->p_ptr;
 				node1 = node1->rc;
 			}
 			else {
@@ -93,13 +107,19 @@ inline Temp::Info Temp::YRangeInfo(int const x1, int const x2, int const y1, int
 			}
 		}
 	}
+	if (node1) {
+		info.n += node1->point->data.n;
+		info.temp += node1->point->data.temp;
+		fcr.i2 = node1->p_ptr;
+	}
 	return info;
 }
 
 inline int Temp::Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const {
 	Info info;
+	FCRange fcr;
 	if (!split->lc && !split->rc) {
-		info = YRangeInfo(x1, x2, y1, y2, split);
+		info = YRangeInfo(y1, y2, split, fcr);
 		return info.Average();
 	}
 	return info.Average();
