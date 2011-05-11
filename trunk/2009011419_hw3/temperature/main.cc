@@ -80,6 +80,19 @@ inline Temp::Info Temp::YRangeInfo(int const x1, int const x2, int const y1, int
 			}
 		}
 	}
+	node1 = node->rc;
+	while (node1 && (node1->rc || node1->lc)) {
+		if (y1 > node1->point->coord.y) {
+			if (node1->lc) {
+				info.n += node1->lc->point->data.n;
+				info.temp += node1->rc->point->data.temp;
+				node1 = node1->rc;
+			}
+			else {
+				node1 = node1->lc;
+			}
+		}
+	}
 	return info;
 }
 
@@ -129,8 +142,6 @@ inline void Temp::PreProc(RangeTree<int, Info>::XNodePtr const root) {
 }
 
 inline int Temp::Query(Point const &LL, Point const &UR) const {
-	// query range (x1, x2) X (y1, y2) is now
-	// ((x1|-inf),(x2|+inf)) X ((y1|-inf), ((y2|+inf)))
 	RangeTree<int, Info>::XNode *node = XFindSplit(LL.x, UR.x, stat.root);
 	if (!node) {
 		return 0;
