@@ -214,6 +214,7 @@ inline typename RangeTree<T, U>::YNode *RangeTree<T, U>::BuildY(std::size_t cons
 		std::size_t mid = (low + high) >> 1;
 		node->point = new (std::nothrow) Point;
 		node->point->coord = p[mid].coord;
+		node->p_ptr = mid;
 		node->lc = BuildY(low, mid, from, p);
 		node->rc = BuildY(mid + 1, high, from, p);
 	}
