@@ -14,6 +14,13 @@ private:
 		size_t n;  // # of stations
 		int64_t temp; // temperature
 
+		inline int Average() {
+			if (0 == n) {
+				return 0;
+			}
+			return int((temp/int64_t(n)));
+		}
+
 		inline Info() : n(0), temp(0) {
 		}
 	};
@@ -33,12 +40,56 @@ private:
 	inline void PreProc(RangeTree<int, Info>::XNodePtr const root);
 	inline void ProcY(RangeTree<int, Info>::YNodePtr const root);
 	inline RangeTree<int, Info>::XNodePtr XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const;
-	inline int Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr split) const;
+	inline int Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const;
+	inline Info YRangeInfo(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const;
+	inline RangeTree<int, Info>::YNodePtr YFindSplit(int const y1, int const y2, RangeTree<int, Info>::YNodePtr const root) const;
 };
 
-inline int Temp::Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr split) const {
+inline RangeTree<int, Temp::Info>::YNodePtr Temp::YFindSplit(int const y1, int const y2, RangeTree<int, Info>::YNodePtr const root) const {
+	RangeTree<int, Info>::YNodePtr node = root;
+	while (node && ((y2 < node->point->coord.y) || (y1 >= node->point->coord.y)) && (node->lc || node->rc)) {
+		if (y2 < node->point->coord.x) {
+			node = node->lc;
+		}
+		else {
+			node = node->rc;
+		}
+	}
+	return node;
+}
+
+inline Temp::Info Temp::YRangeInfo(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const {
+	RangeTree<int, Info>::YNodePtr node = YFindSplit(y1, y2, split->root);
 	Info info;
-	return int(info.temp/int64_t(info.n));
+	if (!node) {
+		return info;
+	}
+	if (!node->lc && !node->rc) {
+		return node->point->data;
+	}
+	RangeTree<int, Info>::YNodePtr node1 = node->lc;
+	while (node1 && (node1->lc || node1->rc)) {
+		if (y1 <= node1->point->coord.y) {
+			if (node1->rc) {
+				info.n += node1->rc->point->data.n;
+				info.temp += node1->rc->point->data.temp;
+				node1 = node1->lc;
+			}
+			else {
+				node1 = node1->rc;
+			}
+		}
+	}
+	return info;
+}
+
+inline int Temp::Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const {
+	Info info;
+	if (!split->lc && !split->rc) {
+		info = YRangeInfo(x1, x2, y1, y2, split);
+		return info.Average();
+	}
+	return info.Average();
 }
 
 inline RangeTree<int, Temp::Info>::XNodePtr Temp::XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const {

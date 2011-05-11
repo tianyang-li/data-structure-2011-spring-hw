@@ -115,9 +115,6 @@ public:
 	}
 	inline void BuildTree();
 
-private:
-	size_t size;
-
 	inline static bool XLess(Point const &a, Point const &b) {
 		return ((a.coord.x < b.coord.x) || ((a.coord.x == b.coord.x) && (a.coord.y < b.coord.y)));
 	}
@@ -130,6 +127,9 @@ private:
 	inline static bool YMore(Point const &a, Point const &b) {
 		return ((a.coord.y > b.coord.y) || ((a.coord.y == b.coord.y) && (a.coord.x > b.coord.x)));
 	}
+
+private:
+	size_t size;
 
 	inline XNode *BuildX(std::size_t const low, std::size_t const high, XNodePtr const from);
 	inline YNode *BuildY(std::size_t const low, std::size_t const high, YNodePtr const from, PointPtr const p);
