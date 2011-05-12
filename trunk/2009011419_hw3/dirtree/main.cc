@@ -144,7 +144,7 @@ public:
 				space[i][(j << 1) + 1] = ' ';
 				++j;
 			}
-			space[i][j] = '\0';
+			space[i][j << 1] = '\0';
 		}
 	}
 
@@ -160,7 +160,7 @@ public:
 private:
 	Dir *root;
 	int indent;  // # of spaces that need to be printed
-	char space[kMaxLen >> 1][kMaxLen >> 1];
+	char space[kMaxLen >> 1][kMaxLen];
 
 	inline void Proc(Dir *dir);
 	inline void AddPath(char const *path);
