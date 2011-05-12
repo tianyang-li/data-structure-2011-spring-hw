@@ -53,7 +53,7 @@ private:
 
 inline RangeTree<int, Temp::Info>::YNodePtr Temp::YFindSplit(int const y1, int const y2, RangeTree<int, Info>::YNodePtr const root) const {
 	RangeTree<int, Info>::YNodePtr node = root;
-	while (node && ((y2 < node->point->coord.y) || (y1 >= node->point->coord.y)) && (node->lc || node->rc)) {
+	while (node && ((y2 < node->point->coord.y) || (y1 > node->point->coord.y)) && (node->lc || node->rc)) {
 		if (y2 < node->point->coord.x) {
 			node = node->lc;
 		}
@@ -85,7 +85,7 @@ inline Temp::Info Temp::YRangeInfo(int const y1, int const y2, RangeTree<int, In
 			node1 = node1->rc;
 		}
 	}
-	if (node1) {
+	if (node1 && (node1->point->coord.y >= y1 && node1->point->coord.y <= y2)) {
 		info = info + node1->point->data;
 	}
 	node1 = node->rc;
@@ -100,7 +100,7 @@ inline Temp::Info Temp::YRangeInfo(int const y1, int const y2, RangeTree<int, In
 			node1 = node1->lc;
 		}
 	}
-	if (node1) {
+	if (node1 && (node1->point->coord.y >= y1 && node1->point->coord.y <= y2)) {
 		info = info + node1->point->data;
 	}
 	return info;
@@ -126,13 +126,13 @@ inline int Temp::Average(int const x1, int const x2, int const y1, int const y2,
 			node1 = node1->rc;
 		}
 	}
-	if (node1) {
+	if (node1 && (node1->coord.x >= x1 && node1->coord.x <= x2) && (node1->coord.y >= y1) && (node1->coord.y <= y2)) {
 		tmp = YRangeInfo(y1, y2, node1);
 		info = tmp + info;
 	}
 	node1 = split->rc;
 	while (node1 && (node1->lc || node1->rc)) {
-		if (x1 > node1->coord.x) {
+		if (x2 > node1->coord.x) {
 			if (node1->lc) {
 				tmp = YRangeInfo(y1, y2, node1->lc);
 				info = info + tmp;
@@ -143,12 +143,16 @@ inline int Temp::Average(int const x1, int const x2, int const y1, int const y2,
 			node1 = node1->lc;
 		}
 	}
+	if (node1 && (node1->coord.x >= x1 && node1->coord.x <= x2) && (node1->coord.y >= y1) && (node1->coord.y <= y2)) {
+		tmp = YRangeInfo(y1, y2, node1);
+		info = tmp + info;
+	}
 	return info.Average();
 }
 
 inline RangeTree<int, Temp::Info>::XNodePtr Temp::XFindSplit(int const x1, int const x2, RangeTree<int, Info>::XNodePtr const root) const {
 	RangeTree<int, Info>::XNodePtr node = root;
-	while (node && ((x2 < node->coord.x) || (x1 >= node->coord.x)) && (node->lc || node->rc)) {
+	while (node && ((x2 < node->coord.x) || (x1 > node->coord.x)) && (node->lc || node->rc)) {
 		if (x2 < node->coord.x) {
 			node = node->lc;
 		}
