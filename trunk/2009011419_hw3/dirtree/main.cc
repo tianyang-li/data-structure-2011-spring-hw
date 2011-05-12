@@ -135,7 +135,17 @@ private:
 	};
 
 public:
-	inline DirTree() : indent(-2) {
+	inline DirTree() : indent(-1) {
+		int j;
+		for (int i = 0; i != (kMaxLen >> 1); ++i) {
+			j = 0;
+			while (j != i) {
+				space[i][j << 1] = ' ';
+				space[i][(j << 1) + 1] = ' ';
+				++j;
+			}
+			space[i][j] = '\0';
+		}
 	}
 
 	inline ~DirTree() {
@@ -150,15 +160,11 @@ public:
 private:
 	Dir *root;
 	int indent;  // # of spaces that need to be printed
+	char space[kMaxLen >> 1][kMaxLen >> 1];
 
 	inline void Proc(Dir *dir);
 	inline void AddPath(char const *path);
 	inline Dir *AddEntry(Path const &path, Dir &cur_dir);
-	inline void PrintSpace() {
-		for (int i = 0; i != indent; ++i) {
-			putchar(' ');
-		}
-	}
 };
 
 template <>
@@ -195,18 +201,17 @@ inline DirTree::Dir *DirTree::AddEntry(Path const &path, Dir &cur_dir) {
 }
 
 inline void DirTree::Proc(Dir *dir) {
-	indent += 2;
+	++indent;
 	RBTree<Path>::NodePtr cur = NULL;
 	if (NULL != dir->dat.root) {
 		cur = RBTree<Path>::Min(dir->dat.root);
 	}
 	while (NULL != cur) {
-		PrintSpace();
-		printf("%s\n", cur->data.path);
+		printf("%s%s\n", space[indent], cur->data.path);
 		Proc(cur->data.sub);
 		cur = RBTree<Path>::Next(cur);
 	}
-	indent -= 2;
+	--indent;
 }
 
 inline void DirTree::Init() {
