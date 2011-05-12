@@ -76,9 +76,8 @@ public:
 		YNode *root;
 		Tuple coord;
 		Point *p;  // points under this XNode
-		std::size_t n;  // # of points under this node
 
-		inline XNode() : lc(NULL), rc(NULL), root(NULL), p(NULL), n(1) {
+		inline XNode() : lc(NULL), rc(NULL), root(NULL), p(NULL) {
 		}
 		inline ~XNode() {
 			if (lc) {
@@ -137,7 +136,7 @@ inline typename RangeTree<T, U>::XNode *RangeTree<T, U>::BuildX(std::size_t cons
 		node->p[i - low] = points[i];
 	}
 	QuickSort<Point>::Sort(node->p, 0, high - low, &YLess, &YMore);
-	node->root = BuildY(low, high, node->p);
+	node->root = BuildY(0, high - low, node->p);
 	if (low != high) {
 		std::size_t mid = (low + high) >> 1;
 		node->coord = points[mid].coord;
