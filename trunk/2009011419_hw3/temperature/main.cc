@@ -71,7 +71,12 @@ inline Temp::Info Temp::YRangeInfo(int const y1, int const y2, RangeTree<int, In
 		return info;
 	}
 	if (!node->lc && !node->rc) {
-		return node->point->data;
+		if (node->point->coord.y <= y2 && node->point->coord.y >= y1) {
+			return node->point->data;
+		}
+		else {
+			return info;
+		}
 	}
 	RangeTree<int, Info>::YNodePtr node1 = node->lc;
 	while (node1 && (node1->lc || node1->rc)) {
@@ -90,7 +95,7 @@ inline Temp::Info Temp::YRangeInfo(int const y1, int const y2, RangeTree<int, In
 	}
 	node1 = node->rc;
 	while (node1 && (node1->rc || node1->lc)) {
-		if (y1 > node1->point->coord.y) {
+		if (y2 >= node1->point->coord.y) {
 			if (node1->lc) {
 				info = info + node1->lc->point->data;
 			}
@@ -109,7 +114,9 @@ inline Temp::Info Temp::YRangeInfo(int const y1, int const y2, RangeTree<int, In
 inline int Temp::Average(int const x1, int const x2, int const y1, int const y2, RangeTree<int, Info>::XNodePtr const split) const {
 	Info info;
 	if (!split->lc && !split->rc) {
-		info = YRangeInfo(y1, y2, split);
+		if (split->coord.x >= x1 && split->coord.x <= x2) {
+			info = YRangeInfo(y1, y2, split);
+		}
 		return info.Average();
 	}
 	RangeTree<int, Info>::XNodePtr node1 = split->lc;
@@ -126,13 +133,13 @@ inline int Temp::Average(int const x1, int const x2, int const y1, int const y2,
 			node1 = node1->rc;
 		}
 	}
-	if (node1 && (node1->coord.x >= x1 && node1->coord.x <= x2) && (node1->coord.y >= y1) && (node1->coord.y <= y2)) {
+	if (node1 && (node1->coord.x >= x1 && node1->coord.x <= x2)) {
 		tmp = YRangeInfo(y1, y2, node1);
 		info = tmp + info;
 	}
 	node1 = split->rc;
 	while (node1 && (node1->lc || node1->rc)) {
-		if (x2 > node1->coord.x) {
+		if (x2 >= node1->coord.x) {
 			if (node1->lc) {
 				tmp = YRangeInfo(y1, y2, node1->lc);
 				info = info + tmp;
@@ -143,7 +150,7 @@ inline int Temp::Average(int const x1, int const x2, int const y1, int const y2,
 			node1 = node1->lc;
 		}
 	}
-	if (node1 && (node1->coord.x >= x1 && node1->coord.x <= x2) && (node1->coord.y >= y1) && (node1->coord.y <= y2)) {
+	if (node1 && (node1->coord.x >= x1 && node1->coord.x <= x2)) {
 		tmp = YRangeInfo(y1, y2, node1);
 		info = tmp + info;
 	}
