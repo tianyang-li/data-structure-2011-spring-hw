@@ -54,7 +54,7 @@ private:
 inline RangeTree<int, Temp::Info>::YNodePtr Temp::YFindSplit(int const y1, int const y2, RangeTree<int, Info>::YNodePtr const root) const {
 	RangeTree<int, Info>::YNodePtr node = root;
 	while (node && ((y2 < node->point->coord.y) || (y1 > node->point->coord.y)) && (node->lc || node->rc)) {
-		if (y2 < node->point->coord.x) {
+		if (y2 < node->point->coord.y) {
 			node = node->lc;
 		}
 		else {
