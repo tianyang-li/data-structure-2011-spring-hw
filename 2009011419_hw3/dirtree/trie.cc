@@ -87,8 +87,18 @@ private:
 public:
 	Dir *root;
 
-	inline DirTree() {
+	inline DirTree() : indent(-1) {
 		root = new (nothrow) Dir;
+		int j;
+		for (int i = 0; i != (kMaxLen >> 1); ++i) {
+			j = 0;
+			while (j != i) {
+				space[i][j << 1] = ' ';
+				space[i][(j << 1) + 1] = ' ';
+				++j;
+			}
+			space[i][j << 1] = '\0';
+		}
 	}
 
 	inline ~DirTree() {
@@ -100,10 +110,12 @@ public:
 		cin >> n;
 		char inp[kMaxLen];
 		char dir[kMaxLen];
-		Dir *cur = root;
+		Dir *cur;
+		int a, b;
 		for (int i = 0; i != n; ++i) {
 			scanf("%s", inp);
-			int a = 0, b = 0;
+			a = 0, b = 0;
+			cur = root;
 			while ('\0' != inp[a]) {
 				if ('/' == inp[a]) {
 					dir[b] = '\0';
@@ -121,7 +133,12 @@ public:
 		}
 	}
 
+	inline void Proc(Dir *const cur) {
+	}
+
 private:
+	char space[kMaxLen >> 1][kMaxLen];
+	int indent;
 };
 
 char const DirTree::Dir::Trie::char_set[] = {'-', '.'
@@ -149,6 +166,7 @@ int const DirTree::Dir::Trie::char_map[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 int main() {
 	DirTree dir;
 	dir.Init();
+	dir.Proc(dir.root);
 	return 0;
 }
 
