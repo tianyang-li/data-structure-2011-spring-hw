@@ -13,7 +13,7 @@ private:
 		class Trie {
 		public:
 			static char const char_set[];
-			static int const char_map[128];
+			static int const char_map[];
 
 			Dir *subdir;
 

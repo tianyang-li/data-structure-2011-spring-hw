@@ -127,10 +127,6 @@ private:
 		}
 
 		RBTree<Path> dat;  // contents in dir
-
-		inline void ls() {  // similar to Linux command ls. list dat in dir
-
-		}
 	private:
 	};
 
