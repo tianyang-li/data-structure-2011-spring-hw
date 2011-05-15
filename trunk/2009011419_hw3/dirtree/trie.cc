@@ -134,6 +134,8 @@ public:
 	}
 
 	inline void Proc(Dir *const cur) {
+		++indent;
+		--indent;
 	}
 
 private:
