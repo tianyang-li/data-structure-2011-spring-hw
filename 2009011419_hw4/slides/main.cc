@@ -1,18 +1,26 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#include <cstddef>
 
 using namespace std;
 
 class Slides {
 public:
+	template <class T>
 	struct Node {
-		Node *prev, *next;
-		int ind;  // index of mate
-		Node *mate;
+		Node<T> *prev, *next;
+		T data;
 
-		inline Node() : prev(NULL), next(NULL), mate(NULL) {
+		inline Node() : prev(NULL), next(NULL) {
 		}
+	};
+
+	typedef int Index;
+
+	struct Mate {
+		Index mate_ind;
+		Node<Mate> *mate_ptr;
 	};
 
 	struct Tuple {
@@ -22,14 +30,15 @@ public:
 	struct Label {
 		Tuple coord;
 		int deg;  // "degree" of label -- number of pieces it lies on
-		Node *list;
+		Node<Mate> *list, *tail;
 
 		inline Label() : deg(0) {
-			list = new (nothrow) Node;
+			list = new (nothrow) Node<Mate>;
+			tail = list;
 		}
 
 		inline ~Label() {
-			Node *tmp1 = list, *tmp2 = list->next;
+			Node<Mate> *tmp1 = list, *tmp2 = list->next;
 			while (tmp1) {
 				delete tmp1;
 				tmp1 = tmp2;
@@ -44,14 +53,15 @@ public:
 		Tuple ll, ur;  // lower left, upper right
 		int ind;  // index of this piece
 		int page;  // page number on this piece, not determined until later
-		Node *list;
+		Node<Mate> *list, *tail;
 
 		inline Piece() {
-			list = new (nothrow) Node;
+			list = new (nothrow) Node<Mate>;
+			tail = list;
 		}
 
 		inline ~Piece() {
-			Node *tmp1 = list, *tmp2 = list->next;
+			Node<Mate> *tmp1 = list, *tmp2 = list->next;
 			while (tmp1) {
 				delete tmp1;
 				tmp1 = tmp2;
@@ -69,11 +79,53 @@ public:
 	inline Slides();
 	inline ~Slides();
 
+	inline void Proc();
+
 private:
 	int n;
 	Label *lab;  // labels on slides
 	Piece *pc;  // pieces of slides
+	Node<Index> *one;  // list of Label on only one Piece
+
+	inline Node<Index> *GetOne() {
+		Node<Index> *tmp = one->next;
+		one->next = tmp->next;
+		if (tmp->next) {
+			tmp->next->prev = one;
+		}
+		return tmp;
+	}
+
+	inline void InsertOne(Index const ind) {
+		Node<Index> *tmp = new (nothrow) Node<Index>;
+		tmp->data = ind;
+		tmp->prev = one;
+		tmp->next = one->next;
+		one->next = tmp;
+	}
 };
+
+inline void Slides::Proc() {
+	for (int i = 0; i != n; ++i) {
+		if (0 == lab[i].deg) {
+			cout << -1 << endl;
+			return;
+		}
+		InsertOne(i);
+	}
+	int unproc = n;  // # of unprocessed labels
+	while ((0 != unproc) && (NULL != one->next)) {
+		Node<Index> *tmp = GetOne();
+		delete tmp;
+	}
+	if (NULL == one->next) {
+		cout << -1 << endl;
+		return;
+	}
+	for (int i = 0; i != n; ++i) {
+		printf("%d %d\n", i + 1, pc[i].ind + 1);
+	}
+}
 
 inline Slides::Slides() {
 	cin >> n;
@@ -88,19 +140,34 @@ inline Slides::Slides() {
 		for (int j = 0; j != n; ++j) {
 			if (pc[j].On(lab[i].coord)) {
 				++lab[i].deg;
-				Node *lab_node = new (nothrow) Node, *pc_node = new (nothrow) Node;
-				lab_node->ind = j;  // new node in Label point to Piece j
-				pc_node->ind = i;  // new node in Piece point to Label i
-				lab_node->mate = pc_node;
-				pc_node->mate = lab_node;
+				Node<Mate> *lab_node = new (nothrow) Node<Mate>, *pc_node = new (nothrow) Node<Mate>;
+				lab_node->data.mate_ind = j;  // new node in Label point to Piece j
+				pc_node->data.mate_ind = i;  // new node in Piece point to Label i
+				lab_node->data.mate_ptr = pc_node;
+				pc_node->data.mate_ptr = lab_node;
+				lab[i].tail->next = lab_node;
+				lab_node->prev = lab[i].tail;
+				lab[i].tail = lab_node;
+				pc[j].tail->next = pc_node;
+				pc_node->prev = pc[j].tail;
+				pc[j].tail = pc_node;
 			}
 		}
 	}
+	one = new (nothrow) Node<Index>;
 }
 
 inline Slides::~Slides() {
 	delete [] lab;
 	delete [] pc;
+	Node<Index> *tmp1 = one, *tmp2 = one->next;
+	while (tmp1) {
+		delete tmp1;
+		tmp1 = tmp2;
+		if (tmp1) {
+			tmp2 = tmp1->next;
+		}
+	}
 }
 
 int main() {
