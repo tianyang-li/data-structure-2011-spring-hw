@@ -88,6 +88,11 @@ inline Slides::Slides() {
 		for (int j = 0; j != n; ++j) {
 			if (pc[j].On(lab[i].coord)) {
 				++lab[i].deg;
+				Node *lab_node = new (nothrow) Node, *pc_node = new (nothrow) Node;
+				lab_node->ind = j;  // new node in Label point to Piece j
+				pc_node->ind = i;  // new node in Piece point to Label i
+				lab_node->mate = pc_node;
+				pc_node->mate = lab_node;
 			}
 		}
 	}
