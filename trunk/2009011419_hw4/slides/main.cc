@@ -103,6 +103,37 @@ private:
 		tmp->next = one->next;
 		one->next = tmp;
 	}
+
+	inline bool IdSlide(Node<Index> *const label) {  // identify the slide with this label
+		Index pc_id = lab[label->data].list->next->data.mate_ind;
+		pc[pc_id].ind = label->data;
+		Node<Mate> *tmp = pc[pc_id].list->next;
+		if (!tmp) {
+			return false;
+		}
+		while (tmp) {
+			Index tmp_ind = tmp->data.mate_ind;
+			--lab[tmp_ind].deg;
+			if (1 == lab[tmp_ind].deg) {
+				InsertOne(tmp_ind);
+			}
+			else {
+				if ((0 >= lab[tmp_ind].deg) && (label->data != tmp_ind)) {
+					return false;
+				}
+			}
+			Node<Mate> *tmp1 = tmp->data.mate_ptr;
+			tmp1->prev->next = tmp1->next;
+			if (tmp1->next) {
+				tmp1->next->prev = tmp1->prev;
+			}
+			delete tmp1;
+			Node<Mate> *tmp2 = tmp;
+			tmp = tmp->next;
+			delete tmp2;
+		}
+		return true;
+	}
 };
 
 inline void Slides::Proc() {
@@ -111,14 +142,21 @@ inline void Slides::Proc() {
 			cout << -1 << endl;
 			return;
 		}
-		InsertOne(i);
+		if (1 == lab[i].deg) {
+			InsertOne(i);
+		}
 	}
 	int unproc = n;  // # of unprocessed labels
 	while ((0 != unproc) && (NULL != one->next)) {
 		Node<Index> *tmp = GetOne();
+		if (!IdSlide(tmp)) {
+			cout << -1 << endl;
+			return;
+		}
 		delete tmp;
+		--unproc;
 	}
-	if (NULL == one->next) {
+	if (0 != unproc) {
 		cout << -1 << endl;
 		return;
 	}
@@ -172,5 +210,6 @@ inline Slides::~Slides() {
 
 int main() {
 	Slides slides;
+	slides.Proc();
 	return 0;
 }
