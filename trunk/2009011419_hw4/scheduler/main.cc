@@ -2,16 +2,22 @@
 #include <cstdio>
 #include <cstdlib>
 #include <new>
+#include <stdint.h>
+
+#include "priority-queue.h"
 
 using namespace std;
 
 class Scheduler {
+	typedef uint32_t Prior;
+
 public:
 	inline Scheduler();
 	inline ~Scheduler();
 
 private:
-	int n, m;
+	uint32_t n, m;
+	PrQue<Prior> task;
 };
 
 inline Scheduler::Scheduler() {

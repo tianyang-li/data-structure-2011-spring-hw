@@ -7,6 +7,11 @@
 template <class T>
 class PrQue {
 public:
+	inline PrQue() : size(0) {
+	}
+
+	inline ~PrQue() {
+	}
 private:
 	std::size_t size;
 };
