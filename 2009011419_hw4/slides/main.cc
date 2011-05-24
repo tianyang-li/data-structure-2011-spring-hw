@@ -30,11 +30,10 @@ public:
 	struct Label {
 		Tuple coord;
 		int deg;  // "degree" of label -- number of pieces it lies on
-		Node<Mate> *list, *tail;
+		Node<Mate> *list;
 
 		inline Label() : deg(0) {
 			list = new (nothrow) Node<Mate>;
-			tail = list;
 		}
 
 		inline ~Label() {
@@ -53,11 +52,10 @@ public:
 		Tuple ll, ur;  // lower left, upper right
 		int ind;  // index of this piece
 		int page;  // page number on this piece, not determined until later
-		Node<Mate> *list, *tail;
+		Node<Mate> *list;
 
 		inline Piece() {
 			list = new (nothrow) Node<Mate>;
-			tail = list;
 		}
 
 		inline ~Piece() {
@@ -183,12 +181,18 @@ inline Slides::Slides() {
 				pc_node->data.mate_ind = i;  // new node in Piece point to Label i
 				lab_node->data.mate_ptr = pc_node;
 				pc_node->data.mate_ptr = lab_node;
-				lab[i].tail->next = lab_node;
-				lab_node->prev = lab[i].tail;
-				lab[i].tail = lab_node;
-				pc[j].tail->next = pc_node;
-				pc_node->prev = pc[j].tail;
-				pc[j].tail = pc_node;
+				lab_node->prev = lab[i].list;
+				lab_node->next = lab[i].list->next;
+				if (lab[i].list->next) {
+					lab[i].list->next->prev = lab_node;
+				}
+				lab[i].list->next = lab_node;
+				pc_node->prev = pc[j].list;
+				pc_node->next = pc[j].list->next;
+				if (pc[j].list->next) {
+					pc[j].list->next->prev = pc_node;
+				}
+				pc[j].list->next = pc_node;
 			}
 		}
 	}
