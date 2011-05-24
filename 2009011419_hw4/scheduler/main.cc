@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include <stdint.h>
+#include <new>
 
 using namespace std;
 
@@ -11,11 +11,11 @@ public:
 	inline ~Scheduler();
 
 private:
-	uint64_t n, m;
+	int n, m;
 };
 
 inline Scheduler::Scheduler() {
-	cin >> n, m;
+	cin >> n >> m;
 }
 
 inline Scheduler::~Scheduler() {
