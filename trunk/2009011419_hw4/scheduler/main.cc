@@ -33,6 +33,26 @@ private:
 			}
 			return *this;
 		}
+
+		inline bool operator<(Task const &x) {
+			if (pr < x.pr) {
+				return true;
+			}
+			size_t i = 0;
+			while ((x.ID[i] != '\0') && (ID[i] != '\0')) {
+				if (ID[i] < x.ID[i]) {
+					return true;
+				}
+				if (ID[i] > x.ID[i]) {
+					return false;
+				}
+				++i;
+			}
+			if (x.ID[i] > ID[i]) {
+				return true;
+			}
+			return false;
+		}
 	};
 
 	static size_t const kMaxNameLen = 9;  // max length for program names
