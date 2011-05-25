@@ -14,8 +14,25 @@ private:
 	typedef uint32_t Prior;
 
 	struct Task {
-		size_t ID;  // program's ID
+		char *ID;  // program's ID
 		Prior pr;
+
+		inline Task(Task const &x) : ID(x.ID), pr(x.pr) {
+		}
+
+		inline Task() {
+		}
+
+		inline ~Task() {
+		}
+
+		inline Task &operator=(Task const &x) {
+			if (this != &x) {
+				ID = x.ID;
+				pr = x.pr;
+			}
+			return *this;
+		}
 	};
 
 	static size_t const kMaxNameLen = 9;  // max length for program names
@@ -26,8 +43,9 @@ public:
 
 	inline void Proc() {
 		for (size_t i = 0; (i != m) && (0 != task_queue.size); ++i) {
+			// XXX: optimize it here?
 			Task tmp0 = task_queue.data[0];
-			printf("%s\n", task[tmp0.ID]);
+			printf("%s\n", tmp0.ID);
 			task_queue.Pop();
 			if (!QuitSched(tmp0.pr)) {
 				task_queue.Insert(tmp0);
@@ -59,7 +77,7 @@ inline Scheduler::Scheduler() {
 	for (size_t i = 0; i != n; ++i) {
 		task[i] = new (nothrow) char[kMaxNameLen];
 		scanf("%d %s", &tmp0.pr, task[i]);
-		tmp0.ID = i;
+		tmp0.ID = task[i];
 
 	}
 }
