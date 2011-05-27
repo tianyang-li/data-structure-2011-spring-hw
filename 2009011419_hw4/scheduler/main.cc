@@ -63,7 +63,6 @@ public:
 
 	inline void Proc() {
 		for (size_t i = 0; (i != m) && (0 != task_queue.size); ++i) {
-			// XXX: optimize it here?
 			Task tmp0 = task_queue.data[0];
 			printf("%s\n", tmp0.ID);
 			task_queue.Pop();
