@@ -38,6 +38,9 @@ private:
 			if (pr < x.pr) {
 				return true;
 			}
+			if (pr > x.pr) {
+				return false;
+			}
 			size_t i = 0;
 			while ((x.ID[i] != '\0') && (ID[i] != '\0')) {
 				if (ID[i] < x.ID[i]) {
@@ -80,7 +83,7 @@ private:
 	inline bool QuitSched(Prior &pr) {
 		// determine if pr should quit scheduling or continue, pr is modified
 		// true if should quit, else false
-		if (0 != (0x8000000 & pr)) {
+		if (0 != (0x80000000 & pr)) {
 			return true;
 		}
 		pr = pr << 1;
@@ -95,9 +98,9 @@ inline Scheduler::Scheduler() {
 	Task tmp0;
 	for (size_t i = 0; i != n; ++i) {
 		task[i] = new (nothrow) char[kMaxNameLen];
-		scanf("%d %s", &tmp0.pr, task[i]);
+		scanf("%u %s", &tmp0.pr, task[i]);
 		tmp0.ID = task[i];
-
+		task_queue.Insert(tmp0);
 	}
 }
 
@@ -110,5 +113,6 @@ inline Scheduler::~Scheduler() {
 
 int main() {
 	Scheduler sched;
+	sched.Proc();
 	return 0;
 }
