@@ -7,6 +7,7 @@
 
 int main() {
 	PrQue<int> test;
+	test.SetSize(0x1000);
 	while (true) {
 		char a;
 		int val;
@@ -14,10 +15,11 @@ int main() {
 		switch (a) {
 		case 'a':
 			scanf("%d", &val);
+			test.Insert(val);
 			break;
 		case 'p':
 			if (test.size) {
-				printf("%d", test.data[0]);
+				printf("%d\n", test.data[0]);
 				test.Pop();
 			}
 			break;
