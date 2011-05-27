@@ -4,6 +4,7 @@
 #include <new>
 #include <stdint.h>
 #include <cstddef>
+#include <cstring>
 
 #include "priority-queue.h"
 
@@ -41,17 +42,7 @@ private:
 			if (pr > x.pr) {
 				return false;
 			}
-			size_t i = 0;
-			while ((x.ID[i] != '\0') && (ID[i] != '\0')) {
-				if (ID[i] < x.ID[i]) {
-					return true;
-				}
-				if (ID[i] > x.ID[i]) {
-					return false;
-				}
-				++i;
-			}
-			if (x.ID[i] > ID[i]) {
+			if (strcmp(ID, x.ID) < 0) {
 				return true;
 			}
 			return false;
@@ -67,7 +58,7 @@ public:
 	inline void Proc() {
 		for (size_t i = 0; (i != m) && (0 != task_queue.size); ++i) {
 			Task tmp0 = task_queue.data[0];
-			printf("%u#%s\n", tmp0.pr, tmp0.ID);
+			printf("%s\n", tmp0.ID);
 			task_queue.Pop();
 			if (!QuitSched(tmp0.pr)) {
 				task_queue.Insert(tmp0);
