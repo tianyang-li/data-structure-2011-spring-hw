@@ -31,7 +31,7 @@ public:
 	std::size_t size;
 	T *data;
 
-	inline PrQue() {
+	inline PrQue() : size(0) {
 	}
 
 	inline ~PrQue() {
@@ -39,7 +39,6 @@ public:
 	}
 
 	inline void SetSize(std::size_t const new_size) {
-		size = new_size;
 		data = new (std::nothrow) T[new_size];  // XXX: error detection
 	}
 
@@ -54,14 +53,11 @@ public:
 	}
 
 	inline void Pop() { // remove top
-		data[0] = data[size];
 		--size;
-		std::size_t l, r, smallest, cur = 0;
+		data[0] = data[size];
+		std::size_t l, r, smallest = 0, cur = 0;
 		if ((1 < size) && (data[1] < data[0])) {
 			smallest = 1;
-		}
-		else {
-			smallest = 0;
 		}
 		if ((2 < size) && (data[2] < data[smallest])) {
 			smallest = 2;
