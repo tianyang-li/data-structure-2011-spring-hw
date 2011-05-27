@@ -44,12 +44,47 @@ public:
 	}
 
 	inline void Insert(T const &new_data) {
+		data[size] = new_data;
+		std::size_t cur = size;
+		while ((cur > 0) && (data[cur] < data[cur >> 1])) {
+			PQSwap(data[cur], data[cur >> 1]);
+			cur = cur >> 1;
+		}
 		++size;
 	}
 
-	inline std::size_t Pop() { // remove top
+	inline void Pop() { // remove top
+		data[0] = data[size];
 		--size;
-		return (size + 1);
+		std::size_t l, r, smallest, cur = 0;
+		if ((1 < size) && (data[1] < data[0])) {
+			smallest = 1;
+		}
+		else {
+			smallest = 0;
+		}
+		if ((2 < size) && (data[2] < data[smallest])) {
+			smallest = 2;
+		}
+		while (smallest != cur) {
+			PQSwap(data[cur], data[smallest]);
+			cur = smallest;
+			l = (cur << 1) + 1;
+			r = (cur << 1) + 2;
+			if ((l < size) && (data[l] < data[smallest])) {
+				smallest = l;
+			}
+			if ((r < size) && (data[r] < data[smallest])) {
+				smallest = r;
+			}
+		}
+	}
+
+private:
+	inline void PQSwap(T &x, T &y) {
+		T tmp = x;
+		x = y;
+		y = tmp;
 	}
 };
 
