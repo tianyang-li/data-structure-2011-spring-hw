@@ -1,11 +1,8 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <new>
-#include <stdint.h>
-#include <cstddef>
+#ifdef BRUTE_FORCE
 
-#include "priority-queue.h"
+#include <cstdio>
+#include <iostream>
+#include <stdint.h>
 
 using namespace std;
 
@@ -65,19 +62,13 @@ public:
 	inline ~Scheduler();
 
 	inline void Proc() {
-		for (size_t i = 0; (i != m) && (0 != task_queue.size); ++i) {
-			Task tmp0 = task_queue.data[0];
-			printf("%s\n", tmp0.ID);
-			task_queue.Pop();
-			if (!QuitSched(tmp0.pr)) {
-				task_queue.Insert(tmp0);
-			}
+		for (size_t i = 0; i != m; ++i) {
+			cout << 1 << endl;
 		}
 	}
 
 private:
 	size_t n, m;
-	PrQue<Task> task_queue;
 	char **task;
 
 	inline bool QuitSched(Prior &pr) {
@@ -93,14 +84,12 @@ private:
 
 inline Scheduler::Scheduler() {
 	cin >> n >> m;
-	task_queue.SetSize(n);
 	task = new (nothrow) char *[n];
 	Task tmp0;
 	for (size_t i = 0; i != n; ++i) {
 		task[i] = new (nothrow) char[kMaxNameLen];
 		scanf("%u %s", &tmp0.pr, task[i]);
 		tmp0.ID = task[i];
-		task_queue.Insert(tmp0);
 	}
 }
 
@@ -116,3 +105,5 @@ int main() {
 	sched.Proc();
 	return 0;
 }
+
+#endif
