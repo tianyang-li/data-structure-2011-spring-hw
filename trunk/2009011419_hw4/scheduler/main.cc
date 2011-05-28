@@ -69,7 +69,7 @@ public:
 			Task tmp0 = task_queue.data[0];
 			printf("%s\n", tmp0.ID);
 			task_queue.Pop();
-			if (!QuitSched(tmp0.pr)) {
+			if (!QuitSched(tmp0)) {
 				task_queue.Insert(tmp0);
 			}
 		}
@@ -80,13 +80,13 @@ private:
 	PrQue<Task> task_queue;
 	char **task;
 
-	inline bool QuitSched(Prior &pr) {
+	inline bool QuitSched(Task &p) {
 		// determine if pr should quit scheduling or continue, pr is modified
 		// true if should quit, else false
-		if (0 != (0x80000000 & pr)) {
+		if (0 != (0x80000000 & p.pr)) {
 			return true;
 		}
-		pr = pr << 1;
+		p.pr = p.pr << 1;
 		return false;
 	}
 };
