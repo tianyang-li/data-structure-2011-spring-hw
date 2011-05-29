@@ -21,6 +21,9 @@ struct Node {
 };
 
 class Navigator {
+	class CityHandle;
+	friend class PrQue<CityHandle>;
+
 	typedef int Dist;
 
 	struct Road {
@@ -38,6 +41,7 @@ class Navigator {
 		int prev_price;
 		int gas_price;
 		Node<Road> *road;
+		int index;  // index of CityHandle
 
 		inline City() {
 			road = new (nothrow) Node<Road>;
@@ -71,6 +75,7 @@ class Navigator {
 
 	struct CityHandle {
 		City *city;
+		int index;
 
 		inline CityHandle() {
 		}
@@ -101,6 +106,7 @@ public:
 		cities = new (nothrow) City[n];
 		for (int i = 0; i != n; ++i) {
 			scanf("%d", &cities[i].gas_price);
+			min_que.data[i].index = i;
 		}
 		int c1, c2, d;
 		for (int i = 0; i != m; ++i) {
@@ -118,7 +124,7 @@ public:
 		int q;
 		cin >> q;
 		int c, s, t;
-		for (int i = 0; i != 1; ++i) {
+		for (int i = 0; i != q; ++i) {
 			scanf("%d %d %d", &c, &s, &t);
 			printf("%d\n", Query(c, s, t));
 		}
@@ -182,7 +188,19 @@ private:
 		}
 		return ((kInfCost == cities[t].cost) ? -1 : cities[t].cost);
 	}
+
+	inline void DecCost(int const cur) {  // adjust heap after decreasing cities[cur].cost
+	}
 };
+
+template <>
+void PrQue<Navigator::CityHandle>::PQSwap(Navigator::CityHandle &x, Navigator::CityHandle &y) {
+	Navigator::City *tmp = x.city;
+	x.city = y.city;
+	y.city = tmp;
+	x.city->index = x.index;
+	y.city->index = y.index;
+}
 
 int main() {
 	Navigator nav;
