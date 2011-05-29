@@ -54,7 +54,7 @@ public:
 
 	inline void Pop() { // remove top
 		--size;
-		data[0] = data[size];
+		PQSwap(data[0], data[size]);
 		std::size_t l, r, smallest = 0, cur = 0;
 		if ((1 < size) && (data[1] < data[0])) {
 			smallest = 1;
@@ -76,7 +76,6 @@ public:
 		}
 	}
 
-private:
 	inline void PQSwap(T &x, T &y) {
 		T tmp = x;
 		x = y;
