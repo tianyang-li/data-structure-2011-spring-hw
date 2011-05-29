@@ -23,6 +23,24 @@ struct Node {
 class Navigator {
 	typedef int Cost;
 
+	struct City {
+		Cost cost;
+		int cap_rem;  // remaining capacity
+		int prev_price;
+
+		inline bool operator<(City const &x) const {
+			return (cost < x.cost);
+		}
+	};
+
+	struct CityHandle {
+		City *city;
+
+		inline bool operator<(CityHandle const &x) const {
+			return (*city < *x.city);
+		}
+	};
+
 public:
 	inline Navigator() {
 	}

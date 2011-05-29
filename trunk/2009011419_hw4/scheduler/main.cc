@@ -34,7 +34,7 @@ private:
 			return *this;
 		}
 
-		inline bool operator<(Task const &x) {
+		inline bool operator<(Task const &x) const {
 			if (pr < x.pr) {
 				return true;
 			}
