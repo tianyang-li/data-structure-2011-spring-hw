@@ -45,9 +45,9 @@ public:
 	inline void Insert(T const &new_data) {
 		data[size] = new_data;
 		std::size_t cur = size;
-		while ((cur > 0) && (data[cur] < data[cur >> 1])) {
-			PQSwap(data[cur], data[cur >> 1]);
-			cur = cur >> 1;
+		while ((cur > 0) && (data[cur] < data[((cur + 1) >> 1) - 1])) {
+			PQSwap(data[cur], data[((cur + 1) >> 1) - 1]);
+			cur = ((cur + 1) >> 1) - 1;
 		}
 		++size;
 	}

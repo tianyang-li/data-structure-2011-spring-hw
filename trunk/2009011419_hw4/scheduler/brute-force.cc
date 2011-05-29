@@ -76,7 +76,7 @@ public:
 		Task tmp0;
 		for (size_t i = 0; (i != m) && sched->next; ++i) {
 			tmp0 = GetMin();
-			printf("%s\n", tmp0.ID);
+			printf("%u#%s\n", tmp0.pr, tmp0.ID);
 			if (!QuitSched(tmp0)) {
 				PutIn(tmp0);
 			}
