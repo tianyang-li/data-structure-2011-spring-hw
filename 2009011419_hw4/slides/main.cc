@@ -37,13 +37,11 @@ public:
 		}
 
 		inline ~Label() {
-			Node<Mate> *tmp1 = list, *tmp2 = list->next;
+			Node<Mate> *tmp1 = list, *tmp2;
 			while (tmp1) {
-				delete tmp1;
-				tmp1 = tmp2;
-				if (tmp1) {
-					tmp2 = tmp1->next;
-				}
+				tmp2 = tmp1;
+				tmp1 = tmp1->next;
+				delete tmp2;
 			}
 		}
 	};
@@ -59,13 +57,11 @@ public:
 		}
 
 		inline ~Piece() {
-			Node<Mate> *tmp1 = list, *tmp2 = list->next;
+			Node<Mate> *tmp1 = list, *tmp2;
 			while (tmp1) {
-				delete tmp1;
-				tmp1 = tmp2;
-				if (tmp1) {
-					tmp2 = tmp1->next;
-				}
+				tmp2 = tmp1;
+				tmp1 = tmp1->next;
+				delete tmp2;
 			}
 		}
 
