@@ -104,7 +104,25 @@ private:
 			cities[i].InitCost();
 		}
 		cities[s].cost = 0;
+		DFS(c, s, t, 0, cities[s].gas_price);
 		return ((kInfCost == cities[t].cost) ? -1 : cities[t].cost);
+	}
+
+	inline void DFS(int const c, int const s, int const t
+			, int const d /* distance from s to the nearest and cheapest city */
+			, int const pc /* corresponding previous city of d */) {
+		if (s == t) {
+			return;
+		}
+		Node<Road> *adj = cities[s].road->next;
+		while (adj) {
+			if (c >= adj->data.d) {
+				if (cities[pc].gas_price >= cities[s].gas_price) {
+					DFS(c, adj->data.to, t, adj->data.d, s);
+				}
+			}
+			adj = adj->next;
+		}
 	}
 };
 
