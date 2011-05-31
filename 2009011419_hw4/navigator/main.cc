@@ -4,8 +4,6 @@
 #include <cstddef>
 #include <new>
 
-#include "priority-queue.h"
-
 using namespace std;
 
 template <class T>
@@ -21,9 +19,6 @@ struct Node {
 };
 
 class Navigator {
-	struct CityHandle;
-	friend class PrQue<CityHandle>;
-
 	typedef int Dist;
 
 	struct Road {
@@ -37,11 +32,8 @@ class Navigator {
 
 	struct City {
 		Cost cost;
-		int cap_rem;  // remaining capacity
-		int prev_price;
 		int gas_price;
 		Node<Road> *road;
-		int index;  // index of CityHandle
 
 		inline City() {
 			road = new (nothrow) Node<Road>;
@@ -73,37 +65,10 @@ class Navigator {
 		}
 	};
 
-	struct CityHandle {
-		City *city;
-		int index;
-
-		inline CityHandle() {
-		}
-
-		inline ~CityHandle() {
-		}
-
-		inline CityHandle &operator=(CityHandle const &x) {
-			if (this != &x) {
-				city = x.city;
-				index = x.index;
-			}
-			return *this;
-		}
-
-		inline CityHandle(CityHandle const &x) : city(x.city), index(x.index) {
-		}
-
-		inline bool operator<(CityHandle const &x) const {
-			return (*city < *x.city);
-		}
-	};
-
 public:
 	inline Navigator() {
 		int m;
 		cin >> n >> m;
-		min_que.SetSize(n);
 		cities = new (nothrow) City[n];
 		for (int i = 0; i != n; ++i) {
 			scanf("%d", &cities[i].gas_price);
@@ -133,86 +98,15 @@ public:
 private:
 	int n;  // # of cities
 	City *cities;
-	PrQue<CityHandle> min_que;
 
 	inline Cost Query(int const c, int const s, int const t) {
 		for (int i = 0; i != n; ++i) {
 			cities[i].InitCost();
 		}
 		cities[s].cost = 0;
-		cities[s].cap_rem = 0;
-		cities[s].prev_price = kInfCost;
-		CityHandle ct_hdl;
-		for (int i = 0; i != n; ++i) {
-			ct_hdl.city = &cities[i];
-			ct_hdl.index = i;
-			cities[i].index = i;
-			min_que.Insert(ct_hdl);
-		}
-		while (0 != min_que.size) {
-			ct_hdl = min_que.data[0];
-			min_que.Pop();
-			Node<Road> *adj = ct_hdl.city->road->next;
-			Cost new_cost;
-			while (adj) {
-				if (c >= adj->data.d) {
-					new_cost = ct_hdl.city->cost;
-					if ((0 != ct_hdl.city->cap_rem) && (ct_hdl.city->gas_price > ct_hdl.city->prev_price)) {
-						if (ct_hdl.city->cap_rem >= adj->data.d) {
-							new_cost += (adj->data.d * ct_hdl.city->prev_price);
-							if (new_cost < cities[adj->data.to].cost) {
-								cities[adj->data.to].cap_rem = ct_hdl.city->cap_rem - adj->data.d;
-								cities[adj->data.to].prev_price = ct_hdl.city->prev_price;
-								cities[adj->data.to].cost = new_cost;
-								DecCost(adj->data.to);
-							}
-						}
-						else {
-							new_cost += ((adj->data.d - ct_hdl.city->cap_rem) * ct_hdl.city->gas_price
-									+ ct_hdl.city->cap_rem * ct_hdl.city->prev_price);
-							if (new_cost < cities[adj->data.to].cost) {
-								cities[adj->data.to].cap_rem = c - (adj->data.d - ct_hdl.city->cap_rem);
-								cities[adj->data.to].prev_price = ct_hdl.city->gas_price;
-								cities[adj->data.to].cost = new_cost;
-								DecCost(adj->data.to);
-							}
-						}
-					}
-					else {
-						new_cost += (adj->data.d * ct_hdl.city->gas_price);
-						if (new_cost < cities[adj->data.to].cost) {
-							cities[adj->data.to].prev_price = ct_hdl.city->gas_price;
-							cities[adj->data.to].cap_rem = c - adj->data.d;
-							cities[adj->data.to].cost = new_cost;
-							DecCost(adj->data.to);
-						}
-					}
-				}
-				adj = adj->next;
-			}
-		}
 		return ((kInfCost == cities[t].cost) ? -1 : cities[t].cost);
 	}
-
-	inline void DecCost(int const cur);
 };
-
-template <>
-inline void PrQue<Navigator::CityHandle>::PQSwap(Navigator::CityHandle &x, Navigator::CityHandle &y) {
-	Navigator::City *tmp = x.city;
-	x.city = y.city;
-	y.city = tmp;
-	x.city->index = x.index;
-	y.city->index = y.index;
-}
-
-inline void Navigator::DecCost(int const cur) {  // adjust heap after decreasing cities[cur].cost
-	int index = cities[cur].index;
-	while ((index > 0) && (min_que.data[index] < min_que.data[((index + 1) >> 1) - 1])) {
-		min_que.PQSwap(min_que.data[index], min_que.data[((index + 1) >> 1) - 1]);
-		index = ((index + 1) >> 1) - 1;
-	}
-}
 
 int main() {
 	Navigator nav;
