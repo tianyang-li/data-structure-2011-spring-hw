@@ -113,10 +113,10 @@ private:
 	inline void DFS(int const c, int const s, int const t
 			, int const d /* distance from s to the nearest and cheapest city */
 			, int const pc /* corresponding previous city of d */) {
-		if (s == t) {
+		if (cities[s].visited) {
 			return;
 		}
-		if (cities[s].visited) {
+		if (s == t) {
 			return;
 		}
 		cities[s].visited = true;
