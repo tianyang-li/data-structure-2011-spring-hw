@@ -34,6 +34,7 @@ class Navigator {
 		Cost cost;
 		int gas_price;
 		Node<Road> *road;
+		bool visited;
 
 		inline City() {
 			road = new (nothrow) Node<Road>;
@@ -54,6 +55,7 @@ class Navigator {
 
 		inline void InitCost() {
 			cost = kInfCost;
+			visited = false;
 		}
 
 		inline void AddRoad(int const to, Dist const d) {
@@ -104,7 +106,7 @@ private:
 			cities[i].InitCost();
 		}
 		cities[s].cost = 0;
-		DFS(c, s, t, 0, cities[s].gas_price);
+		DFS(c, s, t, 0, s);
 		return ((kInfCost == cities[t].cost) ? -1 : cities[t].cost);
 	}
 
@@ -114,15 +116,43 @@ private:
 		if (s == t) {
 			return;
 		}
+		if (cities[s].visited) {
+			return;
+		}
+		cities[s].visited = true;
 		Node<Road> *adj = cities[s].road->next;
+		int cur_cost;
 		while (adj) {
-			if (c >= adj->data.d) {
+			cur_cost = cities[s].cost;
+			if ((!cities[adj->data.to].visited) && (c >= adj->data.d)) {
 				if (cities[pc].gas_price >= cities[s].gas_price) {
-					DFS(c, adj->data.to, t, adj->data.d, s);
+					cur_cost += (cities[s].gas_price * adj->data.d);
+					if (cur_cost < cities[t].cost) {
+						cities[adj->data.to].cost = cur_cost;
+						DFS(c, adj->data.to, t, adj->data.d, s);
+					}
+				}
+				else {
+					if (c > (adj->data.d + d)) {
+						cur_cost += (cities[pc].gas_price * adj->data.d);
+						if (cur_cost < cities[t].cost) {
+							cities[adj->data.to].cost = cur_cost;
+							DFS(c, adj->data.to, t, adj->data.d + d, pc);
+						}
+					}
+					else {
+						cur_cost += (cities[pc].gas_price * (c - d)
+								+ cities[s].gas_price * (adj->data.d + d - c));
+						if (cur_cost < cities[t].cost) {
+							cities[adj->data.to].cost = cur_cost;
+							DFS(c, adj->data.to, t, adj->data.d, s);
+						}
+					}
 				}
 			}
 			adj = adj->next;
 		}
+		cities[s].visited = false;
 	}
 };
 
