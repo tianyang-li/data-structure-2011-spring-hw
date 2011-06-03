@@ -123,9 +123,9 @@ private:
 
 	inline int Query(int const c, int const s, int const t);
 
-	inline void InitCost() {
+	inline void InitCost(int const c) {
 		for (int i = 0; i != n; ++i) {
-			for (int j = 0; j != kMaxFuel; ++j) {
+			for (int j = 0; j <= c; ++j) {
 				cost[i][j].cost = kInfCost;
 			}
 		}
@@ -137,12 +137,12 @@ private:
 
 template <>
 inline void PrQue<Navigator::CostHandle>::PQSwap(Navigator::CostHandle &x, Navigator::CostHandle &y) {
-	int tmp = x.cost_ptr->pq_index;
-	x.cost_ptr->pq_index = y.cost_ptr->pq_index;
-	y.cost_ptr->pq_index = tmp;
 	Navigator::Cost *tmp_cost = x.cost_ptr;
 	x.cost_ptr = y.cost_ptr;
 	y.cost_ptr = tmp_cost;
+	int tmp = x.cost_ptr->pq_index;
+	x.cost_ptr->pq_index = y.cost_ptr->pq_index;
+	y.cost_ptr->pq_index = tmp;
 	tmp = x.city;
 	x.city = y.city;
 	y.city = tmp;
@@ -152,13 +152,13 @@ inline void PrQue<Navigator::CostHandle>::PQSwap(Navigator::CostHandle &x, Navig
 }
 
 inline int Navigator::Query(int const c, int const s, int const t) {
-	InitCost();
+	InitCost(c);
 	min_que.size = 0;
 	cost[s][0].cost = 0;
 	int pq_ind = 0;
 	CostHandle ch;
 	for (int i = 0; i != n; ++i) {
-		for (int j = 0; j != c; ++j) {
+		for (int j = 0; j <= c; ++j) {
 			ch.cost_ptr = &cost[i][j];
 			ch.cost_ptr->pq_index = pq_ind;
 			ch.cap = j;
