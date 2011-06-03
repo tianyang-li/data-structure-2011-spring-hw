@@ -76,7 +76,7 @@ public:
 		}
 	}
 
-	inline void PQSwap(T &x, T &y) {
+	static inline void PQSwap(T &x, T &y) {
 		T tmp = x;
 		x = y;
 		y = tmp;

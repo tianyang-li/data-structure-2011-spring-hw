@@ -12,6 +12,9 @@ template <class T>
 struct Node {
 	Node *next;
 	T data;
+
+	inline Node() : next(NULL) {
+	}
 };
 
 class Navigator {
@@ -150,6 +153,7 @@ inline void PrQue<Navigator::CostHandle>::PQSwap(Navigator::CostHandle &x, Navig
 
 inline int Navigator::Query(int const c, int const s, int const t) {
 	InitCost();
+	min_que.size = 0;
 	cost[s][0].cost = 0;
 	int pq_ind = 0;
 	CostHandle ch;
@@ -157,9 +161,9 @@ inline int Navigator::Query(int const c, int const s, int const t) {
 		for (int j = 0; j != c; ++j) {
 			ch.cost_ptr = &cost[i][j];
 			ch.cost_ptr->pq_index = pq_ind;
-			min_que.Insert(ch);
 			ch.cap = j;
 			ch.city = i;
+			min_que.Insert(ch);
 			pq_ind++;
 		}
 	}
@@ -167,11 +171,10 @@ inline int Navigator::Query(int const c, int const s, int const t) {
 		ch = min_que.data[0];
 		min_que.Pop();
 		if (ch.city == t) {
-			return ch.cost_ptr->cost;
+			return (ch.cost_ptr->cost == kInfCost) ? -1 : ch.cost_ptr->cost;
 		}
 		RelaxEdges(ch, c);
 	}
-	return -1;
 }
 
 inline void Navigator::RelaxEdges(Navigator::CostHandle const &ch, int const c) {
@@ -198,6 +201,11 @@ inline void Navigator::RelaxEdges(Navigator::CostHandle const &ch, int const c) 
 }
 
 inline void Navigator::ReduceCost(int const city, int const cap) {
+	int cur = cost[city][cap].pq_index;
+	while ((cur > 0) && (min_que.data[cur] < min_que.data[((cur + 1) >> 1) - 1])) {
+		PrQue<CostHandle>::PQSwap(min_que.data[cur], min_que.data[((cur + 1) >> 1) - 1]);
+		cur = ((cur + 1) >> 1) - 1;
+	}
 }
 
 int main() {
