@@ -27,6 +27,7 @@ class Navigator {
 	struct Cost {
 		int cost;
 		int pq_index;  // index in priority queue
+        bool visited;
 
 		inline bool operator<(Cost const &x) const {
 			return (cost < x.cost);
@@ -127,6 +128,7 @@ private:
 		for (int i = 0; i != n; ++i) {
 			for (int j = 0; j <= c; ++j) {
 				cost[i][j].cost = kInfCost;
+                cost[i][j].visited = false;
 			}
 		}
 	}
@@ -172,14 +174,15 @@ inline int Navigator::Query(int const c, int const s, int const t) {
 		if (ch.city == t) {
 			return (ch.cost_ptr->cost == kInfCost) ? -1 : ch.cost_ptr->cost;
 		}
-                min_que.Pop();
+        min_que.Pop();
+        ch.cost_ptr->visited = true;
 		RelaxEdges(ch, c);
 	}
 }
 
 inline void Navigator::RelaxEdges(Navigator::CostHandle const &ch, int const c) {
 	int cur_cost;
-	if (ch.cap < c) {
+	if (ch.cap < c && !cost[ch.city][ch.cap + 1].visited) {
 		cur_cost = cost[ch.city][ch.cap].cost + price[ch.city];
 		if (cur_cost < cost[ch.city][ch.cap + 1].cost) {
 			cost[ch.city][ch.cap + 1].cost = cur_cost;
@@ -190,7 +193,7 @@ inline void Navigator::RelaxEdges(Navigator::CostHandle const &ch, int const c) 
 	int rem;  // remaining fuel
 	while (adj) {
 		rem = ch.cap - adj->data.d;
-		if (rem >= 0) {
+		if (!cost[adj->data.to][rem].visited && (rem >= 0)) {
 			if (cost[ch.city][ch.cap].cost < cost[adj->data.to][rem].cost) {
 				cost[adj->data.to][rem].cost = cost[ch.city][ch.cap].cost;
 				ReduceCost(adj->data.to, rem);
