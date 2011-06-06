@@ -19,7 +19,7 @@ struct Node {
 
 class Navigator {
 	static int const kInfCost = 100000000;
-	static int const kMaxFuel = 1000;
+	static int const kMaxFuel = 105;
 
 	struct CostHandle;
 	friend class PrQue<CostHandle>;
