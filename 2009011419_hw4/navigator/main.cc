@@ -193,7 +193,7 @@ inline void Navigator::RelaxEdges(Navigator::CostHandle const &ch, int const c) 
 	int rem;  // remaining fuel
 	while (adj) {
 		rem = ch.cap - adj->data.d;
-		if (!cost[adj->data.to][rem].visited && (rem >= 0)) {
+		if ((rem >= 0) && !cost[adj->data.to][rem].visited) {
 			if (cost[ch.city][ch.cap].cost < cost[adj->data.to][rem].cost) {
 				cost[adj->data.to][rem].cost = cost[ch.city][ch.cap].cost;
 				ReduceCost(adj->data.to, rem);
