@@ -169,10 +169,10 @@ inline int Navigator::Query(int const c, int const s, int const t) {
 	}
 	while (0 != min_que.size) {
 		ch = min_que.data[0];
-		min_que.Pop();
 		if (ch.city == t) {
 			return (ch.cost_ptr->cost == kInfCost) ? -1 : ch.cost_ptr->cost;
 		}
+                min_que.Pop();
 		RelaxEdges(ch, c);
 	}
 }
